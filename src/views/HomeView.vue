@@ -6,6 +6,10 @@ import ArticlesList from '../components/ArticlesList.vue'
 <template>
   <main>
     <HomeBanner />
-    <ArticlesList />
+    <div class="max-w-3xl mx-auto px-8">
+      <p class="m-6 text-center">Bienvenue, sur le site de Mathieu Hourdin qui va parler de plein de choses différentes, notamment de comment sauver le monde, et s'amuser dans la vie, rien que ça.
+      </p>
+      <ArticlesList />
+    </div>
   </main>
 </template>
