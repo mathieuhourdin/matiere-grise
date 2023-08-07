@@ -5,6 +5,7 @@
         :title="article.title"
         :description="article.description"
         :image-url="article.image_url"
+        :progress="article.progress"
         />
 
     </div>
