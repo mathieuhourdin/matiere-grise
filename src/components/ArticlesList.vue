@@ -19,7 +19,7 @@ import { fetchWrapper } from "@/helpers";
 
 const articles = ref([]);
 const getArticles = async () => {
-  let response = await fetchWrapper.get("/articles", {});
+  let response = await fetchWrapper.get("/articles");
   return response;
 };
 
