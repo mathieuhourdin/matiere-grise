@@ -7,6 +7,7 @@
 
 <script setup>
 import { ref, computed, onMounted } from "vue";
+import { fetchWrapper } from "@/helpers";
 
 const isUserLoaded = computed(() => {
   const userIdStored = localStorage.getItem("userId");
@@ -21,9 +22,8 @@ const user = ref(null);
 
 const loadUser = async () => {
   if (!isUserLoaded.value) return null;
-  const response = await fetch("http://127.0.0.1:8080/users/" + userId.value);
-  const responseJson = await response.json();
-  user.value = responseJson;
+  const response = await fetchWrapper.get("/users/" + userId.value);
+  user.value = response;
 }
 
 onMounted(() => loadUser())

@@ -15,16 +15,12 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import ArticleCard from '@/components/ArticleCard.vue';
+import { fetchWrapper } from "@/helpers";
 
 const articles = ref([]);
 const getArticles = async () => {
-  let url = "http://127.0.0.1:8080/articles";
-  let options = {
-    method: "GET",
-    credentials: "include",
-  };
-  let response = await fetch(url, options);
-  return response.json();
+  let response = await fetchWrapper.get("/articles", {});
+  return response;
 };
 
 onMounted(async () => articles.value = await getArticles());
