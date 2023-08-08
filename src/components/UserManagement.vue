@@ -1,11 +1,12 @@
 <template>
   <div>
-    <a v-if="!isUserLoaded || !user" href="/login">Login</a>
+    <BaseLink v-if="!isUserLoaded || !user" partial-href="login">Login</BaseLink>
     <div v-else>{{ user.first_name }} {{ user.last_name }}</div>
   </div>
 </template>
 
 <script setup>
+import BaseLink from "@/components/Ui/BaseLink.vue";
 import { ref, computed, onMounted } from "vue";
 import { fetchWrapper } from "@/helpers";
 
