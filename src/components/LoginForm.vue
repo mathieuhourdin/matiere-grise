@@ -15,6 +15,7 @@ import TextInput from '@/components/Ui/TextInput.vue'
 import ActionButton from '@/components/Ui/ActionButton.vue'
 import { fetchWrapper } from '@/helpers'
 import { ref } from 'vue'
+import router from '@/router'
 
 const username = ref('')
 const password = ref('')
@@ -30,6 +31,7 @@ const submit = async () => {
     const responseData = response.data;
     localStorage.setItem('sessionId', responseData.id)
     localStorage.setItem('userId', responseData.user_id)
+    router.push('/');
   }
 }
 </script>
