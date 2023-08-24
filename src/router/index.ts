@@ -13,6 +13,12 @@ const router = createRouter({
       path: '/login',
       name: 'login',
       component: () => import('@/views/LoginView.vue')
+    },
+    {
+      path: '/articles/:uuid',
+      name: 'seeArticle',
+      props: true,
+      component: () => import('@/views/SeeArticle.vue')
     }
   ]
 })
