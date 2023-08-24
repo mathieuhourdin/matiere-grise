@@ -20,7 +20,7 @@ import { fetchWrapper } from "@/helpers";
 const articles = ref([]);
 const getArticles = async () => {
   let response = await fetchWrapper.get("/articles");
-  return response;
+  return response.data;
 };
 
 onMounted(async () => articles.value = await getArticles());

@@ -27,7 +27,7 @@ const submit = async () => {
     password: password.value
   })
   if (response.status == 200) {
-    const responseData = await response.json()
+    const responseData = response.data;
     localStorage.setItem('sessionId', responseData.id)
     localStorage.setItem('userId', responseData.user_id)
   }

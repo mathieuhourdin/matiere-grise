@@ -45,6 +45,6 @@ function handleResponse(response) {
       return Promise.reject(error)
     }
 
-    return data
+    return { status: response.status, data: data }
   })
 }

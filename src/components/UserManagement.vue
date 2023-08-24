@@ -24,7 +24,7 @@ const user = ref(null);
 const loadUser = async () => {
   if (!isUserLoaded.value) return null;
   const response = await fetchWrapper.get("/users/" + userId.value);
-  user.value = response;
+  user.value = response.data;
 }
 
 onMounted(() => loadUser())
