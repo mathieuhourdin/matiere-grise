@@ -8,6 +8,9 @@ module.exports = {
       },
       fontFamily: {
         mplus: ["'M PLUS Rounded 1c'", 'Verdana', 'sans-sherif']
+      },
+      fontSize: {
+        '2xs': '0.5rem'
       }
     }
   },

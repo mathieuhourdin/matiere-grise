@@ -1,7 +1,7 @@
 <template>
   <div class="m-4">
     <label class="block text-2xs text-slate-800">{{ label }}</label>
-    <input class="border border-neutral-400 block h-full w-full rounded-md border-2" :value="modelValue" :placeholder="placeholder" @input="event => onInput(event)" />
+    <textarea class="border border-neutral-800 block h-full w-full" :value="modelValue" :placeholder="placeholder" @input="event => onInput(event)" />
   </div>
 </template>
 

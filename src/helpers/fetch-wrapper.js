@@ -15,6 +15,7 @@ function request(method) {
       requestOptions.headers['Content-Type'] = 'application/json'
       requestOptions.body = JSON.stringify(body)
     }
+    requestOptions.headers['Authorization'] = localStorage.getItem('sessionId')
     return fetch(import.meta.env.VITE_API_URL + url, requestOptions).then(handleResponse)
   }
 }

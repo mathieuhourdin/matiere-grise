@@ -12,7 +12,7 @@
           :description="article.description"
           :image-url="article.image_url"
           :progress="article.progress"
-          :uuid="article.uuid"
+          :uuid="article.id"
         />
       </div>
     </div>
