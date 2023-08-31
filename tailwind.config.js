@@ -11,6 +11,9 @@ module.exports = {
       },
       fontSize: {
         '2xs': '0.5rem'
+      },
+      minHeight: {
+        96: '24rem'
       }
     }
   },

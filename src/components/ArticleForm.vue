@@ -51,7 +51,7 @@
       @update:modelValue="(event) => emitChange('potential_improvements', event)"
     />
     <TextInterface
-      class="h-60"
+      class="min-h-96"
       label="Contenu"
       :full-text="article.content"
       @change="(event) => emitChange('content', event)"
