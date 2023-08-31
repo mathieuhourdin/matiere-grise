@@ -3,7 +3,9 @@
     class="border-2 mx-auto relative p-4"
     tabindex="0"
     @keydown="handleWrite"
+    @click="menuOpen = false"
   >
+  <div class="bg-white border-4" v-if="menuOpen" :style="menuStyle" ></div>
     <div
       v-for="(line, lindex) in lines"
       :key="lindex"
@@ -14,7 +16,8 @@
         :key="tindex"
         class="border-blue-400"
         :class="{ 'border-r-2': letter.id == currentCursorPosition?.id }"
-        @click="(event) => selectCursorPosition(event, letter)"
+        @click="selectCursorPosition(letter)"
+        @contextmenu="rightClick"
       >
         <div v-if="letter.char == ' '" style="width: 5px" />
         <div v-else-if="letter.char == '\n'" style="height: 25px" />
@@ -72,9 +75,9 @@ const lines: [Line] = computed(() => {
 
 const text: [Char] = ref([])
 
-const selectCursorPosition = (event, letter) => {
+const selectCursorPosition = (letter) => {
   console.log('selectCursorPosition letter : ', letter)
-  currentCursorPosition.value = { id: letter.id, line: letter.line, char: letter.char }
+  currentCursorPosition.value = { id: letter.id, char: letter.char }
 }
 const currentCursorPosition = ref(null)
 
@@ -106,11 +109,37 @@ const handleWrite = (event) => {
     currentCursorPosition.value.id -= 1
   } else if (key == 'Enter') {
     insertChar('\n')
+  } else if (key == 'ArrowRight') {
+    let letterIndex = currentCursorPosition.value.id
+    if (letterIndex < text.value.length -1) selectCursorPosition(text.value[letterIndex +1]);
+  } else if (key == 'ArrowLeft') {
+    let letterIndex = currentCursorPosition.value.id
+    if (letterIndex > 0) selectCursorPosition(text.value[letterIndex -1]);
   }
 }
 
 const formatText = (textArray: [Char]) => {
   return textArray.reduce((resultText, char) => resultText + char.char, "");
+};
+
+const menuOpen = ref(false);
+
+const menuStyle = ref({
+  position: 'absolute',
+  'z-index': 90,
+  top: 0,
+  left: 0,
+  height: '100px',
+  width: '150px',
+});
+
+const rightClick = (event) => {
+  event.preventDefault()
+  menuStyle.value.top = `${event.layerY}px`;
+  menuStyle.value.left = `${event.layerX}px`;
+  menuOpen.value = true;
+  console.log("event : ", event);
+  console.log("Have a new right click");
 };
 
 const mounted = ref(false);
