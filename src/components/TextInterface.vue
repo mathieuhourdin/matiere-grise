@@ -31,9 +31,23 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 
-const lines = computed(() => {
+const props = defineProps<{
+  fullText: string,
+}>();
+
+interface Char {
+  id: number
+  char: string
+}
+
+interface Line {
+  startIndex: number
+  text: [Char]
+}
+
+const lines: [Line] = computed(() => {
   console.log("Compute lines");
-  let ids = [{id: 0}].concat(text.value.filter((char) => char.char == "\n"));
+  let ids = [{id: 0, text: []}].concat(text.value.filter((char) => char.char == "\n"));
   console.log("Compute ids.length : ", ids.length);
   for (let i = 0; i < ids.length -1; i++) {
     console.log("Compute line : ", i)
@@ -43,7 +57,7 @@ const lines = computed(() => {
   return ids;
 })
 
-const text = ref([
+const text: [Char] = ref([
   { id: 0, char: 'M', line: 0 },
   { id: 1, char: 'a', line: 0 }
 ])
