@@ -27,7 +27,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, watch } from 'vue'
+import { ref, computed, onMounted, watch, toRefs } from 'vue'
 
 const emit = defineEmits(['change'])
 
@@ -46,10 +46,11 @@ interface Line {
 }
 
 const textArrayFromString = (textString) => {
+  console.log("textArrayFromString textString: ", textString);
   text.value = []
   if (textString === undefined || textString == "") {
     text.value = [{id: 0, char: "\n"}];
-    selectCursorPosition(null, text.value[0]);
+    selectCursorPosition(null, { id: 0, char: "\n" });
     return;
   }
   for (var i = 0; i < textString.length; i++) {
@@ -69,10 +70,7 @@ const lines: [Line] = computed(() => {
   return ids
 })
 
-const text: [Char] = ref([
-  { id: 0, char: 'M', line: 0 },
-  { id: 1, char: 'a', line: 0 }
-])
+const text: [Char] = ref([])
 
 const selectCursorPosition = (event, letter) => {
   console.log('selectCursorPosition letter : ', letter)
@@ -115,9 +113,19 @@ const formatText = (textArray: [Char]) => {
   return textArray.reduce((resultText, char) => resultText + char.char, "");
 };
 
-onMounted(() => textArrayFromString(props.fullText))
+const mounted = ref(false);
+
+onMounted(() => {
+  textArrayFromString(props.fullText)
+  mounted.value = true
+})
 
 watch(text, (newText) => {
-  emit('change', formatText(newText))
+  console.log("Watch triggered : ", newText);
+  if (mounted.value) emit('change', formatText(newText))
 }, {deep: true})
+
+watch(toRefs(props).fullText, (newText) => {
+  textArrayFromString(newText);
+})
 </script>
