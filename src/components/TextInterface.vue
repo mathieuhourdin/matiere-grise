@@ -1,14 +1,12 @@
 <template>
   <div
-    class="border-2 h-80 mx-auto relative p-4"
+    class="border-2 mx-auto relative p-4"
     tabindex="0"
-    style="width: 800px"
     @keydown="handleWrite"
   >
     <div
       v-for="(line, lindex) in lines"
       :key="lindex"
-      :style="{ height: line.height }"
       class="flex flex-wrap w-full"
     >
       <div
@@ -29,7 +27,9 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
+
+const emit = defineEmits(['change'])
 
 const props = defineProps<{
   fullText: string
@@ -110,5 +110,14 @@ const handleWrite = (event) => {
     insertChar('\n')
   }
 }
+
+const formatText = (textArray: [Char]) => {
+  return textArray.reduce((resultText, char) => resultText + char.char, "");
+};
+
 onMounted(() => textArrayFromString(props.fullText))
+
+watch(text, (newText) => {
+  emit('change', formatText(newText))
+}, {deep: true})
 </script>

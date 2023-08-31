@@ -35,4 +35,5 @@ const triggerUpdateArticle = async () => {
 onMounted(async () => {
   article.value = await getArticle(toRefs(props).id.value);
 });
+
 </script>
