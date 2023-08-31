@@ -1,5 +1,6 @@
 <template>
   <div v-if="!!article" class="px-8 max-w-3xl mx-auto">
+    <RoundLinkButton class="fixed right-4 bottom-10" :to="`/articles/${article.id}/edit`"><PencilSquareIcon class="m-1" /></RoundLinkButton>
     <div class="my-8">
       <img
         :src="article.image_url"
@@ -13,7 +14,6 @@
       <a class="ml-auto underline" :href="article.gdoc_url">Ajouter un commentaire</a>
     </div>
     <hr class="border-top border-zinc-400 my-4" />
-    <RoundLinkButton :to="`/articles/${article.id}/edit`"><PencilSquareIcon class="m-1" /></RoundLinkButton>
     <div v-html="articleContentHtml" class="article-content"></div>
   </div>
 </template>
