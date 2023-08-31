@@ -33,6 +33,7 @@ export function useArticle() {
   
 
   const createArticle = async (article: Article) => {
+      article.progress = Number(article.progress)
       const response = await fetchWrapper.post('/articles', article)
       return response;
   }

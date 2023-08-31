@@ -12,7 +12,7 @@
       @update:modelValue="(event) => emitChange('description', event)"
     />
     <div class="flex">
-      <TextInput
+      <NumberInput
         class="mr-auto h-6"
         label="Progression"
         :modelValue="article.progress"
@@ -61,6 +61,7 @@
 
 <script setup lang="ts">
 import TextInput from '@/components/Ui/TextInput.vue'
+import NumberInput from '@/components/Ui/NumberInput.vue'
 import TextAreaInput from '@/components/Ui/TextAreaInput.vue'
 import { Article } from '@/composables/useArticle.ts'
 
