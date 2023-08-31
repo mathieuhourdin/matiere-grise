@@ -42,7 +42,28 @@ onMounted(() => fetchArticle())
 </script>
 
 <style>
-div.article-content > p {
+div.article-content 
+> p {
   margin-bottom: 1rem;
+}
+div.article-content 
+> h1 {
+  font-size: 2em;
+  font-weight: 800;
+}
+div.article-content 
+> h2 {
+  font-size: 1.5em;
+  font-weight: 700;
+}
+div.article-content 
+> h3 {
+  font-size: 1em;
+  font-weight: 600;
+}
+div.article-content 
+> h4 {
+  font-size: 0.8em;
+  font-weight: 500;
 }
 </style>
