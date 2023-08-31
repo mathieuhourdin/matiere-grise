@@ -20,20 +20,30 @@ import ArticleForm from '@/components/ArticleForm.vue'
 import ActionButton from '@/components/Ui/ActionButton.vue'
 import router from '@/router'
 import { useArticle } from '@/composables/useArticle.ts'
-import { onMounted, toRefs } from 'vue'
+import { onMounted, toRefs, watch, ref } from 'vue'
 
 const props = defineProps<{
   id: string
 }>()
 const { newArticle, getArticle, updateArticle } = useArticle()
-const article = newArticle();
+const article = newArticle()
+
+const debouncedUpdate = ref(null)
+
 const triggerUpdateArticle = async () => {
-  await updateArticle(toRefs(props).id.value, article.value);
-  router.push("/articles/" + toRefs(props).id.value)
-};
+  await updateArticle(toRefs(props).id.value, article.value)
+  router.push('/articles/' + toRefs(props).id.value)
+}
 
 onMounted(async () => {
-  article.value = await getArticle(toRefs(props).id.value);
-});
+  article.value = await getArticle(toRefs(props).id.value)
+})
 
+watch(article, (newArticle) => {
+  console.log("New article : ", newArticle);
+  clearTimeout(debouncedUpdate.value);
+  debouncedUpdate.value = setTimeout(async () => {
+    await updateArticle(toRefs(props).id.value, article.value)
+  }, 2000);
+}, { deep: true })
 </script>
