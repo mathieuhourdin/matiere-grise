@@ -10,9 +10,10 @@
     <div class="md:text-center text-left">{{ article.description }}</div>
     <div class="md:flex my-8">
       <ProgressBar :progress-value="article.progress" class="w-1/3" />
-      <a class="ml-auto underline" :href="article.gdoc_url" >Ajouter un commentaire</a>
+      <a class="ml-auto underline" :href="article.gdoc_url">Ajouter un commentaire</a>
     </div>
     <hr class="border-top border-zinc-400 my-4" />
+    <RoundLinkButton :to="`/articles/${article.id}/edit`"><PencilSquareIcon class="m-1" /></RoundLinkButton>
     <div v-html="articleContentHtml" class="article-content"></div>
   </div>
 </template>
@@ -20,6 +21,8 @@
 <script setup lang="ts">
 import { fetchWrapper } from '@/helpers'
 import ProgressBar from '@/components/ProgressBar.vue'
+import RoundLinkButton from '@/components/Ui/RoundLinkButton.vue'
+import { PencilSquareIcon } from '@heroicons/vue/24/outline';
 import { marked } from 'marked'
 import { ref, computed, onMounted } from 'vue'
 const props = defineProps<{

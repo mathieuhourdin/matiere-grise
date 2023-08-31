@@ -30,7 +30,10 @@ export function useArticle() {
     })
   }
 
-  
+  const getArticle = async (id: string) => {
+      const response = await fetchWrapper.get('/articles/' + id);
+      return response.data;
+  }
 
   const createArticle = async (article: Article) => {
       article.progress = Number(article.progress)
@@ -38,5 +41,11 @@ export function useArticle() {
       return response;
   }
 
-  return { newArticle, createArticle }
+  const updateArticle = async (id: string, article: Article) => {
+      article.progress = Number(article.progress)
+      const response = await fetchWrapper.put('/articles/' + id, article);
+      return response;
+  }
+
+  return { newArticle, getArticle, createArticle, updateArticle }
 }

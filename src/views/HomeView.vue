@@ -6,7 +6,7 @@
         Bienvenue, sur le site de Mathieu Hourdin qui va parler de plein de choses différentes,
         notamment de comment sauver le monde, et s'amuser dans la vie, rien que ça.
       </p>
-      <AddArticleButton />
+      <RoundLinkButton to="/articles/new">+</RoundLinkButton>
       <ArticlesList />
     </div>
   </main>
@@ -15,5 +15,5 @@
 <script setup lang="ts">
 import HomeBanner from '../components/HomeBanner.vue'
 import ArticlesList from '../components/ArticlesList.vue'
-import AddArticleButton from '@/components/AddArticleButton.vue'
+import RoundLinkButton from '@/components/Ui/RoundLinkButton.vue'
 </script>
