@@ -11,29 +11,29 @@
       :style="{ height: line.height }"
       class="flex flex-wrap w-full"
     >
-        <div
-          v-for="(letter, tindex) in line.text"
-          :key="tindex"
-          class="border-blue-400"
-          :class="{ 'border-r-2': letter.id == currentCursorPosition?.id }"
-          @click="(event) => selectCursorPosition(event, letter)"
-        >
-          <div v-if="letter.char == ' '" style="width: 5px" />
-          <div v-else-if="letter.char =='\n'" style="height: 25px" />
-          <div v-else>
-            <div>{{ letter.char }}</div>
-          </div>
+      <div
+        v-for="(letter, tindex) in line.text"
+        :key="tindex"
+        class="border-blue-400"
+        :class="{ 'border-r-2': letter.id == currentCursorPosition?.id }"
+        @click="(event) => selectCursorPosition(event, letter)"
+      >
+        <div v-if="letter.char == ' '" style="width: 5px" />
+        <div v-else-if="letter.char == '\n'" style="height: 25px" />
+        <div v-else>
+          <div>{{ letter.char }}</div>
+        </div>
       </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 
 const props = defineProps<{
-  fullText: string,
-}>();
+  fullText: string
+}>()
 
 interface Char {
   id: number
@@ -45,16 +45,28 @@ interface Line {
   text: [Char]
 }
 
-const lines: [Line] = computed(() => {
-  console.log("Compute lines");
-  let ids = [{id: 0, text: []}].concat(text.value.filter((char) => char.char == "\n"));
-  console.log("Compute ids.length : ", ids.length);
-  for (let i = 0; i < ids.length -1; i++) {
-    console.log("Compute line : ", i)
-    ids[i].text = text.value.filter((char) => char.id >= ids[i].id && char.id < ids[i+1].id);
+const textArrayFromString = (textString) => {
+  text.value = []
+  if (textString === undefined || textString == "") {
+    text.value = [{id: 0, char: "\n"}];
+    selectCursorPosition(null, text.value[0]);
+    return;
   }
-  ids[ids.length -1].text = text.value.filter((char) => char.id >= ids[ids.length -1].id);
-  return ids;
+  for (var i = 0; i < textString.length; i++) {
+    text.value.push({ id: i, char: textString[i] })
+  }
+}
+
+const lines: [Line] = computed(() => {
+  console.log('Compute lines')
+  let ids = [{ id: 0, text: [] }].concat(text.value.filter((char) => char.char == '\n'))
+  console.log('Compute ids.length : ', ids.length)
+  for (let i = 0; i < ids.length - 1; i++) {
+    console.log('Compute line : ', i)
+    ids[i].text = text.value.filter((char) => char.id >= ids[i].id && char.id < ids[i + 1].id)
+  }
+  ids[ids.length - 1].text = text.value.filter((char) => char.id >= ids[ids.length - 1].id)
+  return ids
 })
 
 const text: [Char] = ref([
@@ -87,7 +99,7 @@ const handleWrite = (event) => {
   if (currentCursorPosition.value === null) return
   const key = event.key
   if (key.length == 1) {
-    insertChar(key);
+    insertChar(key)
   } else if (key == 'Backspace') {
     text.value.splice(currentCursorPosition.value.id, 1)
     text.value
@@ -95,7 +107,8 @@ const handleWrite = (event) => {
       .forEach((letter) => (letter.id -= 1))
     currentCursorPosition.value.id -= 1
   } else if (key == 'Enter') {
-    insertChar("\n");
+    insertChar('\n')
   }
 }
+onMounted(() => textArrayFromString(props.fullText))
 </script>

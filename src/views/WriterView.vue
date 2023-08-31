@@ -1,7 +1,6 @@
 <template>
   <div>
-    Salut
-    <TextInterface />
+    <TextInterface full-text="Salut à tous c'est le texte" />
   </div>
 </template>
 
