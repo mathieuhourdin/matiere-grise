@@ -3,14 +3,11 @@
     class="border-2 mx-auto relative p-4"
     tabindex="0"
     @keydown="handleWrite"
+    @keyup="handleRelease"
     @click="menuOpen = false"
   >
-  <div class="bg-white border-4" v-if="menuOpen" :style="menuStyle" ></div>
-    <div
-      v-for="(line, lindex) in lines"
-      :key="lindex"
-      class="flex flex-wrap w-full"
-    >
+    <div class="bg-white border-4" v-if="menuOpen" :style="menuStyle"></div>
+    <div v-for="(line, lindex) in lines" :key="lindex" class="flex flex-wrap w-full">
       <div
         v-for="(letter, tindex) in line.text"
         :key="tindex"
@@ -48,7 +45,17 @@ interface Line {
   text: [Char]
 }
 
+/******************* Manage cursor **********************/
+const selectCursorPosition = (letter) => {
+  console.log('selectCursorPosition letter : ', letter)
+  currentCursorPosition.value = { id: letter.id, char: letter.char }
+}
+const currentCursorPosition = ref(null)
+
 /******************** Manage text ***********************/
+
+const text: [Char] = ref([]); // main data, list of single cars
+
 const lines: [Line] = computed(() => {
   // each line is separated by a \n char, and belongs to a single div.
   console.log('Compute lines')
@@ -61,14 +68,6 @@ const lines: [Line] = computed(() => {
   ids[ids.length - 1].text = text.value.filter((char) => char.id >= ids[ids.length - 1].id)
   return ids
 })
-
-const text: [Char] = ref([]); // main data, list of single cars
-
-const selectCursorPosition = (letter) => {
-  console.log('selectCursorPosition letter : ', letter)
-  currentCursorPosition.value = { id: letter.id, char: letter.char }
-}
-const currentCursorPosition = ref(null)
 
 const insertChar = (key) => {
   text.value
@@ -84,10 +83,14 @@ const insertChar = (key) => {
   currentCursorPosition.value.id += 1
 }
 
-const handleWrite = async (event) => {
+const handleWrite = (event) => {
   console.log('Writes : ', event.key)
   if (currentCursorPosition.value === null) return
   const key = event.key
+  if (isControlOn.value && key == "v") {
+    pasteClipboard();
+    return;
+  }
   if (key.length == 1) {
     insertChar(key)
   } else if (key == 'Backspace') {
@@ -106,13 +109,28 @@ const handleWrite = async (event) => {
     if (letterIndex > 0) selectCursorPosition(text.value[letterIndex -1]);
   } else if (key == 'Control') {
     console.log("Control");
-    try{ 
+    isControlOn.value = true;
+  }
+}
+
+/*************** deal with copy-paste **************/
+const isControlOn = ref(false);
+
+const pasteClipboard = async () => {
+    try{
       let clippedText = await navigator.clipboard.readText();
       console.log("Clippedtext : ", clippedText);
+      for (var i = 0; i < clippedText.length; i++) {
+        insertChar(clippedText[i])
+      }
+
     } catch (error) {
       console.log("Error with clippboard : ", error);
     }
-  }
+}
+
+const handleRelease = (event) => {
+  if (event.key == "Control") isControlOn.value = false;
 }
 
 /*****************  Manage dropdown menu ******************/
