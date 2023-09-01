@@ -121,6 +121,7 @@ const clickOnPage = (event) => {
   if (hiddenInput.value) hiddenInput.value.remove();
   hiddenInput.value = document.createElement('input');
   hiddenInput.value.style.cssText = `opacity: 0; z-index: -1; position: absolute; top: ${event.y}px; left: ${event.x}px;`;
+  hiddenInput.value.addEventListener("keydown", (event) => handleWrite(event));
   document.body.appendChild(hiddenInput.value);
   hiddenInput.value.focus();
   menuOpen.value = false;
