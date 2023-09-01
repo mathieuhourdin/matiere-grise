@@ -53,7 +53,7 @@ const textArrayFromString = (textString) => {
   text.value = []
   if (textString === undefined || textString == "") {
     text.value = [{id: 0, char: "\n"}];
-    selectCursorPosition(null, { id: 0, char: "\n" });
+    selectCursorPosition({ id: 0, char: "\n" });
     return;
   }
   for (var i = 0; i < textString.length; i++) {
