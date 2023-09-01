@@ -8,18 +8,20 @@
   >
     <div class="bg-white border-4" v-if="menuOpen" :style="menuStyle"></div>
     <div v-for="(line, lindex) in lines" :key="lindex" class="flex flex-wrap w-full">
-      <div
-        v-for="(letter, tindex) in line.text"
-        :key="tindex"
-        class="border-blue-400"
-        :class="{ 'border-r-2': letter.id == currentCursorPosition?.id }"
-        @click="selectCursorPosition(letter)"
-        @contextmenu="rightClick"
-      >
-        <div v-if="letter.char == ' '" style="width: 5px" />
-        <div v-else-if="letter.char == '\n'" style="height: 25px" />
-        <div v-else>
-          <div>{{ letter.char }}</div>
+      <div v-for="(word, windex) in line.words" :key="windex" class="flex flex-wrap">
+        <div
+          v-for="(letter, tindex) in word.text"
+          :key="tindex"
+          class="border-blue-400"
+          :class="{ 'border-r-2': letter.id == currentCursorPosition?.id }"
+          @click="selectCursorPosition(letter)"
+          @contextmenu="rightClick"
+        >
+          <div v-if="letter.char == ' '" style="width: 5px" />
+          <div v-else-if="letter.char == '\n'" style="height: 25px" />
+          <div v-else>
+            <div>{{ letter.char }}</div>
+          </div>
         </div>
       </div>
     </div>
@@ -54,7 +56,7 @@ const currentCursorPosition = ref(null)
 
 /******************** Manage text ***********************/
 
-const text: [Char] = ref([]); // main data, list of single cars
+const text: [Char] = ref([]) // main data, list of single cars
 
 const lines: [Line] = computed(() => {
   // each line is separated by a \n char, and belongs to a single div.
@@ -66,8 +68,23 @@ const lines: [Line] = computed(() => {
     ids[i].text = text.value.filter((char) => char.id >= ids[i].id && char.id < ids[i + 1].id)
   }
   ids[ids.length - 1].text = text.value.filter((char) => char.id >= ids[ids.length - 1].id)
+  ids.forEach((line) => {
+    console.log('Line : ', line)
+    line.words = getGroupsByWords(line.text)
+  })
   return ids
 })
+
+const getGroupsByWords = (splittedText) => {
+  let words = splittedText.filter((char) => char.char == ' ')
+  console.log('Words : ', words)
+  for (let i = 0; i < words.length; i++) {
+    words[i].text = splittedText.filter(
+      (char) => char.id >= words[i].id && (i == words.length - 1 || char.id < words[i + 1].id)
+    )
+  }
+  return words
+}
 
 const insertChar = (key) => {
   text.value
@@ -87,9 +104,9 @@ const handleWrite = (event) => {
   console.log('Writes : ', event.key)
   if (currentCursorPosition.value === null) return
   const key = event.key
-  if (isControlOn.value && key == "v") {
-    pasteClipboard();
-    return;
+  if (isControlOn.value && key == 'v') {
+    pasteClipboard()
+    return
   }
   if (key.length == 1) {
     insertChar(key)
@@ -103,38 +120,37 @@ const handleWrite = (event) => {
     insertChar('\n')
   } else if (key == 'ArrowRight') {
     let letterIndex = currentCursorPosition.value.id
-    if (letterIndex < text.value.length -1) selectCursorPosition(text.value[letterIndex +1]);
+    if (letterIndex < text.value.length - 1) selectCursorPosition(text.value[letterIndex + 1])
   } else if (key == 'ArrowLeft') {
     let letterIndex = currentCursorPosition.value.id
-    if (letterIndex > 0) selectCursorPosition(text.value[letterIndex -1]);
+    if (letterIndex > 0) selectCursorPosition(text.value[letterIndex - 1])
   } else if (key == 'Control') {
-    console.log("Control");
-    isControlOn.value = true;
+    console.log('Control')
+    isControlOn.value = true
   }
 }
 
 /*************** deal with copy-paste **************/
-const isControlOn = ref(false);
+const isControlOn = ref(false)
 
 const pasteClipboard = async () => {
-    try{
-      let clippedText = await navigator.clipboard.readText();
-      console.log("Clippedtext : ", clippedText);
-      for (var i = 0; i < clippedText.length; i++) {
-        insertChar(clippedText[i])
-      }
-
-    } catch (error) {
-      console.log("Error with clippboard : ", error);
+  try {
+    let clippedText = await navigator.clipboard.readText()
+    console.log('Clippedtext : ', clippedText)
+    for (var i = 0; i < clippedText.length; i++) {
+      insertChar(clippedText[i])
     }
+  } catch (error) {
+    console.log('Error with clippboard : ', error)
+  }
 }
 
 const handleRelease = (event) => {
-  if (event.key == "Control") isControlOn.value = false;
+  if (event.key == 'Control') isControlOn.value = false
 }
 
 /*****************  Manage dropdown menu ******************/
-const menuOpen = ref(false);
+const menuOpen = ref(false)
 
 const menuStyle = ref({
   position: 'absolute',
@@ -142,26 +158,26 @@ const menuStyle = ref({
   top: 0,
   left: 0,
   height: '100px',
-  width: '150px',
-});
+  width: '150px'
+})
 
 const rightClick = (event) => {
   event.preventDefault()
-  menuStyle.value.top = `${event.layerY}px`;
-  menuStyle.value.left = `${event.layerX}px`;
-  menuOpen.value = true;
-  console.log("event : ", event);
-  console.log("Have a new right click");
-};
+  menuStyle.value.top = `${event.layerY}px`
+  menuStyle.value.left = `${event.layerX}px`
+  menuOpen.value = true
+  console.log('event : ', event)
+  console.log('Have a new right click')
+}
 
 /*****************  Interact with parent ******************/
 const textArrayFromString = (textString) => {
-  console.log("textArrayFromString textString: ", textString);
+  console.log('textArrayFromString textString: ', textString)
   text.value = []
-  if (textString === undefined || textString == "") {
-    text.value = [{id: 0, char: "\n"}];
-    selectCursorPosition({ id: 0, char: "\n" });
-    return;
+  if (textString === undefined || textString == '') {
+    text.value = [{ id: 0, char: '\n' }]
+    selectCursorPosition({ id: 0, char: '\n' })
+    return
   }
   for (var i = 0; i < textString.length; i++) {
     text.value.push({ id: i, char: textString[i] })
@@ -169,22 +185,26 @@ const textArrayFromString = (textString) => {
 }
 
 const formatText = (textArray: [Char]) => {
-  return textArray.reduce((resultText, char) => resultText + char.char, "");
-};
+  return textArray.reduce((resultText, char) => resultText + char.char, '')
+}
 
-const mounted = ref(false);
+const mounted = ref(false)
 
 onMounted(() => {
   textArrayFromString(props.fullText)
   mounted.value = true
 })
 
-watch(text, (newText) => {
-  console.log("Watch triggered : ", newText);
-  if (mounted.value) emit('change', formatText(newText))
-}, {deep: true})
+watch(
+  text,
+  (newText) => {
+    console.log('Watch triggered : ', newText)
+    if (mounted.value) emit('change', formatText(newText))
+  },
+  { deep: true }
+)
 
 watch(toRefs(props).fullText, (newText) => {
-  textArrayFromString(newText);
+  textArrayFromString(newText)
 })
 </script>
