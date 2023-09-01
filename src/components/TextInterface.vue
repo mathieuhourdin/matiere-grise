@@ -107,7 +107,7 @@ const handleWrite = async (event) => {
   } else if (key == 'Control') {
     console.log("Control");
     try{ 
-      let clippedText = await navigator.clipboard.read();
+      let clippedText = await navigator.clipboard.readText();
       console.log("Clippedtext : ", clippedText);
     } catch (error) {
       console.log("Error with clippboard : ", error);
