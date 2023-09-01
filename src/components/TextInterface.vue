@@ -48,20 +48,9 @@ interface Line {
   text: [Char]
 }
 
-const textArrayFromString = (textString) => {
-  console.log("textArrayFromString textString: ", textString);
-  text.value = []
-  if (textString === undefined || textString == "") {
-    text.value = [{id: 0, char: "\n"}];
-    selectCursorPosition({ id: 0, char: "\n" });
-    return;
-  }
-  for (var i = 0; i < textString.length; i++) {
-    text.value.push({ id: i, char: textString[i] })
-  }
-}
-
+/******************** Manage text ***********************/
 const lines: [Line] = computed(() => {
+  // each line is separated by a \n char, and belongs to a single div.
   console.log('Compute lines')
   let ids = [{ id: 0, text: [] }].concat(text.value.filter((char) => char.char == '\n'))
   console.log('Compute ids.length : ', ids.length)
@@ -73,7 +62,7 @@ const lines: [Line] = computed(() => {
   return ids
 })
 
-const text: [Char] = ref([])
+const text: [Char] = ref([]); // main data, list of single cars
 
 const selectCursorPosition = (letter) => {
   console.log('selectCursorPosition letter : ', letter)
@@ -118,10 +107,7 @@ const handleWrite = (event) => {
   }
 }
 
-const formatText = (textArray: [Char]) => {
-  return textArray.reduce((resultText, char) => resultText + char.char, "");
-};
-
+/*****************  Manage dropdown menu ******************/
 const menuOpen = ref(false);
 
 const menuStyle = ref({
@@ -140,6 +126,24 @@ const rightClick = (event) => {
   menuOpen.value = true;
   console.log("event : ", event);
   console.log("Have a new right click");
+};
+
+/*****************  Interact with parent ******************/
+const textArrayFromString = (textString) => {
+  console.log("textArrayFromString textString: ", textString);
+  text.value = []
+  if (textString === undefined || textString == "") {
+    text.value = [{id: 0, char: "\n"}];
+    selectCursorPosition({ id: 0, char: "\n" });
+    return;
+  }
+  for (var i = 0; i < textString.length; i++) {
+    text.value.push({ id: i, char: textString[i] })
+  }
+}
+
+const formatText = (textArray: [Char]) => {
+  return textArray.reduce((resultText, char) => resultText + char.char, "");
 };
 
 const mounted = ref(false);
