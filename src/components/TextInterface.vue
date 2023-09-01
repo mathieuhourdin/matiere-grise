@@ -1,6 +1,5 @@
 <template>
   <div
-    autofocus
     class="border-2 mx-auto relative p-4"
     tabindex="0"
     @keydown="handleWrite"
@@ -85,7 +84,7 @@ const insertChar = (key) => {
   currentCursorPosition.value.id += 1
 }
 
-const handleWrite = (event) => {
+const handleWrite = async (event) => {
   console.log('Writes : ', event.key)
   if (currentCursorPosition.value === null) return
   const key = event.key
@@ -105,6 +104,14 @@ const handleWrite = (event) => {
   } else if (key == 'ArrowLeft') {
     let letterIndex = currentCursorPosition.value.id
     if (letterIndex > 0) selectCursorPosition(text.value[letterIndex -1]);
+  } else if (key == 'Control') {
+    console.log("Control");
+    try{ 
+      let clippedText = await navigator.clipboard.read();
+      console.log("Clippedtext : ", clippedText);
+    } catch (error) {
+      console.log("Error with clippboard : ", error);
+    }
   }
 }
 
