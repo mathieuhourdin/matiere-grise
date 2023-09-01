@@ -1,9 +1,11 @@
 <template>
   <div
+    autofocus
+    id="board"
     class="border-2 mx-auto relative p-4"
     tabindex="0"
     @keydown="handleWrite"
-    @click="menuOpen = false"
+    @click="clickOnPage"
   >
   <div class="bg-white border-4" v-if="menuOpen" :style="menuStyle" ></div>
     <div
@@ -109,6 +111,11 @@ const handleWrite = (event) => {
 
 /*****************  Manage dropdown menu ******************/
 const menuOpen = ref(false);
+
+const clickOnPage = () => {
+  menuOpen.value = false;
+  document.getElementById("board").focus();
+}
 
 const menuStyle = ref({
   position: 'absolute',
