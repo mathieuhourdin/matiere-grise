@@ -112,9 +112,18 @@ const handleWrite = (event) => {
 /*****************  Manage dropdown menu ******************/
 const menuOpen = ref(false);
 
-const clickOnPage = () => {
+const hiddenInput = ref(null);
+
+const clickOnPage = (event) => {
+  console.log(event);
+  event.preventDefault();
+  event.stopPropagation();
+  if (hiddenInput.value) hiddenInput.value.remove();
+  hiddenInput.value = document.createElement('input');
+  hiddenInput.value.focus();
+  hiddenInput.value.style.cssText = `opacity: 0; z-index: -1; position: absolute; top: ${event.y}px; left: ${event.x}px;`;
+  document.body.appendChild(hiddenInput.value);
   menuOpen.value = false;
-  document.getElementById("board").focus();
 }
 
 const menuStyle = ref({
