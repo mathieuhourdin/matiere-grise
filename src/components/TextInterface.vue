@@ -73,13 +73,12 @@ const calculateLinesFromText = (textString) => {
       wordsIndex = 0;
       lines.push({ id: linesIndex, words: [{id: 0, text: []}], text: [] })
     }
+    lines[linesIndex].words[wordsIndex].text.push({id: i, char: text.value[i].char});
     if (text.value[i].char == " ") {
+      // if space, go to next word
       wordsIndex += 1;
       lines[linesIndex].words.push({ id: wordsIndex, text: [{ id: i, char: text.value[i].char}]})
     }
-    console.log("LinesIndex : ", linesIndex);
-    console.log("wordsIndex : ", wordsIndex);
-    lines[linesIndex].words[wordsIndex].text.push({id: i, char: text.value[i].char});
   }
   return lines
 }
