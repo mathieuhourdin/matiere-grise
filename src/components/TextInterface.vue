@@ -59,31 +59,29 @@ const currentCursorPosition = ref(null)
 const text: [Char] = ref([]) // main data, list of single cars
 
 const lines: [Line] = computed(() => {
-  // each line is separated by a \n char, and belongs to a single div.
-  console.log('Compute lines')
-  let ids = [{ id: 0, text: [] }].concat(text.value.filter((char) => char.char == '\n'))
-  console.log('Compute ids.length : ', ids.length)
-  for (let i = 0; i < ids.length - 1; i++) {
-    console.log('Compute line : ', i)
-    ids[i].text = text.value.filter((char) => char.id >= ids[i].id && char.id < ids[i + 1].id)
-  }
-  ids[ids.length - 1].text = text.value.filter((char) => char.id >= ids[ids.length - 1].id)
-  ids.forEach((line) => {
-    console.log('Line : ', line)
-    line.words = getGroupsByWords(line.text)
-  })
-  return ids
+  return calculateLinesFromText(text.value);
 })
 
-const getGroupsByWords = (splittedText) => {
-  let words = splittedText.filter((char) => char.char == ' ')
-  console.log('Words : ', words)
-  for (let i = 0; i < words.length; i++) {
-    words[i].text = splittedText.filter(
-      (char) => char.id >= words[i].id && (i == words.length - 1 || char.id < words[i + 1].id)
-    )
+const calculateLinesFromText = (textString) => {
+  console.log('textArrayFromString textString: ', textString)
+  let lines = [{ id: 0, words: [{id: 0, text: []}], text: []}];
+  let linesIndex = 0;
+  let wordsIndex = 0;
+  for (var i = 0; i < text.value.length; i++) {
+    if (text.value[i].char == "\n") {
+      linesIndex += 1;
+      wordsIndex = 0;
+      lines.push({ id: linesIndex, words: [{id: 0, text: []}], text: [] })
+    }
+    if (text.value[i].char == " ") {
+      wordsIndex += 1;
+      lines[linesIndex].words.push({ id: wordsIndex, text: [{ id: i, char: text.value[i].char}]})
+    }
+    console.log("LinesIndex : ", linesIndex);
+    console.log("wordsIndex : ", wordsIndex);
+    lines[linesIndex].words[wordsIndex].text.push({id: i, char: text.value[i].char});
   }
-  return words
+  return lines
 }
 
 const insertChar = (key) => {
