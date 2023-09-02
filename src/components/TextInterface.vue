@@ -1,6 +1,6 @@
 <template>
   <div
-    class="border-2 mx-auto relative p-4"
+    class="mx-auto relative p-4"
     tabindex="0"
     @keydown="handleWrite"
     @keyup="handleRelease"
@@ -33,9 +33,12 @@ import { ref, computed, onMounted, watch, toRefs } from 'vue'
 
 const emit = defineEmits(['change'])
 
-const props = defineProps<{
-  fullText: string
-}>()
+const props = withDefaults(defineProps<{
+  fullText: string,
+  editable?: boolean,
+}>(), {
+  editable: true
+})
 
 interface Char {
   id: number
@@ -50,7 +53,7 @@ interface Line {
 /******************* Manage cursor **********************/
 const selectCursorPosition = (letter) => {
   console.log('selectCursorPosition letter : ', letter)
-  currentCursorPosition.value = { id: letter.id, char: letter.char }
+  if (props.editable.value) currentCursorPosition.value = { id: letter.id, char: letter.char }
 }
 const currentCursorPosition = ref(null)
 
