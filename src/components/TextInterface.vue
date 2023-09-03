@@ -1,29 +1,57 @@
 <template>
   <div
-    class="mx-auto relative p-4"
+    class="relative p-4"
     tabindex="0"
     @keydown="handleWrite"
     @keyup="handleRelease"
     @click="menuOpen = false"
   >
-    <div class="bg-white border-4" v-if="menuOpen" :style="menuStyle"></div>
-    <div v-for="(line, lindex) in lines" :key="lindex" class="flex flex-wrap w-full">
-      <div v-for="(word, windex) in line.words" :key="windex" class="flex flex-wrap">
-        <div
-          v-for="(letter, tindex) in word.text"
-          :key="tindex"
-          class="border-blue-400"
-          :class="{ 'border-r-2': letter.id == currentCursorPosition?.id }"
-          @click="selectCursorPosition(letter)"
-          @contextmenu="rightClick"
-        >
-          <div v-if="letter.char == ' '" style="width: 5px" />
-          <div v-else-if="letter.char == '\n'" style="height: 25px" />
-          <div v-else>
-            <div>{{ letter.char }}</div>
+    <div class="bg-white border-4" v-if="menuOpen" :style="menuStyle">
+      <div
+        @click="addComment"
+        class="text-sm border-b-2 flex items-center p-2"
+        style="height: 50px"
+      >
+        Ajouter un commentaire
+      </div>
+      <div class="text-sm align-middle flex items-center p-2" style="height: 50px">
+        Corriger une faute
+      </div>
+    </div>
+    <div class="flex mx-auto max-w-full">
+      <div>
+        <div v-for="(line, lindex) in lines" :key="lindex" class="flex flex-wrap">
+          <div class="flex flex-wrap">
+            <div v-for="(word, windex) in line.words" :key="windex" class="flex flex-wrap">
+              <div
+                v-for="(letter, tindex) in word.text"
+                :key="tindex"
+                class="border-blue-400"
+                :class="{ 'border-r-2': letter.id == currentCursorPosition?.id }"
+                @click="selectCursorPosition(letter)"
+                @contextmenu="(event) => rightClick(event, letter.id)"
+              >
+                <div v-if="letter.char == ' '" style="width: 5px" />
+                <div v-else-if="letter.char == '\n'" style="height: 25px" />
+                <div v-else>
+                  <div>{{ letter.char }}</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="absolute h-full" style="right: -100px">
+            <div
+              v-for="(comment, cindex) in line.comments"
+              :key="cindex"
+              class="bg-slate-100 border-2 p-4 m-1"
+              style="width: 200px"
+            >
+              {{ comment.text }}
+            </div>
           </div>
         </div>
       </div>
+      <div v-if="comments.length > 0" style="width: 200px">Espace</div>
     </div>
   </div>
 </template>
@@ -31,14 +59,19 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, watch, toRefs } from 'vue'
 
-const emit = defineEmits(['change'])
+const emit = defineEmits(['change', 'changeComments'])
 
-const props = withDefaults(defineProps<{
-  fullText: string,
-  editable?: boolean,
-}>(), {
-  editable: true
-})
+const props = withDefaults(
+  defineProps<{
+    fullText: string
+    extComments?: Array
+    editable?: boolean
+  }>(),
+  {
+    editable: true,
+    extComments: () => []
+  }
+)
 
 interface Char {
   id: number
@@ -53,7 +86,7 @@ interface Line {
 /******************* Manage cursor **********************/
 const selectCursorPosition = (letter) => {
   console.log('selectCursorPosition letter : ', letter)
-  if (props.editable.value) currentCursorPosition.value = { id: letter.id, char: letter.char }
+  if (props.editable) currentCursorPosition.value = { id: letter.id, char: letter.char }
 }
 const currentCursorPosition = ref(null)
 
@@ -62,26 +95,32 @@ const currentCursorPosition = ref(null)
 const text: [Char] = ref([]) // main data, list of single cars
 
 const lines: [Line] = computed(() => {
-  return calculateLinesFromText(text.value);
+  return calculateLinesFromText(text.value)
 })
 
 const calculateLinesFromText = (textString) => {
   console.log('textArrayFromString textString: ', textString)
-  let lines = [{ id: 0, words: [{id: 0, text: []}], text: []}];
-  let linesIndex = 0;
-  let wordsIndex = 0;
+  let lines = [{ id: 0, words: [{ id: 0, text: [] }], text: [], comments: [] }]
+  let linesIndex = 0
+  let wordsIndex = 0
   for (var i = 0; i < text.value.length; i++) {
-    if (text.value[i].char == "\n") {
-      linesIndex += 1;
-      wordsIndex = 0;
-      lines.push({ id: linesIndex, words: [{id: 0, text: []}], text: [] })
+    if (text.value[i].char == '\n') {
+      linesIndex += 1
+      wordsIndex = 0
+      lines.push({ id: linesIndex, words: [{ id: 0, text: [] }], text: [], comments: [] })
     }
-    lines[linesIndex].words[wordsIndex].text.push({id: i, char: text.value[i].char});
-    if (text.value[i].char == " ") {
+    lines[linesIndex].words[wordsIndex].text.push({
+      id: i,
+      char: text.value[i].char,
+      comment: text.value[i].comment
+    })
+    if (text.value[i].char == ' ') {
       // if space, go to next word
-      wordsIndex += 1;
-      lines[linesIndex].words.push({ id: wordsIndex, text: [{ id: i, char: text.value[i].char}]})
+      wordsIndex += 1
+      lines[linesIndex].words.push({ id: wordsIndex, text: [{ id: i, char: text.value[i].char }] })
     }
+    const foundComment = comments.value.find((comment) => comment.startIndex == i)
+    if (foundComment) lines[linesIndex].comments.push(foundComment)
   }
   return lines
 }
@@ -149,23 +188,51 @@ const handleRelease = (event) => {
   if (event.key == 'Control') isControlOn.value = false
 }
 
+/***************** Comments **********************/
+
+const comments = ref([
+  { id: 0, startIndex: 12, text: 'Ceci est un commentaire' },
+  { id: 1, startIndex: 16, text: 'Un autre commentaire' }
+])
+
+const loadComments = (extComments) => {
+  console.log('Comments loading : ', extComments)
+  comments.value = extComments
+}
+
+watch(
+  comments,
+  (comments) => {
+    console.log('Watch comments triggered : ', comments.value)
+    if (mounted.value) emit('changeComments', comments.value)
+  },
+  { deep: true }
+)
+
 /*****************  Manage dropdown menu ******************/
 const menuOpen = ref(false)
+const menuIndex = ref(null)
+
+const addComment = () => {
+  console.log('Add Comment')
+  comments.value.push({ id: 0, startIndex: menuIndex.value, text: 'Nouveau commentaire' })
+}
 
 const menuStyle = ref({
   position: 'absolute',
   'z-index': 90,
   top: 0,
   left: 0,
-  height: '100px',
-  width: '150px'
+  height: '106px',
+  width: '260px'
 })
 
-const rightClick = (event) => {
+const rightClick = (event, index) => {
   event.preventDefault()
   menuStyle.value.top = `${event.layerY}px`
   menuStyle.value.left = `${event.layerX}px`
   menuOpen.value = true
+  menuIndex.value = index
   console.log('event : ', event)
   console.log('Have a new right click')
 }
@@ -180,7 +247,8 @@ const textArrayFromString = (textString) => {
     return
   }
   for (var i = 0; i < textString.length; i++) {
-    text.value.push({ id: i, char: textString[i] })
+    const foundComment = comments.value.find((comment) => comment.startIndex == i)
+    text.value.push({ id: i, char: textString[i], comment: foundComment })
   }
 }
 
@@ -192,6 +260,7 @@ const mounted = ref(false)
 
 onMounted(() => {
   textArrayFromString(props.fullText)
+  loadComments(props.extComments)
   mounted.value = true
 })
 

@@ -1,5 +1,5 @@
 <template>
-  <div v-if="!!article" class="px-8 max-w-3xl mx-auto">
+  <div v-if="!!article" class="px-8 mx-auto">
     <RoundLinkButton class="fixed right-4 bottom-10" :to="`/articles/${article.id}/edit`"
       ><PencilSquareIcon class="m-1"
     /></RoundLinkButton>
