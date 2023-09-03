@@ -40,14 +40,12 @@
             </div>
           </div>
           <div class="absolute h-full" style="right: -30px">
-            <div
+            <CommentCard
               v-for="(comment, cindex) in line.comments"
               :key="cindex"
-              class="bg-slate-100 border-2 p-4 m-1 rounded"
               style="width: 200px"
-            >
-            <textarea class="max-w-full"/>
-            </div>
+              v-model="comment.text"
+            />
           </div>
         </div>
       </div>
@@ -57,6 +55,7 @@
 </template>
 
 <script setup lang="ts">
+import CommentCard from '@/components/CommentCard.vue'
 import { ref, computed, onMounted, watch, toRefs } from 'vue'
 
 const emit = defineEmits(['change', 'changeComments'])
