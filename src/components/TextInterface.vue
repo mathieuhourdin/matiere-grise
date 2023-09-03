@@ -19,7 +19,7 @@
       </div>
     </div>
     <div class="flex mx-auto max-w-full">
-      <div>
+      <div class="w-full">
         <div v-for="(line, lindex) in lines" :key="lindex" class="flex flex-wrap">
           <div class="flex flex-wrap">
             <div v-for="(word, windex) in line.words" :key="windex" class="flex flex-wrap">
@@ -39,14 +39,14 @@
               </div>
             </div>
           </div>
-          <div class="absolute h-full" style="right: -100px">
+          <div class="absolute h-full" style="right: -30px">
             <div
               v-for="(comment, cindex) in line.comments"
               :key="cindex"
-              class="bg-slate-100 border-2 p-4 m-1"
+              class="bg-slate-100 border-2 p-4 m-1 rounded"
               style="width: 200px"
             >
-              {{ comment.text }}
+            <textarea class="max-w-full"/>
             </div>
           </div>
         </div>
