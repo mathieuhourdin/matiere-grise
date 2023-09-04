@@ -1,11 +1,11 @@
 <template>
   <div class="w-1/3 border shadow rounded">
-    <div class="flex">
-      <div class="m-2">Connectez-vous</div>
-      <slot />
-    </div>
-    <TextInput label="Username" v-model="username" />
-    <TextInput label="Password" v-model="password" />
+    <div class="m-2">Inscription</div>
+    <TextInput label="Email" v-model="newUser.email" />
+    <TextInput label="Prénom" v-model="newUser.first_name" />
+    <TextInput label="Nom" v-model="newUser.last_name" />
+    <TextInput label="hanle" v-model="newUser.handle" />
+    <TextInput label="Password" v-model="newUser.password" />
     <div class="flex">
       <ActionButton class="ml-auto m-2" text="Valider" type="valid" @click="submit" />
       <ActionButton class="m-2" text="Annuler" type="abort" @click="submit" />
@@ -16,18 +16,20 @@
 <script setup>
 import TextInput from '@/components/Ui/TextInput.vue'
 import ActionButton from '@/components/Ui/ActionButton.vue'
-import { fetchWrapper } from '@/helpers'
 import { ref } from 'vue'
-import router from '@/router'
 import { useUser } from '@/composables/useUser.ts'
 
-const { authUser } = useUser()
-const username = ref('')
-const password = ref('')
+const { createNewUser } = useUser()
+
+const newUser = ref({
+  username: '',
+  first_name: '',
+  last_name: '',
+  handle: '',
+  password: ''
+})
 
 const submit = async () => {
-  console.log('Submit')
-  console.log(username.value)
-  await authUser({ username: username.value, password: password.value })
+  await createNewUser(newUser.value)
 }
 </script>

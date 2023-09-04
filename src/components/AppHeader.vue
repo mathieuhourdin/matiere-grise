@@ -1,7 +1,7 @@
 <template>
   <div class="w-full flex h-10 bg-orange-100">
-    <BaseLink class="m-2">Plus Proche Du Coeur</BaseLink>
-    <UserManagement class="ml-auto m-2" />
+    <BaseLink class="m-2 mr-auto">Plus Proche Du Coeur</BaseLink>
+    <UserManagement class="m-2" />
   </div>
 </template>
 
