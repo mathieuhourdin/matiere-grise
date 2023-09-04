@@ -1,31 +1,20 @@
 <template>
   <div>
-    <BaseLink v-if="!isUserLoaded || !user" partial-href="login">Login</BaseLink>
+    <router-link
+      v-if="!user"
+      to="/login"
+    >
+    Login
+    </router-link>
     <div v-else>{{ user.first_name }} {{ user.last_name }}</div>
   </div>
 </template>
 
 <script setup>
-import BaseLink from "@/components/Ui/BaseLink.vue";
-import { ref, computed, onMounted } from "vue";
-import { fetchWrapper } from "@/helpers";
+import { useUser } from "@/composables/useUser.ts";
+import { onMounted } from "vue";
 
-const isUserLoaded = computed(() => {
-  const userIdStored = localStorage.getItem("userId");
-  return !!userIdStored;
-})
-
-const userId = computed(() => {
-  return localStorage.getItem("userId");
-})
-
-const user = ref(null);
-
-const loadUser = async () => {
-  if (!isUserLoaded.value) return null;
-  const response = await fetchWrapper.get("/users/" + userId.value);
-  user.value = response.data;
-}
+const { user, loadUser } = useUser();
 
 onMounted(() => loadUser())
 
