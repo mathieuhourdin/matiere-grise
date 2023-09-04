@@ -26,9 +26,10 @@ const createComment = async (articleId: string, startIndex: number) => {
   }
 }
 
-const getCommentsForArticle = async (articleId: string) => {
+const getCommentsForArticle = async (articleId: string, withUsers: boolean = true) => {
+    const userParams = withUsers ? "?author=true" : "";
     try {
-        const response = await fetchWrapper.get('/articles/' + articleId + '/comments');
+        const response = await fetchWrapper.get('/articles/' + articleId + '/comments' + userParams);
         return response.data;
     } catch (error) {
         console.log("error : ", error);

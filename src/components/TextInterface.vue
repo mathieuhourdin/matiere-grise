@@ -27,7 +27,7 @@
                 v-for="(letter, tindex) in word.text"
                 :key="tindex"
                 class="border-blue-400"
-                :class="{ 'border-r-2': letter.id == currentCursorPosition?.id }"
+                :class="{ 'border-r-2': letter.id == currentCursorPosition?.id, 'bg-yellow-400': letter.comment }"
                 @click="selectCursorPosition(letter)"
                 @contextmenu="(event) => rightClick(event, letter.id)"
               >
@@ -47,6 +47,7 @@
               v-model="comment.content"
               :editing="comment.editing"
               @validate="comment.editing = false"
+              :author="comment.author"
             />
           </div>
         </div>
@@ -112,18 +113,18 @@ const calculateLinesFromText = (textString) => {
       wordsIndex = 0
       lines.push({ id: linesIndex, words: [{ id: 0, text: [] }], text: [], comments: [] })
     }
+    const foundComment = comments.value.find((comment) => comment.start_index == i)
+    if (foundComment) lines[linesIndex].comments.push(foundComment)
     lines[linesIndex].words[wordsIndex].text.push({
       id: i,
       char: text.value[i].char,
-      comment: text.value[i].comment
+      comment: foundComment
     })
     if (text.value[i].char == ' ') {
       // if space, go to next word
       wordsIndex += 1
       lines[linesIndex].words.push({ id: wordsIndex, text: [{ id: i, char: text.value[i].char }] })
     }
-    const foundComment = comments.value.find((comment) => comment.start_index == i)
-    if (foundComment) lines[linesIndex].comments.push(foundComment)
   }
   return lines
 }
@@ -139,6 +140,10 @@ const insertChar = (key) => {
     char: key,
     line: 0
   })
+  comments.value.forEach((comment) => {
+    if (comment.start_index > currentCursorPosition.value.id) comment.start_index += 1;
+    if (comment.end_index > currentCursorPosition.value.id) comment.end_index += 1;
+  });
   currentCursorPosition.value.id += 1
 }
 

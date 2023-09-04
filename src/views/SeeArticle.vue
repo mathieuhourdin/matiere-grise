@@ -16,7 +16,13 @@
       <a class="ml-auto underline" :href="article.gdoc_url">Ajouter un commentaire</a>
     </div>
     <hr class="border-top border-zinc-400 my-4" />
-    <TextInterface :ext-comments="comments" :ressource-id="article.id" :full-text="article.content" :editable="false" />
+    <TextInterface
+      :ext-comments="comments"
+      :ressource-id="article.id"
+      :full-text="article.content"
+      :editable="isArticleAuthor"
+      @change="(event) => debouncedUpdateArticle(event)"
+    />
   </div>
 </template>
 
@@ -24,30 +30,51 @@
 import TextInterface from '@/components/TextInterface.vue'
 import ProgressBar from '@/components/ProgressBar.vue'
 import RoundLinkButton from '@/components/Ui/RoundLinkButton.vue'
+import { useArticle } from '@/composables/useArticle.ts'
 import { useComments } from '@/composables/useComments.ts'
+import { useUser } from '@/composables/useUser.ts'
 import { fetchWrapper } from '@/helpers'
 import { PencilSquareIcon } from '@heroicons/vue/24/outline'
 import { marked } from 'marked'
-import { ref, computed, onMounted } from 'vue'
+import { watch, toRefs, ref, computed, onMounted } from 'vue'
 const props = defineProps<{
-  uuid: String
+  id: String
 }>()
 
-const { getCommentsForArticle } = useComments()
-
+/************** article section ******************/
+const { getArticle, updateArticle } = useArticle()
+const debouncedUpdate = ref(null)
 const article = ref(null)
-const comments = ref([])
 
-const fetchArticle = async () => {
-  const response = await fetchWrapper.get('/articles/' + props.uuid)
-  article.value = response.data
+const debouncedUpdateArticle = (newArticle) => {
+  console.log('New article : ', newArticle)
+  if (newArticle == "\n") return
+  clearTimeout(debouncedUpdate.value)
+  debouncedUpdate.value = setTimeout(async () => {
+    try {
+      await updateArticle(toRefs(props).id.value, { ...article.value, content: newArticle })
+    } catch (error) {
+      console.log("An error : ", error)
+    }
+  }, 2000)
 }
+
+/************** user section *********************/
+const { user } = useUser()
+const isArticleAuthor = computed(() => {
+  if (!user.value) return false
+  return article.value.author_id == user.value.id
+})
+
+/************** comments section *****************/
+const { getCommentsForArticle } = useComments()
+const comments = ref([])
 
 const articleContentHtml = computed(() => (article.value ? marked(article.value.content) : null))
 
 onMounted(async () => {
-  fetchArticle()
-  comments.value = await getCommentsForArticle(props.uuid)
+  article.value = await getArticle(props.id)
+  comments.value = await getCommentsForArticle(props.id)
 })
 </script>
 

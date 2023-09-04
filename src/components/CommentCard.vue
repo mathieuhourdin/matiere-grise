@@ -1,6 +1,6 @@
 <template>
   <div class="bg-slate-100 border p-4 m-1 rounded p-2 shadow-xl">
-    <div class="text-xs m-1 font-bold">{{ user.first_name }} {{ user.last_name }}</div>
+    <div class="text-xs m-1 font-bold">{{ author.first_name }} {{ author.last_name }}</div>
     <div v-if="editing">
       <textarea class="w-full text-xs rounded-xl p-2" :value="modelValue" @input="onInput" />
       <div class="flex">
@@ -17,13 +17,12 @@
 <script setup lang="ts">
 import TextAreaInput from '@/components/Ui/TextAreaInput.vue'
 import ActionButton from '@/components/Ui/ActionButton.vue'
-import { useUser } from '@/composables/useUser.ts'
 const emit = defineEmits(['update:modelValue', 'validate', 'abort'])
 const props = defineProps<{
   editing: boolean
   modelValue: string
+  author: Object
 }>()
-const { user } = useUser()
 const onInput = (event) => {
   emit('update:modelValue', event.target.value)
 }

@@ -21,7 +21,7 @@ const router = createRouter({
       component: () => import('@/views/WriteArticle.vue')
     },
     {
-      path: '/articles/:uuid',
+      path: '/articles/:id',
       name: 'seeArticle',
       props: true,
       component: () => import('@/views/SeeArticle.vue')
