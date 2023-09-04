@@ -1,7 +1,7 @@
 import { ref } from 'vue'
 import { fetchWrapper } from '@/helpers'
 
-interface User {
+export interface User {
   email: string
   first_name: string
   last_name: string

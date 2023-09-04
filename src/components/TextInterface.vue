@@ -44,7 +44,9 @@
               v-for="(comment, cindex) in line.comments"
               :key="cindex"
               style="width: 200px"
-              v-model="comment.text"
+              v-model="comment.content"
+              :editing="comment.editing"
+              @validate="comment.editing = false"
             />
           </div>
         </div>
@@ -57,6 +59,7 @@
 <script setup lang="ts">
 import CommentCard from '@/components/CommentCard.vue'
 import { ref, computed, onMounted, watch, toRefs } from 'vue'
+import { useComments } from '@/composables/useComments.ts'
 
 const emit = defineEmits(['change', 'changeComments'])
 
@@ -118,7 +121,7 @@ const calculateLinesFromText = (textString) => {
       wordsIndex += 1
       lines[linesIndex].words.push({ id: wordsIndex, text: [{ id: i, char: text.value[i].char }] })
     }
-    const foundComment = comments.value.find((comment) => comment.startIndex == i)
+    const foundComment = comments.value.find((comment) => comment.start_index == i)
     if (foundComment) lines[linesIndex].comments.push(foundComment)
   }
   return lines
@@ -189,14 +192,27 @@ const handleRelease = (event) => {
 
 /***************** Comments **********************/
 
+const { createComment } = useComments();
+
 const comments = ref([
-  { id: 0, startIndex: 12, text: 'Ceci est un commentaire' },
-  { id: 1, startIndex: 16, text: 'Un autre commentaire' }
+  { id: 0, start_index: 12, text: 'Ceci est un commentaire' },
+  { id: 1, start_index: 16, text: 'Un autre commentaire' }
 ])
 
 const loadComments = (extComments) => {
   console.log('Comments loading : ', extComments)
   comments.value = extComments
+}
+
+const addComment = () => {
+  console.log('Add Comment')
+  const newComment = createComment(menuIndex.value);
+  comments.value.push(newComment)
+}
+
+const updateCommentContent = (editingComment, event) => {
+  console.log("editingComment : ", editingComment, event);
+  comments.value.find((comment) => comment.id == editingComment.id).content = event;
 }
 
 watch(
@@ -211,11 +227,6 @@ watch(
 /*****************  Manage dropdown menu ******************/
 const menuOpen = ref(false)
 const menuIndex = ref(null)
-
-const addComment = () => {
-  console.log('Add Comment')
-  comments.value.push({ id: 0, startIndex: menuIndex.value, text: 'Nouveau commentaire' })
-}
 
 const menuStyle = ref({
   position: 'absolute',
@@ -246,7 +257,7 @@ const textArrayFromString = (textString) => {
     return
   }
   for (var i = 0; i < textString.length; i++) {
-    const foundComment = comments.value.find((comment) => comment.startIndex == i)
+    const foundComment = comments.value.find((comment) => comment.start_index == i)
     text.value.push({ id: i, char: textString[i], comment: foundComment })
   }
 }
