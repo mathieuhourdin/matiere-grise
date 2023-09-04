@@ -1,6 +1,6 @@
 <template>
-  <div class="bg-slate-100 border-2 p-4 m-1 rounded p-2">
-    <div class="text-xs m-1">{{ user.first_name }} {{ user.last_name }}</div>
+  <div class="bg-slate-100 border p-4 m-1 rounded p-2 shadow-xl">
+    <div class="text-xs m-1 font-bold">{{ user.first_name }} {{ user.last_name }}</div>
     <div v-if="editing">
       <textarea class="w-full text-xs rounded-xl p-2" :value="modelValue" @input="onInput" />
       <div class="flex">
@@ -8,7 +8,7 @@
         <ActionButton @click="abortComment" class="text-sm" rounded size="2xs" text="Annuler" type="abort" />
       </div>
     </div>
-    <div v-else class="text-2xs">
+    <div v-else class="text-xs">
       {{ modelValue }}
     </div>
   </div>

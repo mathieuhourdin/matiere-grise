@@ -193,12 +193,10 @@ const handleRelease = (event) => {
 
 /***************** Comments **********************/
 
-const { createComment } = useComments();
+const { createComment, batchUpdateComments } = useComments();
 
-const comments = ref([
-  { id: 0, start_index: 12, text: 'Ceci est un commentaire' },
-  { id: 1, start_index: 16, text: 'Un autre commentaire' }
-])
+const comments = ref([])
+const debouncedEditCommentTimeout = ref(null);
 
 const loadComments = (extComments) => {
   console.log('Comments loading : ', extComments)
@@ -211,16 +209,16 @@ const addComment = async () => {
   comments.value.push(newComment)
 }
 
-const updateCommentContent = (editingComment, event) => {
-  console.log("editingComment : ", editingComment, event);
-  comments.value.find((comment) => comment.id == editingComment.id).content = event;
-}
-
 watch(
   comments,
   (comments) => {
     console.log('Watch comments triggered : ', comments.value)
-    if (mounted.value) emit('changeComments', comments.value)
+    if (mounted.value) {
+      console.log("Comments : ", comments);
+      emit('changeComments', comments.value)
+      clearTimeout(debouncedEditCommentTimeout.value);
+      debouncedEditCommentTimeout.value = setTimeout(() => batchUpdateComments(comments), 1000);
+    }
   },
   { deep: true }
 )

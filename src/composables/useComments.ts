@@ -35,6 +35,20 @@ const getCommentsForArticle = async (articleId: string) => {
     }
 }
 
+const updateComment = async (comment: Comment) => {
+    try {
+        const response = await fetchWrapper.put('/comments/' + comment.id, comment);
+        return response.data;
+    } catch (error) {
+        console.log("error : ", error)
+    }
+}
+
+const batchUpdateComments = async (comments: [Comment]) => {
+    console.log("comments : ", comments)
+    comments.map((comment) => updateComment(comment));
+}
+
 export function useComments() {
-  return { createComment, getCommentsForArticle }
+  return { createComment, getCommentsForArticle, updateComment, batchUpdateComments }
 }
