@@ -1,4 +1,5 @@
 import { type User, useUser } from '@/composables/useUser'
+import { fetchWrapper } from '@/helpers'
 
 interface Comment {
   id?: string
@@ -11,20 +12,29 @@ interface Comment {
   editing: boolean
 }
 
-const createComment = (startIndex: number) => {
-    const { user } = useUser();
-    const newComment = {
-        id: Math.floor(Math.random() * 2000),
-        created_at: Date.now(),
-        content: "",
-        start_index: startIndex,
-        end_index: startIndex,
-        author: user,
-        editing: true,
+const createComment = async (articleId: string, startIndex: number) => {
+  const { user } = useUser()
+  const payload = {
+    start_index: startIndex,
+    end_index: startIndex
+  }
+  try {
+    const response = await fetchWrapper.post('/articles/' + articleId + '/comments', payload)
+    return response.data
+  } catch (error) {
+      console.log("error : ", error);
+  }
+}
+
+const getCommentsForArticle = async (articleId: string) => {
+    try {
+        const response = await fetchWrapper.get('/articles/' + articleId + '/comments');
+        return response.data;
+    } catch (error) {
+        console.log("error : ", error);
     }
-    return newComment;
-};
+}
 
 export function useComments() {
-    return { createComment };
+  return { createComment, getCommentsForArticle }
 }

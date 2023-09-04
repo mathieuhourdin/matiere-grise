@@ -16,15 +16,16 @@
       <a class="ml-auto underline" :href="article.gdoc_url">Ajouter un commentaire</a>
     </div>
     <hr class="border-top border-zinc-400 my-4" />
-    <TextInterface :full-text="article.content" :editable="false" />
+    <TextInterface :ext-comments="comments" :ressource-id="article.id" :full-text="article.content" :editable="false" />
   </div>
 </template>
 
 <script setup lang="ts">
 import TextInterface from '@/components/TextInterface.vue'
-import { fetchWrapper } from '@/helpers'
 import ProgressBar from '@/components/ProgressBar.vue'
 import RoundLinkButton from '@/components/Ui/RoundLinkButton.vue'
+import { useComments } from '@/composables/useComments.ts'
+import { fetchWrapper } from '@/helpers'
 import { PencilSquareIcon } from '@heroicons/vue/24/outline'
 import { marked } from 'marked'
 import { ref, computed, onMounted } from 'vue'
@@ -32,7 +33,10 @@ const props = defineProps<{
   uuid: String
 }>()
 
+const { getCommentsForArticle } = useComments()
+
 const article = ref(null)
+const comments = ref([])
 
 const fetchArticle = async () => {
   const response = await fetchWrapper.get('/articles/' + props.uuid)
@@ -41,7 +45,10 @@ const fetchArticle = async () => {
 
 const articleContentHtml = computed(() => (article.value ? marked(article.value.content) : null))
 
-onMounted(() => fetchArticle())
+onMounted(async () => {
+  fetchArticle()
+  comments.value = await getCommentsForArticle(props.uuid)
+})
 </script>
 
 <style>

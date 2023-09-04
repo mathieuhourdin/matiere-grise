@@ -65,6 +65,7 @@ const emit = defineEmits(['change', 'changeComments'])
 
 const props = withDefaults(
   defineProps<{
+    ressourceId: string
     fullText: string
     extComments?: Array
     editable?: boolean
@@ -204,9 +205,9 @@ const loadComments = (extComments) => {
   comments.value = extComments
 }
 
-const addComment = () => {
+const addComment = async () => {
   console.log('Add Comment')
-  const newComment = createComment(menuIndex.value);
+  const newComment = await createComment(props.ressourceId, menuIndex.value);
   comments.value.push(newComment)
 }
 
@@ -222,6 +223,13 @@ watch(
     if (mounted.value) emit('changeComments', comments.value)
   },
   { deep: true }
+)
+
+watch(
+  toRefs(props).extComments,
+  (extComments) => {
+    comments.value = extComments
+  },
 )
 
 /*****************  Manage dropdown menu ******************/
