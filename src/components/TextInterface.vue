@@ -20,7 +20,12 @@
     </div>
     <div class="flex mx-auto max-w-full">
       <div class="w-full">
-        <div v-for="(line, lindex) in lines" :key="lindex" class="flex flex-wrap">
+        <div v-for="(line, lindex) in lines" :key="lindex" class="flex">
+          <div v-if="line.lineStyle == '*'" class="flex">
+            <div class="w-6">
+              <div class="rounded-full ml-4 mr-2 mt-2 h-1 w-1 bg-black" />
+            </div>
+          </div>
           <div class="flex flex-wrap">
             <div v-for="(word, windex) in line.words" :key="windex" class="flex flex-wrap">
               <div
@@ -33,7 +38,8 @@
               >
                 <div v-if="letter.char == ' '" style="width: 5px" />
                 <div v-else-if="letter.char == '\n'" style="height: 25px" />
-                <div v-else>
+                <div v-else-if="(letter.char == '#' || letter.char == '*') && windex == 0"></div>
+                <div v-else :class="{ 'font-bold': line.lineStyle == '#'}">
                   <div>{{ letter.char }}</div>
                 </div>
               </div>
@@ -111,7 +117,7 @@ const calculateLinesFromText = (textString) => {
     if (text.value[i].char == '\n') {
       linesIndex += 1
       wordsIndex = 0
-      lines.push({ id: linesIndex, words: [{ id: 0, text: [] }], text: [], comments: [] })
+      lines.push({ id: linesIndex, words: [{ id: 0, text: [] }], lineStyle: text.value[i+1].char, text: [], comments: [] })
     }
     const foundComment = comments.value.find((comment) => comment.start_index == i)
     if (foundComment) lines[linesIndex].comments.push(foundComment)
