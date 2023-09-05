@@ -4,7 +4,7 @@
     <TextInput label="Email" v-model="newUser.email" />
     <TextInput label="Prénom" v-model="newUser.first_name" />
     <TextInput label="Nom" v-model="newUser.last_name" />
-    <TextInput label="hanle" v-model="newUser.handle" />
+    <TextInput label="handle" v-model="newUser.handle" />
     <TextInput label="Password" v-model="newUser.password" />
     <div class="flex">
       <ActionButton class="ml-auto m-2" text="Valider" type="valid" @click="submit" />
