@@ -61,7 +61,7 @@
           </div>
         </div>
       </div>
-      <div v-if="comments.length > 0" style="width: 33%">Espace</div>
+      <div v-if="comments.length > 0" style="width: 33%" />
     </div>
   </div>
 </template>

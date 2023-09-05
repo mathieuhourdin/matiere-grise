@@ -31,21 +31,27 @@ export function useArticle() {
   }
 
   const getArticle = async (id: string) => {
-      const response = await fetchWrapper.get('/articles/' + id);
-      return response.data;
+    const response = await fetchWrapper.get('/articles/' + id)
+    return response.data
+  }
+
+  const getArticles = async (withUsers: boolean = true) => {
+    const userParams = withUsers ? '?author=true' : ''
+    const response = await fetchWrapper.get('/articles' + userParams)
+    return response.data
   }
 
   const createArticle = async (article: Article) => {
-      article.progress = Number(article.progress)
-      const response = await fetchWrapper.post('/articles', article)
-      return response;
+    article.progress = Number(article.progress)
+    const response = await fetchWrapper.post('/articles', article)
+    return response
   }
 
   const updateArticle = async (id: string, article: Article) => {
-      article.progress = Number(article.progress)
-      const response = await fetchWrapper.put('/articles/' + id, article);
-      return response;
+    article.progress = Number(article.progress)
+    const response = await fetchWrapper.put('/articles/' + id, article)
+    return response
   }
 
-  return { newArticle, getArticle, createArticle, updateArticle }
+  return { newArticle, getArticle, createArticle, updateArticle, getArticles }
 }

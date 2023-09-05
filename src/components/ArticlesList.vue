@@ -1,9 +1,19 @@
 <template>
   <div>
     <div class="flex my-8">
-      <ActionButton class="ml-auto" text="Terminés" @click="tab = 'finished'" :type="isSelected('finished')">Terminés</ActionButton>
-      <ActionButton text="Relecture" @click="tab = 'review'" :type="isSelected('review')">Review</ActionButton>
-      <ActionButton class="mr-auto" text="Idées" @click="tab = 'idea'" :type="isSelected('idea')">Idées</ActionButton>
+      <ActionButton
+        class="ml-auto"
+        text="Terminés"
+        @click="tab = 'finished'"
+        :type="isSelected('finished')"
+        >Terminés</ActionButton
+      >
+      <ActionButton text="Relecture" @click="tab = 'review'" :type="isSelected('review')"
+        >Review</ActionButton
+      >
+      <ActionButton class="mr-auto" text="Idées" @click="tab = 'idea'" :type="isSelected('idea')"
+        >Idées</ActionButton
+      >
     </div>
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
       <div v-for="(article, i) in filterArticles(tab, articles)" :key="i">
@@ -13,6 +23,7 @@
           :image-url="article.image_url"
           :progress="article.progress"
           :uuid="article.id"
+          :author="article.author"
         />
       </div>
     </div>
@@ -23,17 +34,12 @@
 import { ref, computed, onMounted } from 'vue'
 import ArticleCard from '@/components/ArticleCard.vue'
 import ActionButton from '@/components/Ui/ActionButton.vue'
-import UiTabs from '@/components/Ui/UiTabs.vue'
-import UiTab from '@/components/Ui/UiTab.vue'
-import { fetchWrapper } from '@/helpers'
+import { useArticle } from '@/composables/useArticle.ts'
 
 const articles = ref([])
 const tab = ref('finished')
 
-const getArticles = async () => {
-  let response = await fetchWrapper.get('/articles')
-  return response.data
-}
+const { getArticles } = useArticle()
 
 const filterArticles = (filter, articles) => {
   if (filter == 'finished') {
@@ -48,8 +54,8 @@ const filterArticles = (filter, articles) => {
 }
 
 const isSelected = (type) => {
-  return tab.value == type ? "valid" : "abort";
-};
+  return tab.value == type ? 'valid' : 'abort'
+}
 
 onMounted(async () => (articles.value = await getArticles()))
 </script>
