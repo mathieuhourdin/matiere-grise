@@ -50,11 +50,11 @@
       :modelValue="article.potential_improvements"
       @update:modelValue="(event) => emitChange('potential_improvements', event)"
     />
-    <TextInterface
-      class="min-h-96"
+    <TextAreaInput
+      class="h-60"
       label="Contenu"
-      :full-text="article.content"
-      @change="(event) => emitChange('content', event)"
+      :modelValue="article.content"
+      @update:modelValue="(event) => emitChange('content', event)"
     />
   </div>
 </template>
@@ -63,7 +63,6 @@
 import TextInput from '@/components/Ui/TextInput.vue'
 import NumberInput from '@/components/Ui/NumberInput.vue'
 import TextAreaInput from '@/components/Ui/TextAreaInput.vue'
-import TextInterface from '@/components/TextInterface.vue'
 import { Article } from '@/composables/useArticle.ts'
 
 const emit = defineEmits(['change'])

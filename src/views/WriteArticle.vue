@@ -4,7 +4,7 @@
         <div>Nouvel Article</div>
         <ArticleForm class="w-full" :article="article" @change="(event) => (article = event)" />
         <div class="flex">
-          <ActionButton @click="createArticle(article)" text="Valider" type="valid" class="ml-auto m-4"/>
+          <ActionButton @click="localCreateArticle" text="Valider" type="valid" class="ml-auto m-4"/>
         </div>
     </div>
   </div>
@@ -13,9 +13,15 @@
 <script setup>
 import ArticleForm from '@/components/ArticleForm.vue'
 import ActionButton from '@/components/Ui/ActionButton.vue'
+import router from '@/router'
 import { useArticle } from '@/composables/useArticle.ts'
 import { ref } from 'vue'
 
 const { newArticle, createArticle } = useArticle()
 const article = newArticle()
+
+const localCreateArticle = async () => {
+  await createArticle(article.value);
+  router.push('/');
+}
 </script>
