@@ -57,6 +57,7 @@
               :editing="comment.editing"
               @validate="comment.editing = false"
               :author="comment.author"
+              :created-at="comment.created_at"
             />
           </div>
         </div>
