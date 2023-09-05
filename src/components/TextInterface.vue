@@ -156,6 +156,7 @@ const handleWrite = (event) => {
     return
   }
   if (key.length == 1) {
+    event.preventDefault()
     insertChar(key)
   } else if (key == 'Backspace') {
     text.value.splice(currentCursorPosition.value.id, 1)
