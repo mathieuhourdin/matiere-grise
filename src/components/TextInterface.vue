@@ -32,14 +32,17 @@
                 v-for="(letter, tindex) in word.text"
                 :key="tindex"
                 class="border-blue-400"
-                :class="{ 'border-r-2': letter.id == currentCursorPosition?.id, 'bg-yellow-400': letter.comment }"
+                :class="{
+                  'border-r-2': letter.id == currentCursorPosition?.id,
+                  'bg-yellow-400': letter.comment
+                }"
                 @click="selectCursorPosition(letter)"
                 @contextmenu="(event) => rightClick(event, letter.id)"
               >
                 <div v-if="letter.char == ' '" style="width: 5px" />
                 <div v-else-if="letter.char == '\n'" style="height: 25px" />
                 <div v-else-if="(letter.char == '#' || letter.char == '*') && windex == 0"></div>
-                <div v-else :class="{ 'font-bold': line.lineStyle == '#'}">
+                <div v-else :class="{ 'font-bold': line.lineStyle == '#' }">
                   <div>{{ letter.char }}</div>
                 </div>
               </div>
@@ -110,14 +113,19 @@ const lines: [Line] = computed(() => {
 
 const calculateLinesFromText = (textString) => {
   console.log('textArrayFromString textString: ', textString)
-  let lines = [{ id: 0, words: [{ id: 0, text: [] }], text: [], comments: [] }]
+  let lines = [{ id: 0, words: [{ id: 0, text: [] }], comments: [] }]
   let linesIndex = 0
   let wordsIndex = 0
   for (var i = 0; i < text.value.length; i++) {
     if (text.value[i].char == '\n') {
       linesIndex += 1
       wordsIndex = 0
-      lines.push({ id: linesIndex, words: [{ id: 0, text: [] }], lineStyle: text.value[i+1].char, text: [], comments: [] })
+      lines.push({
+        id: linesIndex,
+        words: [{ id: 0, text: [] }],
+        lineStyle: (i < text.value.length -1) ? text.value[i+1].char : null,
+        comments: []
+      })
     }
     const foundComment = comments.value.find((comment) => comment.start_index == i)
     if (foundComment) lines[linesIndex].comments.push(foundComment)
