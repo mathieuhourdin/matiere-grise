@@ -59,12 +59,6 @@
       :modelValue="article.potential_improvements"
       @update:modelValue="(event) => emitChange('potential_improvements', event)"
     />
-    <TextAreaInput
-      class="h-60"
-      label="Contenu"
-      :modelValue="article.content"
-      @update:modelValue="(event) => emitChange('content', event)"
-    />
   </div>
 </template>
 

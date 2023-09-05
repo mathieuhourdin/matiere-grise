@@ -1,19 +1,32 @@
 <template>
   <div v-if="!!article" class="px-8 mx-auto">
-    <RoundLinkButton class="fixed right-4 bottom-10" :to="`/articles/${article.id}/edit`"
-      ><PencilSquareIcon class="m-1"
-    /></RoundLinkButton>
-    <div class="my-8">
-      <img
-        :src="article.image_url"
-        class="border border-slate-300 dark:border-zinc-700 rounded-xl ml-auto mr-auto"
-      />
+    <div v-if="!editingMetaData">
+      <div class="my-8">
+        <img
+          :src="article.image_url"
+          class="border border-slate-300 dark:border-zinc-700 rounded-xl ml-auto mr-auto"
+        />
+      </div>
+      <h1 class="text-3xl my-3 font-mplus md:text-center text-left">{{ article.title }}</h1>
+      <div class="md:text-center text-left">{{ article.description }}</div>
+      <RoundLinkButton @click="editingMetaData = true"
+        ><PencilSquareIcon class="m-1"
+      /></RoundLinkButton>
+      <div class="md:flex my-8">
+        <ProgressBar :progress-value="article.progress" class="w-1/3" />
+        <a class="ml-auto underline" :href="article.gdoc_url"> Ajouter un commentaire </a>
+      </div>
     </div>
-    <h1 class="text-3xl my-3 font-mplus md:text-center text-left">{{ article.title }}</h1>
-    <div class="md:text-center text-left">{{ article.description }}</div>
-    <div class="md:flex my-8">
-      <ProgressBar :progress-value="article.progress" class="w-1/3" />
-      <a class="ml-auto underline" :href="article.gdoc_url">Ajouter un commentaire</a>
+    <div v-else>
+      <ArticleForm
+        :article="article"
+        @change="(event) => debouncedUpdateArticle(article.id, event)"
+      />
+      <div class="flex">
+        <ActionButton class="ml-auto" @click="editingMetaData = false" type="valid" text="Ok"
+          >Ok</ActionButton
+        >
+      </div>
     </div>
     <hr class="border-top border-zinc-400 my-4" />
     <TextInterface
@@ -21,7 +34,7 @@
       :ressource-id="article.id"
       :full-text="article.content"
       :editable="isArticleAuthor"
-      @change="(event) => debouncedUpdateArticle(event)"
+      @change="(event) => debouncedUpdateArticleContent(event)"
     />
   </div>
 </template>
@@ -30,13 +43,13 @@
 import TextInterface from '@/components/TextInterface.vue'
 import ProgressBar from '@/components/ProgressBar.vue'
 import RoundLinkButton from '@/components/Ui/RoundLinkButton.vue'
+import ArticleForm from '@/components/ArticleForm.vue'
+import ActionButton from '@/components/Ui/ActionButton.vue'
 import { useArticle } from '@/composables/useArticle.ts'
 import { useComments } from '@/composables/useComments.ts'
 import { useUser } from '@/composables/useUser.ts'
-import { fetchWrapper } from '@/helpers'
 import { PencilSquareIcon } from '@heroicons/vue/24/outline'
-import { marked } from 'marked'
-import { watch, toRefs, ref, computed, onMounted } from 'vue'
+import { toRefs, ref, computed, onMounted } from 'vue'
 const props = defineProps<{
   id: String
 }>()
@@ -45,18 +58,22 @@ const props = defineProps<{
 const { getArticle, updateArticle } = useArticle()
 const debouncedUpdate = ref(null)
 const article = ref(null)
+const editingMetaData = ref(false)
 
-const debouncedUpdateArticle = (newArticle) => {
-  console.log('New article : ', newArticle)
-  if (newArticle == "\n") return
+const debouncedUpdateArticle = (id, newArticle) => {
   clearTimeout(debouncedUpdate.value)
   debouncedUpdate.value = setTimeout(async () => {
     try {
-      await updateArticle(toRefs(props).id.value, { ...article.value, content: newArticle })
+      await updateArticle(id, newArticle)
     } catch (error) {
-      console.log("An error : ", error)
+      console.log('An error : ', error)
     }
   }, 2000)
+}
+
+const debouncedUpdateArticleContent = (newArticleContent) => {
+  if (newArticleContent == '\n') return
+  debouncedUpdateArticle(toRefs(props).id.value, { ...article.value, content: newArticleContent })
 }
 
 /************** user section *********************/
@@ -69,8 +86,6 @@ const isArticleAuthor = computed(() => {
 /************** comments section *****************/
 const { getCommentsForArticle } = useComments()
 const comments = ref([])
-
-const articleContentHtml = computed(() => (article.value ? marked(article.value.content) : null))
 
 onMounted(async () => {
   article.value = await getArticle(props.id)
