@@ -251,6 +251,7 @@ const menuStyle = ref({
 
 const rightClick = (event, index) => {
   event.preventDefault()
+  currentCursorPosition.value = null
   menuStyle.value.top = `${event.layerY}px`
   menuStyle.value.left = `${event.layerX}px`
   menuOpen.value = true
