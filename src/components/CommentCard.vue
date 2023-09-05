@@ -1,6 +1,6 @@
 <template>
-  <div class="bg-slate-100 border p-4 m-1 rounded p-2 shadow-xl">
-    <div class="text-xs m-1 font-bold">{{ author.first_name }} {{ author.last_name }}</div>
+  <div class="bg-slate-100 border p-1 m-1 rounded shadow-xl">
+    <div class="text-xs m-0.5 font-bold">{{ author.first_name }} {{ author.last_name }}</div>
     <div v-if="editing">
       <textarea class="w-full text-xs rounded-xl p-2" :value="modelValue" @input="onInput" />
       <div class="flex">

@@ -3,8 +3,7 @@
     <router-link :to="articleLink">
       <img
         :src="imageUrl"
-        class="border border-slate-300 dark:border-zinc-700 rounded-xl max-w-full aspect-[2/1] object-cover object-center"
-        width="500"
+        class="border border-slate-300 dark:border-zinc-700 rounded-xl max-w-full aspect-[2/1] object-cover object-center w-full"
         fit="cover"
         position="center"
       />

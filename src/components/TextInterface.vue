@@ -39,11 +39,11 @@
               </div>
             </div>
           </div>
-          <div class="absolute h-full" style="right: -30px">
+          <div class="absolute h-full" style="right: -2%; width: 27%">
             <CommentCard
               v-for="(comment, cindex) in line.comments"
               :key="cindex"
-              style="width: 200px"
+              class="w-full"
               v-model="comment.content"
               :editing="comment.editing"
               @validate="comment.editing = false"
@@ -52,7 +52,7 @@
           </div>
         </div>
       </div>
-      <div v-if="comments.length > 0" style="width: 200px">Espace</div>
+      <div v-if="comments.length > 0" style="width: 33%">Espace</div>
     </div>
   </div>
 </template>

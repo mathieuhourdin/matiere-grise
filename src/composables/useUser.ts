@@ -3,6 +3,7 @@ import router from '@/router'
 import { fetchWrapper } from '@/helpers'
 
 export interface User {
+  id?: string
   email: string
   first_name: string
   last_name: string

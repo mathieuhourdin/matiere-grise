@@ -20,7 +20,11 @@ const createComment = async (articleId: string, startIndex: number) => {
   }
   try {
     const response = await fetchWrapper.post('/articles/' + articleId + '/comments', payload)
-    return response.data
+    const comment = response.data;
+    if (user.value && comment.author_id == user.value.id) {
+        comment.author = user.value;
+    }
+    return comment;
   } catch (error) {
       console.log("error : ", error);
   }

@@ -2,8 +2,8 @@
   <div>
     <router-link v-if="!user" to="/login"> Login </router-link>
     <div v-else class="flex max-h-full">
-      <div class="text-sm">{{ user.first_name }} {{ user.last_name }}</div>
-      <ArrowRightOnRectangleIcon @click="logOut"/>
+      <div class="text-sm my-auto">{{ user.first_name }} {{ user.last_name }}</div>
+      <ArrowRightOnRectangleIcon class="h-6 m-1" @click="logOut"/>
     </div>
   </div>
 </template>
