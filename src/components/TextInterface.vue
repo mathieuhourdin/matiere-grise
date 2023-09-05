@@ -30,6 +30,7 @@
             <div v-for="(word, windex) in line.words" :key="windex" class="flex flex-wrap">
               <div
                 v-for="(letter, tindex) in word.text"
+                :id="letter.id"
                 :key="tindex"
                 class="border-blue-400"
                 :class="{
@@ -138,10 +139,24 @@ const calculateLinesFromText = (textString) => {
     if (text.value[i].char == ' ') {
       // if space, go to next word
       wordsIndex += 1
-      lines[linesIndex].words.push({ id: wordsIndex, text: [{ id: i, char: text.value[i].char }] })
+      lines[linesIndex].words.push({ id: wordsIndex, text: [] })
     }
   }
   return lines
+}
+
+const moveCommentsAfterTextChange = (offset) => {
+  if (offset == 1) {
+    comments.value.forEach((comment) => {
+      if (comment.start_index > currentCursorPosition.value.id) comment.start_index += 1;
+      if (comment.end_index > currentCursorPosition.value.id) comment.end_index += 1;
+    });
+  } else if (offset == -1) {
+    comments.value.forEach((comment) => {
+      if (comment.start_index >= currentCursorPosition.value.id) comment.start_index -= 1;
+      if (comment.end_index >= currentCursorPosition.value.id) comment.end_index -= 1;
+    });
+  }
 }
 
 const insertChar = (key) => {
@@ -155,10 +170,7 @@ const insertChar = (key) => {
     char: key,
     line: 0
   })
-  comments.value.forEach((comment) => {
-    if (comment.start_index > currentCursorPosition.value.id) comment.start_index += 1;
-    if (comment.end_index > currentCursorPosition.value.id) comment.end_index += 1;
-  });
+  moveCommentsAfterTextChange(1);
   currentCursorPosition.value.id += 1
 }
 
@@ -178,6 +190,7 @@ const handleWrite = (event) => {
     text.value
       .filter((letter) => letter.id > currentCursorPosition.value.id)
       .forEach((letter) => (letter.id -= 1))
+    moveCommentsAfterTextChange(-1)
     currentCursorPosition.value.id -= 1
   } else if (key == 'Enter') {
     insertChar('\n')
