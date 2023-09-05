@@ -49,7 +49,7 @@
               </div>
             </div>
           </div>
-          <div class="absolute h-full" style="right: -2%; width: 27%">
+          <div v-if="comments.length > 0" class="absolute h-full" style="right: -2%; width: 27%">
             <CommentCard
               v-for="(comment, cindex) in line.comments"
               :key="cindex"
