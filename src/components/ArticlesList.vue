@@ -4,14 +4,14 @@
       <ActionButton
         class="ml-auto"
         text="Terminés"
-        @click="tab = 'finished'"
-        :type="isSelected('finished')"
+        @click="updateTab('over')"
+        :type="isSelected('over')"
         >Terminés</ActionButton
       >
-      <ActionButton text="Relecture" @click="tab = 'review'" :type="isSelected('review')"
+      <ActionButton text="Relecture" @click="updateTab('rvew')" :type="isSelected('rvew')"
         >Review</ActionButton
       >
-      <ActionButton class="mr-auto" text="Idées" @click="tab = 'idea'" :type="isSelected('idea')"
+      <ActionButton class="mr-auto" text="Idées" @click="updateTab('idea')" :type="isSelected('idea')"
         >Idées</ActionButton
       >
     </div>
@@ -30,21 +30,31 @@
   </div>
 </template>
 
-<script setup>
-import { ref, computed, onMounted } from 'vue'
+<script setup lang="ts">
+import { ref, toRefs, onMounted } from 'vue'
 import ArticleCard from '@/components/ArticleCard.vue'
 import ActionButton from '@/components/Ui/ActionButton.vue'
 import { useArticle } from '@/composables/useArticle.ts'
+import router from '@/router'
+
+const props = defineProps<{
+  maturingState?: string
+}>()
 
 const articles = ref([])
-const tab = ref('finished')
+const tab = ref(null)
+
+const updateTab = (tabValue) => {
+  tab.value = tabValue
+  router.push("/" + tabValue)
+}
 
 const { getArticles } = useArticle()
 
 const filterArticles = (filter, articles) => {
-  if (filter == 'finished') {
+  if (filter == 'over') {
     return articles.filter((article) => article.progress >= 80)
-  } else if (filter == 'review') {
+  } else if (filter == 'rvew') {
     return articles.filter((article) => article.progress < 80 && article.progress >= 30)
   } else if (filter == 'idea') {
     return articles.filter((article) => article.progress < 30)
@@ -57,5 +67,8 @@ const isSelected = (type) => {
   return tab.value == type ? 'valid' : 'abort'
 }
 
-onMounted(async () => (articles.value = await getArticles()))
+onMounted(async () => {
+  articles.value = await getArticles()
+  tab.value = props.maturingState || "over"
+})
 </script>
