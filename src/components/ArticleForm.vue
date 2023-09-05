@@ -18,12 +18,21 @@
         :modelValue="article.progress"
         @update:modelValue="(event) => emitChange('progress', event)"
       />
-      <TextInput
-        class="h-6"
-        label="Stade d'écriture"
-        :modelValue="article.maturing_state"
-        @update:modelValue="(event) => emitChange('maturing_state', event)"
-      />
+      <div class="ml-auto h-6 m-4 w-1/3">
+        <label class="block text-2xs text-slate-800">Stade d'écriture</label>
+        <select
+          :value="article.maturing_state"
+          name="Stade d'écriture"
+          class="text-xs w-full p-1 block rounded border-2 border-neutral-400"
+          @input="(event) => emitChange('maturing_state', event.target.value)"
+        >
+          <option disabled value="">Choisissez</option>
+          <option value="over">Terminé</option>
+          <option value="rvew">Relecture</option>
+          <option value="prgs">En cours</option>
+          <option value="idea">Idée</option>
+        </select>
+      </div>
     </div>
     <div class="flex">
       <TextInput
@@ -71,8 +80,8 @@ const props = defineProps<{
 }>()
 
 const emitChange = (field, event) => {
-  let article = { ...props.article };
-  article[field] = event;
-  emit("change", article);
+  let article = { ...props.article }
+  article[field] = event
+  emit('change', article)
 }
 </script>
