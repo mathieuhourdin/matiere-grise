@@ -37,11 +37,19 @@
     </div>
     <hr class="border-top border-zinc-400 my-4" />
     <TextInterface
+      v-if="article.publishing_state != 'drft'"
       :ext-comments="comments"
       :ressource-id="article.id"
       :full-text="article.content"
       :editable="isArticleAuthor"
       @change="(event) => debouncedUpdateArticleContent(event)"
+    />
+    <TextAreaInput
+      v-else
+      class="h-96"
+      label="Contenu"
+      :modelValue="article.content"
+      @update:modelValue="(event) => debouncedUpdateArticleContent(event)"
     />
   </div>
 </template>
@@ -52,6 +60,7 @@ import ProgressBar from '@/components/ProgressBar.vue'
 import RoundLinkButton from '@/components/Ui/RoundLinkButton.vue'
 import ArticleForm from '@/components/ArticleForm.vue'
 import ActionButton from '@/components/Ui/ActionButton.vue'
+import TextAreaInput from '@/components/Ui/TextAreaInput.vue'
 import { useArticle } from '@/composables/useArticle.ts'
 import { useComments } from '@/composables/useComments.ts'
 import { useUser } from '@/composables/useUser.ts'
@@ -93,7 +102,7 @@ const debouncedUpdateArticle = (id, newArticle) => {
     } catch (error) {
       console.log('An error : ', error)
     }
-  }, 2000)
+  }, 1000)
 }
 
 const debouncedUpdateArticleContent = (newArticleContent) => {
