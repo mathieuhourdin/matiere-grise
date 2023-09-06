@@ -6,7 +6,7 @@
         Bienvenue, sur la plateforme de Mathieu Hourdin qui va parler de plein de choses différentes,
         notamment de comment sauver le monde, et s'amuser dans la vie, rien que ça.
       </p>
-      <RoundLinkButton @click="createDraftArticleAndRedirect">+</RoundLinkButton>
+      <RoundLinkButton v-if="user" @click="createDraftArticleAndRedirect">+</RoundLinkButton>
       <ArticlesList :maturing-state="maturingState" style="min-height: 40rem" />
     </div>
   </main>
@@ -17,12 +17,15 @@ import HomeBanner from '../components/HomeBanner.vue'
 import ArticlesList from '../components/ArticlesList.vue'
 import RoundLinkButton from '@/components/Ui/RoundLinkButton.vue'
 import { useArticle } from '@/composables/useArticle.ts'
+import { useUser } from '@/composables/useUser.ts'
 import { useRouter } from 'vue-router'
 const router = useRouter();
 
 const props = defineProps<{
   maturingState?: string,
 }>()
+
+const { user } = useUser();
 
 const { newArticle, createArticle } = useArticle();
 const createDraftArticleAndRedirect = async () => {
