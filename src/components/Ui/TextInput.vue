@@ -6,17 +6,23 @@
       :value="modelValue"
       :placeholder="placeholder"
       @input="(event) => onInput(event)"
+      :type="type"
     />
   </div>
 </template>
 
 <script setup lang="ts">
 const emit = defineEmits(['update:modelValue', 'input'])
-const props = defineProps<{
+const props = withDefaults(defineProps<{
   label?: String
   modelValue?: String
   placeholder?: String
-}>()
+  type?: string
+}>(),
+  {
+    type: "text",
+  }
+)
 const onInput = (event) => {
   emit('update:modelValue', event.target.value)
   emit('input', event.target.value)

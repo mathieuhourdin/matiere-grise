@@ -5,7 +5,7 @@
       <slot />
     </div>
     <TextInput label="Username" v-model="username" />
-    <TextInput label="Password" v-model="password" />
+    <TextInput type="password" label="Password" v-model="password" />
     <div class="flex">
       <ActionButton class="ml-auto m-2" text="Valider" type="valid" @click="submit" />
       <ActionButton class="m-2" text="Annuler" type="abort" @click="submit" />
