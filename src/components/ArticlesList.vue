@@ -14,7 +14,7 @@
       <ActionButton class="mr-auto" text="Idées" @click="updateTab('idea')" :type="isSelected('idea')"
         >Idées</ActionButton
       >
-      <ActionButton class="mr-auto" text="Mes brouillons" @click="updateTab('drft')" :type="isSelected('drft')"
+      <ActionButton v-if="draftArticles.length > 0" class="mr-auto" text="Mes brouillons" @click="updateTab('drft')" :type="isSelected('drft')"
         >Mes brouillons</ActionButton
       >
     </div>
