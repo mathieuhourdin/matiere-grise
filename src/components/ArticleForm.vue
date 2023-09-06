@@ -27,7 +27,7 @@
           @input="(event) => emitChange('maturing_state', event.target.value)"
         >
           <option disabled value="">Choisissez</option>
-          <option value="over">Terminé</option>
+          <option value="fnsh">Terminé</option>
           <option value="rvew">Relecture</option>
           <option value="prgs">En cours</option>
           <option value="idea">Idée</option>

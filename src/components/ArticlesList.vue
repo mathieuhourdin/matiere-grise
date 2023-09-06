@@ -4,8 +4,8 @@
       <ActionButton
         class="ml-auto"
         text="Terminés"
-        @click="updateTab('over')"
-        :type="isSelected('over')"
+        @click="updateTab('fnsh')"
+        :type="isSelected('fnsh')"
         >Terminés</ActionButton
       >
       <ActionButton text="Relecture" @click="updateTab('rvew')" :type="isSelected('rvew')"
@@ -58,15 +58,7 @@ const { getArticles } = useArticle()
 
 const filterArticles = (filter, articles) => {
   if (filter == "drft") return draftArticles.value
-  if (filter == 'over') {
-    return articles.filter((article) => article.progress >= 80)
-  } else if (filter == 'rvew') {
-    return articles.filter((article) => article.progress < 80 && article.progress >= 30)
-  } else if (filter == 'idea') {
-    return articles.filter((article) => article.progress < 30)
-  } else {
-    return []
-  }
+  return articles.filter((article) => article.maturing_state == filter)
 }
 
 const isSelected = (type) => {
@@ -76,6 +68,6 @@ const isSelected = (type) => {
 onMounted(async () => {
   articles.value = await getArticles({author: true})
   draftArticles.value = await getArticles({author: false, drafts: true})
-  tab.value = props.maturingState || "over"
+  tab.value = props.maturingState || "fnsh"
 })
 </script>

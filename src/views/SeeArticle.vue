@@ -82,7 +82,7 @@ const setEditingMetaData = (value) => {
 
 const publishArticle = () => {
   article.value.publishing_state = 'pbsh'
-  debouncedUpdateArticle(article.value.id, article.value)
+  updateArticle(article.value.id, article.value)
 }
 
 const debouncedUpdateArticle = (id, newArticle) => {
