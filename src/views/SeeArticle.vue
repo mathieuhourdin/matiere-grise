@@ -9,7 +9,7 @@
       </div>
       <h1 class="text-3xl my-3 font-mplus md:text-center text-left">{{ article.title }}</h1>
       <div class="md:text-center text-left">{{ article.description }}</div>
-      <RoundLinkButton @click="editingMetaData = true"
+      <RoundLinkButton v-if="isArticleAuthor" @click="editingMetaData = true"
         ><PencilSquareIcon class="m-1"
       /></RoundLinkButton>
       <div class="md:flex my-8">

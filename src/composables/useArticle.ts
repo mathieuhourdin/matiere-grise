@@ -23,7 +23,7 @@ export function useArticle() {
       content: '',
       potential_improvements: '',
       progress: 0,
-      maturing_state: '',
+      maturing_state: 'drft',
       gdoc_url: '',
       image_url: '',
       url_slug: ''
@@ -44,7 +44,7 @@ export function useArticle() {
   const createArticle = async (article: Article) => {
     article.progress = Number(article.progress)
     const response = await fetchWrapper.post('/articles', article)
-    return response
+    return response.data
   }
 
   const updateArticle = async (id: string, article: Article) => {
