@@ -5,6 +5,6 @@
       class="absolute w-full opacity-30"
       src="https://img.freepik.com/photos-gratuite/jetee-au-bord-lac-hallstatt-autriche_181624-44201.jpg">
     </div>
-    <div class="z-10 text-center px-8 drop-shadow-lg shadow-black font-mplus text-4xl">👨‍🚀 Bienvenue Plus Proche du Coeur</div>
+    <div class="z-10 text-center px-8 drop-shadow-lg shadow-black font-mplus text-4xl">👨‍🚀 Bienvenue Dans la Matière Grise</div>
   </div>
 </template>
