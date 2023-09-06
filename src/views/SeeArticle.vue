@@ -23,7 +23,7 @@
         @change="(event) => debouncedUpdateArticle(article.id, event)"
       />
       <div class="flex flex-row-reverse">
-        <ActionButton class="mx-4" @click="setEditingMetaData(false)" type="valid" text="Ok"
+        <ActionButton class="mx-4" @click="setEditingMetaData(false)" type="valid" text="Preview"
           >Ok</ActionButton
         >
         <ActionButton
@@ -32,6 +32,7 @@
           type="valid"
           text="Publier"
         />
+        <div v-else class="p-2 border rounded bg-neutral-100">Publié</div>
       </div>
     </div>
     <hr class="border-top border-zinc-400 my-4" />
