@@ -22,10 +22,16 @@
         :article="article"
         @change="(event) => debouncedUpdateArticle(article.id, event)"
       />
-      <div class="flex">
-        <ActionButton class="ml-auto" @click="setEditingMetaData(false)" type="valid" text="Ok"
+      <div class="flex flex-row-reverse">
+        <ActionButton class="mx-4" @click="setEditingMetaData(false)" type="valid" text="Ok"
           >Ok</ActionButton
         >
+        <ActionButton
+          v-if="article.publishing_state == 'drft'"
+          @click="publishArticle"
+          type="valid"
+          text="Publier"
+        />
       </div>
     </div>
     <hr class="border-top border-zinc-400 my-4" />
@@ -59,17 +65,23 @@ const props = defineProps<{
 const { getArticle, updateArticle } = useArticle()
 const debouncedUpdate = ref(null)
 const article = ref(null)
-const route = useRoute();
-const router = useRouter();
-watch(() => route.query.editing,
-  editing => {
-    console.log("Editing : ", editing);
-    editingMetaData.value = editing === "false" ? false : !!editing
+const route = useRoute()
+const router = useRouter()
+watch(
+  () => route.query.editing,
+  (editing) => {
+    console.log('Editing : ', editing)
+    editingMetaData.value = editing === 'false' ? false : !!editing
   }
 )
 const editingMetaData = ref(false)
 const setEditingMetaData = (value) => {
-  router.push({query: { editing: value }})
+  router.push({ query: { editing: value } })
+}
+
+const publishArticle = () => {
+  article.value.publishing_state = 'pbsh'
+  debouncedUpdateArticle(article.value.id, article.value)
 }
 
 const debouncedUpdateArticle = (id, newArticle) => {
@@ -103,7 +115,7 @@ onMounted(async () => {
   article.value = await getArticle(props.id)
   comments.value = await getCommentsForArticle(props.id)
   const editing = route.query.editing
-  editingMetaData.value = editing === "false" ? false : !!editing
+  editingMetaData.value = editing === 'false' ? false : !!editing
 })
 </script>
 

@@ -9,6 +9,7 @@ export interface Article {
   author_id?: string
   progress: number
   maturing_state: string
+  publishing_state: string
   parent_id?: string
   gdoc_url: string
   image_url: string
@@ -23,7 +24,8 @@ export function useArticle() {
       content: '',
       potential_improvements: '',
       progress: 0,
-      maturing_state: 'drft',
+      maturing_state: '',
+      publishing_state: 'drft',
       gdoc_url: '',
       image_url: '',
       url_slug: ''
@@ -35,9 +37,9 @@ export function useArticle() {
     return response.data
   }
 
-  const getArticles = async (withUsers: boolean = true) => {
-    const userParams = withUsers ? '?author=true' : ''
-    const response = await fetchWrapper.get('/articles' + userParams)
+  const getArticles = async (params: any) => {
+    const requestParams = `?author=${params.author}&drafts=${params.drafts}`
+    const response = await fetchWrapper.get('/articles' + requestParams)
     return response.data
   }
 

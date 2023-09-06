@@ -14,6 +14,9 @@
       <ActionButton class="mr-auto" text="Idées" @click="updateTab('idea')" :type="isSelected('idea')"
         >Idées</ActionButton
       >
+      <ActionButton class="mr-auto" text="Mes brouillons" @click="updateTab('drft')" :type="isSelected('drft')"
+        >Mes brouillons</ActionButton
+      >
     </div>
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
       <div v-for="(article, i) in filterArticles(tab, articles)" :key="i">
@@ -42,6 +45,7 @@ const props = defineProps<{
 }>()
 
 const articles = ref([])
+const draftArticles = ref([])
 const tab = ref(null)
 
 const router = useRouter();
@@ -53,6 +57,7 @@ const updateTab = (tabValue) => {
 const { getArticles } = useArticle()
 
 const filterArticles = (filter, articles) => {
+  if (filter == "drft") return draftArticles.value
   if (filter == 'over') {
     return articles.filter((article) => article.progress >= 80)
   } else if (filter == 'rvew') {
@@ -69,7 +74,8 @@ const isSelected = (type) => {
 }
 
 onMounted(async () => {
-  articles.value = await getArticles()
+  articles.value = await getArticles({author: true})
+  draftArticles.value = await getArticles({author: false, drafts: true})
   tab.value = props.maturingState || "over"
 })
 </script>
