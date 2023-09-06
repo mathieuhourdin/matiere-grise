@@ -9,7 +9,7 @@
       </div>
       <h1 class="text-3xl my-3 font-mplus md:text-center text-left">{{ article.title }}</h1>
       <div class="md:text-center text-left">{{ article.description }}</div>
-      <RoundLinkButton v-if="isArticleAuthor" @click="editingMetaData = true"
+      <RoundLinkButton v-if="isArticleAuthor" @click="setEditingMetaData(true)"
         ><PencilSquareIcon class="m-1"
       /></RoundLinkButton>
       <div class="md:flex my-8">
@@ -23,7 +23,7 @@
         @change="(event) => debouncedUpdateArticle(article.id, event)"
       />
       <div class="flex">
-        <ActionButton class="ml-auto" @click="editingMetaData = false" type="valid" text="Ok"
+        <ActionButton class="ml-auto" @click="setEditingMetaData(false)" type="valid" text="Ok"
           >Ok</ActionButton
         >
       </div>
@@ -49,7 +49,8 @@ import { useArticle } from '@/composables/useArticle.ts'
 import { useComments } from '@/composables/useComments.ts'
 import { useUser } from '@/composables/useUser.ts'
 import { PencilSquareIcon } from '@heroicons/vue/24/outline'
-import { toRefs, ref, computed, onMounted } from 'vue'
+import { watch, toRefs, ref, computed, onMounted } from 'vue'
+import { useRouter, useRoute } from 'vue-router'
 const props = defineProps<{
   id: String
 }>()
@@ -58,7 +59,18 @@ const props = defineProps<{
 const { getArticle, updateArticle } = useArticle()
 const debouncedUpdate = ref(null)
 const article = ref(null)
+const route = useRoute();
+const router = useRouter();
+watch(() => route.query.editing,
+  editing => {
+    console.log("Editing : ", editing);
+    editingMetaData.value = editing === "false" ? false : !!editing
+  }
+)
 const editingMetaData = ref(false)
+const setEditingMetaData = (value) => {
+  router.push({query: { editing: value }})
+}
 
 const debouncedUpdateArticle = (id, newArticle) => {
   clearTimeout(debouncedUpdate.value)
@@ -90,6 +102,8 @@ const comments = ref([])
 onMounted(async () => {
   article.value = await getArticle(props.id)
   comments.value = await getCommentsForArticle(props.id)
+  const editing = route.query.editing
+  editingMetaData.value = editing === "false" ? false : !!editing
 })
 </script>
 

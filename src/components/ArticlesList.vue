@@ -35,7 +35,7 @@ import { ref, toRefs, onMounted } from 'vue'
 import ArticleCard from '@/components/ArticleCard.vue'
 import ActionButton from '@/components/Ui/ActionButton.vue'
 import { useArticle } from '@/composables/useArticle.ts'
-import router from '@/router'
+import { useRouter } from 'vue-router'
 
 const props = defineProps<{
   maturingState?: string
@@ -44,9 +44,10 @@ const props = defineProps<{
 const articles = ref([])
 const tab = ref(null)
 
+const router = useRouter();
 const updateTab = (tabValue) => {
   tab.value = tabValue
-  router.push("/" + tabValue)
+  router.push({ path: "/" + tabValue})
 }
 
 const { getArticles } = useArticle()

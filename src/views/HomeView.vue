@@ -17,7 +17,8 @@ import HomeBanner from '../components/HomeBanner.vue'
 import ArticlesList from '../components/ArticlesList.vue'
 import RoundLinkButton from '@/components/Ui/RoundLinkButton.vue'
 import { useArticle } from '@/composables/useArticle.ts'
-import router from '@/router'
+import { useRouter } from 'vue-router'
+const router = useRouter();
 
 const props = defineProps<{
   maturingState?: string,
@@ -27,6 +28,6 @@ const { newArticle, createArticle } = useArticle();
 const createDraftArticleAndRedirect = async () => {
   const draftArticle = newArticle();
   const createdArticle = await createArticle(draftArticle.value);
-  router.push('/articles/' + createdArticle.id)
+  router.push({ path: '/articles/' + createdArticle.id, query: { editing: true }})
 }
 </script>
