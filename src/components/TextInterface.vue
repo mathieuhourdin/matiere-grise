@@ -72,6 +72,7 @@
 import CommentCard from '@/components/CommentCard.vue'
 import { ref, computed, onMounted, watch, toRefs } from 'vue'
 import { useComments } from '@/composables/useComments.ts'
+import { useUser } from '@/composables/useUser.ts'
 
 const emit = defineEmits(['change', 'changeComments'])
 
@@ -277,8 +278,11 @@ const menuStyle = ref({
   width: '260px'
 })
 
+const { user } = useUser()
+
 const rightClick = (event, index) => {
   event.preventDefault()
+  if (!user.value) return;
   currentCursorPosition.value = null
   menuStyle.value.top = `${event.layerY}px`
   menuStyle.value.left = `${event.layerX}px`
