@@ -5,10 +5,15 @@ const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
-      path: '/:maturingState?',
+      path: '/',
       name: 'home',
       props: true,
       component: HomeView
+    },
+    {
+      path: '/platform-presentation',
+      name: 'platformPresentation',
+      component: () => import('@/views/PlatformPresentation.vue')
     },
     {
       path: '/login',
@@ -37,7 +42,7 @@ const router = createRouter({
       path: '/writer',
       name: 'writer',
       component: () => import('@/views/WriterView.vue')
-    },
+    }
   ]
 })
 

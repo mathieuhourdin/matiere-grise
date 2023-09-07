@@ -55,7 +55,7 @@ import { ref, toRefs, onMounted } from 'vue'
 import ArticleCard from '@/components/ArticleCard.vue'
 import ActionButton from '@/components/Ui/ActionButton.vue'
 import { useArticle } from '@/composables/useArticle.ts'
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 
 const props = defineProps<{
   maturingState?: string
@@ -75,9 +75,10 @@ const maturingStateTexts = (maturingState) => {
 }
 
 const router = useRouter()
+const route = useRoute()
 const updateTab = (tabValue) => {
   tab.value = tabValue
-  router.push({ path: '/' + tabValue })
+  router.push({ path: '/', query: { maturing_state: tabValue} })
 }
 
 const { getArticles } = useArticle()
@@ -94,6 +95,7 @@ const isSelected = (type) => {
 onMounted(async () => {
   articles.value = await getArticles({ author: true })
   draftArticles.value = await getArticles({ author: false, drafts: true })
-  tab.value = props.maturingState || 'fnsh'
+  tab.value = route.query.maturing_state || 'fnsh'
+  updateTab(tab.value)
 })
 </script>
