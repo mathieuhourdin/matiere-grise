@@ -1,19 +1,21 @@
 <template>
   <div>
-    <div class="flex my-8">
+    <div class="flex flex-wrap my-8">
+      <div class="mx-auto flex flex-wrap max-w-full">
       <ActionButton
-        class="ml-auto"
+        class="w-24 mx-auto"
         text="Terminés"
         @click="updateTab('fnsh')"
         :type="isSelected('fnsh')"
         >Terminés</ActionButton
       >
-      <ActionButton text="Relecture" @click="updateTab('rvew')" :type="isSelected('rvew')"
+      <ActionButton class="w-24 mx-auto" text="Relecture" @click="updateTab('rvew')" :type="isSelected('rvew')"
         >Review</ActionButton
       >
-      <ActionButton class="mr-auto" text="Idées" @click="updateTab('idea')" :type="isSelected('idea')"
-        >Idées</ActionButton
+      <ActionButton class="w-24 mx-auto" text="Idées" @click="updateTab('idea')" :type="isSelected('idea')"
+        >  Idées  </ActionButton
       >
+      </div>
       <ActionButton v-if="draftArticles.length > 0" class="mr-auto" text="Mes brouillons" @click="updateTab('drft')" :type="isSelected('drft')"
         >Mes brouillons</ActionButton
       >
