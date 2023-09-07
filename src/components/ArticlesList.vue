@@ -3,21 +3,21 @@
     <div class="flex flex-wrap my-8">
       <div class="mx-auto flex flex-wrap max-w-full">
         <ActionButton
-          class="w-24 mx-auto"
+          class="w-24 mx-auto my-1"
           text="Terminés"
           @click="updateTab('fnsh')"
           :type="isSelected('fnsh')"
           >Terminés</ActionButton
         >
         <ActionButton
-          class="w-24 mx-auto"
+          class="w-24 mx-auto my-1"
           text="Relecture"
           @click="updateTab('rvew')"
           :type="isSelected('rvew')"
           >Review</ActionButton
         >
         <ActionButton
-          class="w-24 mx-auto"
+          class="w-24 mx-auto my-1"
           text="Idées"
           @click="updateTab('idea')"
           :type="isSelected('idea')"
@@ -27,12 +27,13 @@
       </div>
       <ActionButton
         v-if="draftArticles.length > 0"
-        class="mr-auto"
+        class="mr-auto my-1"
         text="Mes brouillons"
         @click="updateTab('drft')"
         :type="isSelected('drft')"
         >Mes brouillons</ActionButton
       >
+      <RoundLinkButton class="md:absolute mx-auto md:mx-0" v-if="user" @click="createDraftArticleAndRedirect">+</RoundLinkButton>
     </div>
     <div class="text-center mb-8 text-sm">{{ maturingStateTexts(tab) }}</div>
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -53,9 +54,11 @@
 <script setup lang="ts">
 import { ref, toRefs, onMounted } from 'vue'
 import ArticleCard from '@/components/ArticleCard.vue'
+import RoundLinkButton from '@/components/Ui/RoundLinkButton.vue'
 import ActionButton from '@/components/Ui/ActionButton.vue'
 import { useArticle } from '@/composables/useArticle.ts'
 import { useRouter, useRoute } from 'vue-router'
+import { useUser } from '@/composables/useUser.ts'
 
 const props = defineProps<{
   maturingState?: string
@@ -81,7 +84,7 @@ const updateTab = (tabValue) => {
   router.push({ path: '/', query: { maturing_state: tabValue} })
 }
 
-const { getArticles } = useArticle()
+const { getArticles, newArticle, createArticle } = useArticle();
 
 const filterArticles = (filter, articles) => {
   if (filter == 'drft') return draftArticles.value
@@ -91,6 +94,18 @@ const filterArticles = (filter, articles) => {
 const isSelected = (type) => {
   return tab.value == type ? 'valid' : 'abort'
 }
+
+/******************* article creation ***********************/
+
+const { user } = useUser()
+
+const createDraftArticleAndRedirect = async () => {
+  const draftArticle = newArticle();
+  const createdArticle = await createArticle(draftArticle.value);
+  router.push({ path: '/articles/' + createdArticle.id, query: { editing: true }})
+}
+
+/*********************/
 
 onMounted(async () => {
   articles.value = await getArticles({ author: true })

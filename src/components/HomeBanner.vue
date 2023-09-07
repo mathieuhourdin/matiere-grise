@@ -3,8 +3,8 @@
     <div class="absolute h-full w-full overflow-hidden">
     <img
       class="absolute w-full opacity-30"
-      src="https://img.freepik.com/photos-gratuite/jetee-au-bord-lac-hallstatt-autriche_181624-44201.jpg">
+      src="https://st.depositphotos.com/1034557/3484/i/450/depositphotos_34842243-stock-photo-zen-stones.jpg">
     </div>
-    <div class="z-10 text-center px-8 drop-shadow-lg shadow-black font-mplus text-4xl">👨‍🚀 Bienvenue Dans la Matière Grise</div>
+    <div class="z-10 text-center px-8 drop-shadow-lg shadow-black font-mplus text-2xl text-slate-600">Bienvenue Dans la Matière Grise</div>
   </div>
 </template>
