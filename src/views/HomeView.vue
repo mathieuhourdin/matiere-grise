@@ -2,10 +2,10 @@
   <main>
     <HomeBanner />
     <div class="mx-auto px-8" style="max-width: 75%">
-      <p class="m-6 text-center">
+      <!--<p class="m-6 text-center">
         Bienvenue, sur la plateforme de Mathieu Hourdin qui va parler de plein de choses différentes,
         notamment de comment sauver le monde, et s'amuser dans la vie, rien que ça.
-      </p>
+      </p>-->
       <RoundLinkButton v-if="user" @click="createDraftArticleAndRedirect">+</RoundLinkButton>
       <ArticlesList :maturing-state="maturingState" style="min-height: 40rem" />
     </div>
