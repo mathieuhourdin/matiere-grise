@@ -1,10 +1,14 @@
 <template>
   <div>
-    <div>{{user}}</div>
-    <ThoughtInputsList :thought-inputs="thoughtInputs" />
+    <div class="m-8">
+    <UserInfos class="mx-auto border my-8" v-if="user" :user="user" />
+    <div class="text-center m-4 italic text-sm">Derniers apports extérieurs</div>
+    <ThoughtInputsList class="mx-auto" :thought-inputs="thoughtInputs" />
+    </div>
   </div>
 </template>
 <script setup lang="ts">
+  import UserInfos from '@/components/UserInfos.vue'
   import ThoughtInputsList from '@/components/ThoughtInputsList.vue'
 import { ref, onMounted } from 'vue'
 import { useUser } from '@/composables/useUser.ts'
