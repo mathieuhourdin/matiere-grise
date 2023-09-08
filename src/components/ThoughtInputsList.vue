@@ -4,7 +4,7 @@
     <ThoughtInputCard
       v-for="(thoughtInput, index) in thoughtInputs"
       :key="thoughtInput.id"
-      class="mx-auto md:mr-0"
+      class="mx-auto md:mr-0 max-w-full"
       :class="{ 'md:ml-0': index % 2 == 0 }"
       :thought-input="thoughtInput"
     />
