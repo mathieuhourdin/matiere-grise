@@ -9,7 +9,9 @@
       />
       <div class="flex">
         <ProgressBar :progress-value="progress" class="w-1/3 mr-auto" />
-        <div v-if="author" class="text-xs italic my-auto mr-2">{{ author.first_name }} {{ author.last_name }}</div>
+        <router-link v-if="author" class="text-xs italic my-auto mr-2" :to="'/users/' + author.id"
+          >{{ author.first_name }} {{ author.last_name }}</router-link
+        >
       </div>
       <div class="mt-3 text-xl font-bold">{{ title }}</div>
       <div class="opacity-70">{{ description }}</div>

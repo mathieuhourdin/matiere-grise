@@ -28,6 +28,11 @@ async function loadUser() {
   }
 }
 
+async function getUserById(id: string) {
+  const response = await fetchWrapper.get('/users/' + id)
+  return response.data
+}
+
 function logOut() {
   localStorage.removeItem('userId')
   user.value = null
@@ -48,7 +53,10 @@ async function createNewUser(userPayload: User) {
   if (!userPayload.handle.startsWith('@')) userPayload.handle += '@'
   try {
     const response = await fetchWrapper.post('/users', userPayload)
-    authUser({ username: userPayload.email, password: userPayload.password }, "/platform-presentation")
+    authUser(
+      { username: userPayload.email, password: userPayload.password },
+      '/platform-presentation'
+    )
   } catch (error) {
     console.log('Error : ', error)
   }
@@ -60,6 +68,7 @@ export function useUser() {
     loadUser,
     authUser,
     createNewUser,
-    logOut
+    logOut,
+    getUserById,
   }
 }

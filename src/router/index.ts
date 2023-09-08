@@ -39,6 +39,12 @@ const router = createRouter({
       component: () => import('@/views/EditArticle.vue')
     },
     {
+      path: '/users/:userId',
+      name: 'userFeed',
+      props: true,
+      component: () => import('@/views/UserFeedView.vue')
+    },
+    {
       path: '/writer',
       name: 'writer',
       component: () => import('@/views/WriterView.vue')
