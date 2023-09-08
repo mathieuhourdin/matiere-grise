@@ -4,7 +4,33 @@ export interface ThoughtInput {
   id?: string
   resource_title: string
   resource_author_name: string
+  resource_type: string
+  resource_link: string
+  resource_image_link: string
+  resource_comment: string
+  input_progress: number
   input_date: Date
+  input_comment: string
+  input_is_public: boolean
+  input_user_id?: string
+  created_at?: Date
+  updated_at?: Date
+}
+
+function newThoughtInput(): ThoughtInput {
+  const thought_input: ThoughtInput = {
+    resource_title: '',
+    resource_author_name: '',
+    resource_type: '',
+    resource_link: '',
+    resource_image_link: '',
+    resource_comment: '',
+    input_progress: 0,
+    input_date: new Date(Date.now()),
+    input_comment: '',
+    input_is_public: true
+  }
+  return thought_input
 }
 
 function formatApiResponse(apiThoughtInput: any): ThoughtInput {
@@ -19,8 +45,18 @@ async function getUserThoughtInputs(userId: string): Promise<[ThoughtInput]> {
   return response.data.map((thoughtInput: any) => formatApiResponse(thoughtInput))
 }
 
+async function createThoughtInput(thoughtInput: ThoughtInput): Promise<ThoughtInput> {
+  const date_input_date = new Date(thoughtInput.input_date)
+  console.log("Date : ", date_input_date)
+  const input_date = date_input_date.toISOString().split('.')[0]
+  const response = await fetchWrapper.post('/thought_inputs', { ...thoughtInput, input_date })
+  return formatApiResponse(response.data)
+}
+
 export function useThoughtInputs() {
   return {
-    getUserThoughtInputs
+    getUserThoughtInputs,
+    newThoughtInput,
+    createThoughtInput
   }
 }
