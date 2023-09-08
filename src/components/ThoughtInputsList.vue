@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="absolute border h-full left-1/2" />
+    <div class="absolute md:border h-full left-1/2" />
     <ThoughtInputCard
       v-for="(thoughtInput, index) in thoughtInputs"
       :key="thoughtInput.id"

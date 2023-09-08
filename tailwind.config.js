@@ -10,7 +10,8 @@ module.exports = {
         mplus: ["'M PLUS Rounded 1c'", 'Verdana', 'sans-sherif']
       },
       fontSize: {
-        '2xs': '0.5rem'
+        '2xs': '0.6rem',
+        '3xs': '0.5rem'
       },
       minHeight: {
         96: '24rem'
