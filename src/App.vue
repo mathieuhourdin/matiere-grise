@@ -3,7 +3,8 @@ import { RouterLink, RouterView } from 'vue-router'
 import AppHeader from './components/AppHeader.vue'
 import SidebarMenu from '@/components/SidebarMenu.vue'
 import { ref } from 'vue'
-const menuOpen = ref(false)
+import { useMenu } from '@/composables/useMenu.ts'
+const { menuOpen } = useMenu()
 </script>
 
 <template>
