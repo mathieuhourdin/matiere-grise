@@ -3,6 +3,10 @@ module.exports = {
   content: ['./index.html', './src/**/*.{vue,js,ts,jsx,tsx}'],
   theme: {
     extend: {
+      width: {
+        '250px': '250px',
+        '80pt': '80%'
+      },
       aspectRatio: {
         '1/2': '1 / 2'
       },
