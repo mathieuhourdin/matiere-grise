@@ -5,7 +5,7 @@
       <div class="text-center m-4 italic text-sm">Derniers apports extérieurs</div>
 
       <RoundLinkButton
-        class="md:absolute mx-auto md:mx-0"
+        class="mx-auto md:mx-0"
         v-if="user && pageUserId == user.id"
         @click="openNewThoughtInput = true"
         >+</RoundLinkButton
