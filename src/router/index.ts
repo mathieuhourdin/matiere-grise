@@ -33,6 +33,11 @@ const router = createRouter({
       component: () => import('@/views/SeeArticle.vue')
     },
     {
+      path: '/problems',
+      name: 'problemsList',
+      component: () => import('@/views/ProblemsView.vue')
+    },
+    {
       path: '/articles/:id/edit',
       name: 'editArticle',
       props: true,

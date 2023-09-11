@@ -3,7 +3,7 @@
     <div>
       <MenuItem v-if="user" :to="'/users/' + user.id">Mon profil</MenuItem>
       <MenuItem to="/">Productions</MenuItem>
-      <MenuItem to="/problematics">Problématiques</MenuItem>
+      <MenuItem to="/problems">Problématiques</MenuItem>
       <MenuItem to="/thought-inputs">Inspirations</MenuItem>
       <MenuItem to="/friends">Amis</MenuItem>
     </div>
