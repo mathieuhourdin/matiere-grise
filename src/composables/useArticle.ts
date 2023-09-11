@@ -51,7 +51,7 @@ export function useArticle() {
 
   const updateArticle = async (id: string, article: Article) => {
     article.progress = Number(article.progress)
-    const response = await fetchWrapper.put('/articles/' + id, article)
+    const response = await fetchWrapper.put('/thought_outputs/' + id, article)
     return response
   }
 
