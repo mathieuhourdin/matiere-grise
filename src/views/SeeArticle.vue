@@ -95,10 +95,11 @@ const publishArticle = () => {
 }
 
 const debouncedUpdateArticle = (id, newArticle) => {
+  article.value = newArticle
   clearTimeout(debouncedUpdate.value)
   debouncedUpdate.value = setTimeout(async () => {
     try {
-      await updateArticle(id, newArticle)
+      await updateArticle(id, article.value)
     } catch (error) {
       console.log('An error : ', error)
     }
