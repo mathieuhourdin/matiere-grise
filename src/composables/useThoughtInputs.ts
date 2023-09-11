@@ -49,6 +49,7 @@ async function createThoughtInput(thoughtInput: ThoughtInput): Promise<ThoughtIn
   const date_input_date = new Date(thoughtInput.input_date)
   console.log("Date : ", date_input_date)
   const input_date = date_input_date.toISOString().split('.')[0]
+  thoughtInput.input_progress = Number(thoughtInput.input_progress)
   const response = await fetchWrapper.post('/thought_inputs', { ...thoughtInput, input_date })
   return formatApiResponse(response.data)
 }
