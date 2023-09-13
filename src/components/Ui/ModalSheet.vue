@@ -1,11 +1,12 @@
 <template>
-  <div v-if="modalOpen" class="fixed top-0 left-0 w-full h-full z-10 bg-slate-500/50">
-    <div class="max-w-xl overflow-y-scroll max-h-screen mb-10 bg-white mx-auto mt-6 p-4 rounded shadow"><slot /></div>
+  <div v-if="modalOpen" class="fixed top-0 left-0 w-full h-full z-10 bg-slate-500/50" @click="emit('close')">
+    <div class="max-w-xl overflow-y-scroll max-h-screen mb-10 bg-white mx-auto mt-6 p-4 rounded shadow" @click.stop=""><slot /></div>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, toRefs, watch, onMounted } from 'vue'
+const emit = defineEmits(["close"])
 const props = withDefaults(
   defineProps<{
     open: boolean

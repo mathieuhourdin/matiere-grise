@@ -10,7 +10,7 @@
         <div class="text-2xs">{{ formatText(thoughtInput.input_comment) }}</div>
       </div>
     </div>
-    <div class="text-2xs italic">{{ formatDate(thoughtInput.input_date) }}</div>
+    <div v-if="thoughtInput.input_date" class="text-2xs italic">{{ formatDate(thoughtInput.input_date) }}</div>
   </div>
 </template>
 

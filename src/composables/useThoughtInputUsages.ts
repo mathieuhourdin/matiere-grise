@@ -7,8 +7,17 @@ const getThoughtInputUsagesForThoughtOutput = async (thought_output_id: string) 
   return response.data
 }
 
+const createThoughtInputUsage = async (thought_input_usage: any) => {
+    const response = await fetchWrapper.post(
+        '/thought_input_usages',
+        thought_input_usage
+    )
+    return response.data
+}
+
 export function useThoughtInputUsages() {
   return {
-    getThoughtInputUsagesForThoughtOutput
+    getThoughtInputUsagesForThoughtOutput,
+    createThoughtInputUsage
   }
 }

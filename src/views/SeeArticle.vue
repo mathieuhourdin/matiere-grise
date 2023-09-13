@@ -46,29 +46,40 @@
     </div>
     <hr class="border-top border-zinc-400 my-4" />
     <div v-if="current_tab == 'ctnt'">
-    <TextInterface
-      v-if="thoughtOutput.publishing_state != 'drft'"
-      :ext-comments="comments"
-      :ressource-id="thoughtOutput.id"
-      :full-text="thoughtOutput.content"
-      :editable="isThoughtOutputAuthor"
-      @change="(event) => debouncedUpdateThoughtOutputContent(event)"
-    />
-    <TextAreaInput
-      v-else
-      class="h-96"
-      label="Contenu"
-      :modelValue="thoughtOutput.content"
-      @update:modelValue="(event) => debouncedUpdateThoughtOutputContent(event)"
-    />
+      <TextInterface
+        v-if="thoughtOutput.publishing_state != 'drft'"
+        :ext-comments="comments"
+        :ressource-id="thoughtOutput.id"
+        :full-text="thoughtOutput.content"
+        :editable="isThoughtOutputAuthor"
+        @change="(event) => debouncedUpdateThoughtOutputContent(event)"
+      />
+      <TextAreaInput
+        v-else
+        class="h-96"
+        label="Contenu"
+        :modelValue="thoughtOutput.content"
+        @update:modelValue="(event) => debouncedUpdateThoughtOutputContent(event)"
+      />
     </div>
     <div v-else>
+      <ModalSheet :open="openAddThoughtInputUsage" @close="openAddThoughtInputUsage = false">
+        <CreateThoughtInputUsageForm
+          @refresh="loadBiblio"
+          @close="openAddThoughtInputUsage = false"
+          :thought-output="thoughtOutput"
+        />
+      </ModalSheet>
+      <div @click="openAddThoughtInputUsage = true" class="text-sm italic underline">
+        Ajouter une référence
+      </div>
       <ThoughtInputsList :thought-inputs="thoughtInputUsages.map((tiu) => tiu.thought_input)" />
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
+import CreateThoughtInputUsageForm from '@/components/CreateThoughtInputUsageForm.vue'
 import ToggleButtonGroup from '@/components/Ui/ToggleButtonGroup.vue'
 import TextInterface from '@/components/TextInterface.vue'
 import ProgressBar from '@/components/ProgressBar.vue'
@@ -78,6 +89,7 @@ import ProblemForm from '@/components/ProblemForm.vue'
 import ActionButton from '@/components/Ui/ActionButton.vue'
 import TextAreaInput from '@/components/Ui/TextAreaInput.vue'
 import ThoughtInputsList from '@/components/ThoughtInputsList.vue'
+import ModalSheet from '@/components/Ui/ModalSheet.vue'
 import { useThoughtOutput } from '@/composables/useThoughtOutput.ts'
 import { useComments } from '@/composables/useComments.ts'
 import { useUser } from '@/composables/useUser.ts'
@@ -99,18 +111,26 @@ const tabChoices = ref([
 
 const current_tab = ref(null)
 
-watch(() => route.query.tab, (newValue) => {
-  console.log("new route query", newValue)
-  current_tab.value = newValue
-})
+watch(
+  () => route.query.tab,
+  (newValue) => {
+    console.log('new route query', newValue)
+    current_tab.value = newValue
+  }
+)
 
 /************** Biblio *****************/
 
 const { getThoughtInputUsagesForThoughtOutput } = useThoughtInputUsages()
 
 const thoughtInputUsages = ref([])
+const openAddThoughtInputUsage = ref(false)
 
-onMounted(async () => thoughtInputUsages.value = await getThoughtInputUsagesForThoughtOutput(toRefs(props).id.value))
+const loadBiblio = async () => {
+  thoughtInputUsages.value = await getThoughtInputUsagesForThoughtOutput(toRefs(props).id.value)
+}
+
+onMounted(() => loadBiblio())
 
 /************** thoughtOutput section ******************/
 const { getThoughtOutput, updateThoughtOutput } = useThoughtOutput()
