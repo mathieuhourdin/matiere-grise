@@ -41,7 +41,11 @@
         <div v-else class="p-2 border rounded bg-neutral-100">Publié</div>
       </div>
     </div>
+    <div>
+      <ToggleButtonGroup :choices="tabChoices" default="ctnt" />
+    </div>
     <hr class="border-top border-zinc-400 my-4" />
+    <div v-if="current_tab == 'ctnt'">
     <TextInterface
       v-if="thoughtOutput.publishing_state != 'drft'"
       :ext-comments="comments"
@@ -57,10 +61,15 @@
       :modelValue="thoughtOutput.content"
       @update:modelValue="(event) => debouncedUpdateThoughtOutputContent(event)"
     />
+    </div>
+    <div v-else>
+      <ThoughtInputsList :thought-inputs="thoughtInputUsages.map((tiu) => tiu.thought_input)" />
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
+import ToggleButtonGroup from '@/components/Ui/ToggleButtonGroup.vue'
 import TextInterface from '@/components/TextInterface.vue'
 import ProgressBar from '@/components/ProgressBar.vue'
 import RoundLinkButton from '@/components/Ui/RoundLinkButton.vue'
@@ -68,21 +77,45 @@ import ArticleForm from '@/components/ArticleForm.vue'
 import ProblemForm from '@/components/ProblemForm.vue'
 import ActionButton from '@/components/Ui/ActionButton.vue'
 import TextAreaInput from '@/components/Ui/TextAreaInput.vue'
+import ThoughtInputsList from '@/components/ThoughtInputsList.vue'
 import { useThoughtOutput } from '@/composables/useThoughtOutput.ts'
 import { useComments } from '@/composables/useComments.ts'
 import { useUser } from '@/composables/useUser.ts'
+import { useThoughtInputUsages } from '@/composables/useThoughtInputUsages.ts'
 import { PencilSquareIcon } from '@heroicons/vue/24/outline'
 import { watch, toRefs, ref, computed, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 const props = defineProps<{
   id: String
 }>()
+const route = useRoute()
+
+/************** tabs ******************/
+
+const tabChoices = ref([
+  { text: 'Contenu', value: 'ctnt' },
+  { text: 'Biblio', value: 'bbli' }
+])
+
+const current_tab = ref(null)
+
+watch(() => route.query.tab, (newValue) => {
+  console.log("new route query", newValue)
+  current_tab.value = newValue
+})
+
+/************** Biblio *****************/
+
+const { getThoughtInputUsagesForThoughtOutput } = useThoughtInputUsages()
+
+const thoughtInputUsages = ref([])
+
+onMounted(async () => thoughtInputUsages.value = await getThoughtInputUsagesForThoughtOutput(toRefs(props).id.value))
 
 /************** thoughtOutput section ******************/
 const { getThoughtOutput, updateThoughtOutput } = useThoughtOutput()
 const debouncedUpdate = ref(null)
 const thoughtOutput = ref(null)
-const route = useRoute()
 const router = useRouter()
 watch(
   () => route.query.editing,

@@ -54,3 +54,11 @@ export interface ThoughtInput {
   created_at?: Date
   updated_at?: Date
 }
+
+export interface ThoughtInputUsage {
+    id?: string
+    thought_output_id?: string
+    thought_input_id?: string
+    thought_input?: ThoughtInput
+    usage_reason: string
+}
