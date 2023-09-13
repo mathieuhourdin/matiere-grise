@@ -1,0 +1,1 @@
+import{l as e}from"./index-c393c4f7.js";const r=async s=>(await e.get("/thought_outputs/"+s)).data,o=async(s,t)=>(t.progress=Number(t.progress),await e.put("/thought_outputs/"+s,t)),n=async s=>(s.progress=Number(s.progress),(await e.post("/thought_outputs",s)).data);function a(){return{getThoughtOutput:r,updateThoughtOutput:o,createThoughtOutput:n}}export{a as u};
