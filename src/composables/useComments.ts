@@ -30,7 +30,7 @@ const createComment = async (articleId: string, startIndex: number) => {
   }
 }
 
-const getCommentsForArticle = async (articleId: string, withUsers: boolean = true) => {
+const getCommentsForThoughtOutput = async (articleId: string, withUsers: boolean = true) => {
     const userParams = withUsers ? "?author=true" : "";
     try {
         const response = await fetchWrapper.get('/thought_outputs/' + articleId + '/comments' + userParams);
@@ -55,5 +55,5 @@ const batchUpdateComments = async (comments: [Comment]) => {
 }
 
 export function useComments() {
-  return { createComment, getCommentsForArticle, updateComment, batchUpdateComments }
+  return { createComment, getCommentsForThoughtOutput, updateComment, batchUpdateComments }
 }

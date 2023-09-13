@@ -1,21 +1,5 @@
 import { fetchWrapper } from '@/helpers'
-
-export interface ThoughtInput {
-  id?: string
-  resource_title: string
-  resource_author_name: string
-  resource_type: string
-  resource_link: string
-  resource_image_link: string
-  resource_comment: string
-  input_progress: number
-  input_date: Date
-  input_comment: string
-  input_is_public: boolean
-  input_user_id?: string
-  created_at?: Date
-  updated_at?: Date
-}
+import { type ThoughtInput } from '@/types/models';
 
 function newThoughtInput(): ThoughtInput {
   const thought_input: ThoughtInput = {

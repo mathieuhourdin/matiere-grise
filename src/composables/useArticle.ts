@@ -1,7 +1,16 @@
 import { ref } from 'vue'
 import { fetchWrapper } from '@/helpers'
 
-export interface Article {
+export interface ThoughtOutput {
+    title: string
+    description: string
+    content: string
+    author_id?: string
+    publishing_state: string
+    output_type: string
+}
+
+export interface Article extends ThoughtOutput {
   title: string
   description: string
   content: string
@@ -14,6 +23,7 @@ export interface Article {
   gdoc_url: string
   image_url: string
   url_slug: string
+  output_type: string
 }
 
 export function useArticle() {
@@ -28,7 +38,8 @@ export function useArticle() {
       publishing_state: 'drft',
       gdoc_url: '',
       image_url: '',
-      url_slug: ''
+      url_slug: '',
+      output_type: 'atcl'
     })
   }
 

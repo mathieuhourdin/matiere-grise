@@ -1,34 +1,40 @@
 <template>
-  <div v-if="!!article" class="px-8 mx-auto">
+  <div v-if="!!thoughtOutput" class="px-8 mx-auto">
     <div v-if="!editingMetaData">
       <div class="my-8">
         <img
-          :src="article.image_url"
+          :src="thoughtOutput.image_url"
           class="border border-slate-300 dark:border-zinc-700 rounded-xl ml-auto mr-auto"
         />
       </div>
-      <h1 class="text-3xl my-3 font-mplus md:text-center text-left">{{ article.title }}</h1>
-      <div class="md:text-center text-left">{{ article.description }}</div>
-      <RoundLinkButton v-if="isArticleAuthor" @click="setEditingMetaData(true)"
+      <h1 class="text-3xl my-3 font-mplus md:text-center text-left">{{ thoughtOutput.title }}</h1>
+      <div class="md:text-center text-left">{{ thoughtOutput.description }}</div>
+      <RoundLinkButton v-if="isThoughtOutputAuthor" @click="setEditingMetaData(true)"
         ><PencilSquareIcon class="m-1"
       /></RoundLinkButton>
       <div class="md:flex my-8">
-        <ProgressBar :progress-value="article.progress" class="w-1/3" />
-        <a class="ml-auto underline" :href="article.gdoc_url"> Ajouter un commentaire </a>
+        <ProgressBar :progress-value="thoughtOutput.progress" class="w-1/3" />
+        <a class="ml-auto underline" :href="thoughtOutput.gdoc_url"> Ajouter un commentaire </a>
       </div>
     </div>
     <div v-else>
       <ArticleForm
-        :article="article"
-        @change="(event) => debouncedUpdateArticle(article.id, event)"
+        v-if="thoughtOutput.output_type == 'atcl'"
+        :article="thoughtOutput"
+        @change="(event) => debouncedUpdateThoughtOutput(thoughtOutput.id, event)"
+      />
+      <ProblemForm
+        v-else
+        :problem="thoughtOutput"
+        @change="(event) => debouncedUpdateThoughtOutput(thoughtOutput.id, event)"
       />
       <div class="flex flex-row-reverse">
         <ActionButton class="mx-4" @click="setEditingMetaData(false)" type="valid" text="Preview"
           >Ok</ActionButton
         >
         <ActionButton
-          v-if="article.publishing_state == 'drft'"
-          @click="publishArticle"
+          v-if="thoughtOutput.publishing_state == 'drft'"
+          @click="publishThoughtOutput"
           type="valid"
           text="Publier"
         />
@@ -37,19 +43,19 @@
     </div>
     <hr class="border-top border-zinc-400 my-4" />
     <TextInterface
-      v-if="article.publishing_state != 'drft'"
+      v-if="thoughtOutput.publishing_state != 'drft'"
       :ext-comments="comments"
-      :ressource-id="article.id"
-      :full-text="article.content"
-      :editable="isArticleAuthor"
-      @change="(event) => debouncedUpdateArticleContent(event)"
+      :ressource-id="thoughtOutput.id"
+      :full-text="thoughtOutput.content"
+      :editable="isThoughtOutputAuthor"
+      @change="(event) => debouncedUpdateThoughtOutputContent(event)"
     />
     <TextAreaInput
       v-else
       class="h-96"
       label="Contenu"
-      :modelValue="article.content"
-      @update:modelValue="(event) => debouncedUpdateArticleContent(event)"
+      :modelValue="thoughtOutput.content"
+      @update:modelValue="(event) => debouncedUpdateThoughtOutputContent(event)"
     />
   </div>
 </template>
@@ -59,9 +65,10 @@ import TextInterface from '@/components/TextInterface.vue'
 import ProgressBar from '@/components/ProgressBar.vue'
 import RoundLinkButton from '@/components/Ui/RoundLinkButton.vue'
 import ArticleForm from '@/components/ArticleForm.vue'
+import ProblemForm from '@/components/ProblemForm.vue'
 import ActionButton from '@/components/Ui/ActionButton.vue'
 import TextAreaInput from '@/components/Ui/TextAreaInput.vue'
-import { useArticle } from '@/composables/useArticle.ts'
+import { useThoughtOutput } from '@/composables/useThoughtOutput.ts'
 import { useComments } from '@/composables/useComments.ts'
 import { useUser } from '@/composables/useUser.ts'
 import { PencilSquareIcon } from '@heroicons/vue/24/outline'
@@ -71,10 +78,10 @@ const props = defineProps<{
   id: String
 }>()
 
-/************** article section ******************/
-const { getArticle, updateArticle } = useArticle()
+/************** thoughtOutput section ******************/
+const { getThoughtOutput, updateThoughtOutput } = useThoughtOutput()
 const debouncedUpdate = ref(null)
-const article = ref(null)
+const thoughtOutput = ref(null)
 const route = useRoute()
 const router = useRouter()
 watch(
@@ -89,65 +96,46 @@ const setEditingMetaData = (value) => {
   router.push({ query: { editing: value } })
 }
 
-const publishArticle = () => {
-  article.value.publishing_state = 'pbsh'
-  updateArticle(article.value.id, article.value)
+const publishThoughtOutput = () => {
+  thoughtOutput.value.publishing_state = 'pbsh'
+  updateThoughtOutput(thoughtOutput.value.id, thoughtOutput.value)
 }
 
-const debouncedUpdateArticle = (id, newArticle) => {
-  article.value = newArticle
+const debouncedUpdateThoughtOutput = (id, newThoughtOutput) => {
+  thoughtOutput.value = newThoughtOutput
   clearTimeout(debouncedUpdate.value)
   debouncedUpdate.value = setTimeout(async () => {
     try {
-      await updateArticle(id, article.value)
+      await updateThoughtOutput(id, thoughtOutput.value)
     } catch (error) {
       console.log('An error : ', error)
     }
   }, 1000)
 }
 
-const debouncedUpdateArticleContent = (newArticleContent) => {
-  if (newArticleContent == '\n') return
-  debouncedUpdateArticle(toRefs(props).id.value, { ...article.value, content: newArticleContent })
+const debouncedUpdateThoughtOutputContent = (newThoughtOutputContent) => {
+  if (newThoughtOutputContent == '\n') return
+  debouncedUpdateThoughtOutput(toRefs(props).id.value, {
+    ...thoughtOutput.value,
+    content: newThoughtOutputContent
+  })
 }
 
 /************** user section *********************/
 const { user } = useUser()
-const isArticleAuthor = computed(() => {
+const isThoughtOutputAuthor = computed(() => {
   if (!user.value) return false
-  return article.value.author_id == user.value.id
+  return thoughtOutput.value.author_id == user.value.id
 })
 
 /************** comments section *****************/
-const { getCommentsForArticle } = useComments()
+const { getCommentsForThoughtOutput } = useComments()
 const comments = ref([])
 
 onMounted(async () => {
-  article.value = await getArticle(props.id)
-  comments.value = await getCommentsForArticle(props.id)
+  thoughtOutput.value = await getThoughtOutput(props.id)
+  comments.value = await getCommentsForThoughtOutput(props.id)
   const editing = route.query.editing
   editingMetaData.value = editing === 'false' ? false : !!editing
 })
 </script>
-
-<style>
-div.article-content > p {
-  margin-bottom: 1rem;
-}
-div.article-content > h1 {
-  font-size: 2em;
-  font-weight: 800;
-}
-div.article-content > h2 {
-  font-size: 1.5em;
-  font-weight: 700;
-}
-div.article-content > h3 {
-  font-size: 1em;
-  font-weight: 600;
-}
-div.article-content > h4 {
-  font-size: 0.8em;
-  font-weight: 500;
-}
-</style>
