@@ -4,7 +4,7 @@
       <div class="underline italic" @click="createNewDraftProblemAndRedirect">Ajouter une problématique</div>
       <div>Histoire et sociétés</div>
       <hr class="border-top border-slate-800 border-dashed my-1" />
-      <div class="flex">
+      <div class="flex flex-wrap">
         <div v-for="(problem, i) in problems" :key="i"><ProblemCard :problem="problem" /></div>
       </div>
     </div>

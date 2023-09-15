@@ -10,7 +10,7 @@ const { menuOpen } = useMenu()
 <template>
   <AppHeader />
   <div class="flex">
-    <SidebarMenu v-if="menuOpen" style="min-height: 800px" class="md:w-250px w-80pt absolute md:static" />
+    <SidebarMenu v-if="menuOpen" style="min-height: 800px" class="md:w-250px w-full absolute md:static" />
     <RouterView :style="{width: menuOpen ? '1450px' : '100%'}"/>
   </div>
 </template>

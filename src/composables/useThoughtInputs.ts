@@ -1,5 +1,5 @@
 import { fetchWrapper } from '@/helpers'
-import { type ThoughtInput } from '@/types/models';
+import { type ThoughtInput } from '@/types/models'
 
 function newThoughtInput(): ThoughtInput {
   const thought_input: ThoughtInput = {
@@ -24,6 +24,11 @@ function formatApiResponse(apiThoughtInput: any): ThoughtInput {
   return response
 }
 
+async function getThoughtInputs(): Promise<ThoughtInput[]> {
+  const response = await fetchWrapper.get('/thought_inputs')
+  return response.data.map((thoughtInput: any) => formatApiResponse(thoughtInput))
+}
+
 async function getUserThoughtInputs(userId: string): Promise<[ThoughtInput]> {
   const response = await fetchWrapper.get('/users/' + userId + '/thought_inputs')
   return response.data.map((thoughtInput: any) => formatApiResponse(thoughtInput))
@@ -31,7 +36,7 @@ async function getUserThoughtInputs(userId: string): Promise<[ThoughtInput]> {
 
 async function createThoughtInput(thoughtInput: ThoughtInput): Promise<ThoughtInput> {
   const date_input_date = new Date(thoughtInput.input_date)
-  console.log("Date : ", date_input_date)
+  console.log('Date : ', date_input_date)
   const input_date = date_input_date.toISOString().split('.')[0]
   thoughtInput.input_progress = Number(thoughtInput.input_progress)
   const response = await fetchWrapper.post('/thought_inputs', { ...thoughtInput, input_date })
@@ -42,6 +47,7 @@ export function useThoughtInputs() {
   return {
     getUserThoughtInputs,
     newThoughtInput,
-    createThoughtInput
+    createThoughtInput,
+    getThoughtInputs
   }
 }
