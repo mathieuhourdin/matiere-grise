@@ -1,5 +1,5 @@
 <template>
-  <div class="border shadow-xl rounded m-2 p-4 w-96">
+  <div class="border shadow-xl rounded m-2 p-4 md:w-96">
     <div class="flex">
       <img class="w-8 h-fit mr-4" :src="thoughtInput.resource_image_link" />
       <div>

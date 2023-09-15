@@ -1,5 +1,5 @@
 <template>
-  <div class="relative">
+  <div class="relative max-w-full">
     <div v-if="!center" class="absolute md:border h-full start-1/2" />
     <ThoughtInputCard
       v-for="(thoughtInput, index) in thoughtInputs"
