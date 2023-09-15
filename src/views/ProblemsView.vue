@@ -2,16 +2,12 @@
   <div>
     <div class="m-4">
       <div class="underline italic" @click="createNewDraftProblemAndRedirect">Ajouter une problématique</div>
-      <div>Histoire et sociétés</div>
-      <hr class="border-top border-slate-800 border-dashed my-1" />
-      <div class="flex flex-wrap">
-        <div v-for="(problem, i) in problems" :key="i"><ProblemCard :problem="problem" /></div>
-      </div>
+      <CategoryProblemsCarousel category-title="Histoire et sociétés" :problems-list="problems" />
     </div>
   </div>
 </template>
 <script setup lang="ts">
-import ProblemCard from '@/components/ProblemCard.vue'
+import CategoryProblemsCarousel from '@/components/CategoryProblemsCarousel.vue'
 import { useProblem } from '@/composables/useProblem.ts'
 import { useRouter } from 'vue-router'
 import { onMounted, ref } from 'vue'
