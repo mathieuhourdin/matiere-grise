@@ -8,7 +8,7 @@
         position="center"
       />
       <div class="flex">
-        <ProgressBar :progress-value="progress" class="w-1/3 mr-auto" />
+        <ProgressBar :progress-value="progress" class="m-2 w-1/3 mr-auto" />
         <router-link v-if="author" class="text-xs italic my-auto mr-2" :to="'/users/' + author.id"
           >{{ author.first_name }} {{ author.last_name }}</router-link
         >

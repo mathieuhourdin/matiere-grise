@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-gray-200 m-2">
+  <div class="bg-gray-200">
     <div
         class="h-2"
         :class="progressColor"
