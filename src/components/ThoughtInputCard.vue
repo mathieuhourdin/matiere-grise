@@ -15,8 +15,16 @@
         <div class="text-2xs">{{ formatText(thoughtInput.input_comment) }}</div>
       </div>
     </div>
-    <div v-if="thoughtInput.input_date" class="text-2xs italic">
-      {{ formatDate(thoughtInput.input_date) }}
+    <div class="flex flex-wrap">
+      <div v-if="thoughtInput.input_date" class="text-2xs italic">
+        {{ formatDate(thoughtInput.input_date) }}
+      </div>
+      <router-link
+        v-if="inputAuthor"
+        :to="'/users/' + inputAuthor.id"
+        class="ml-auto text-2xs underline"
+        >{{ inputAuthor.first_name }} {{ inputAuthor.last_name }}</router-link
+      >
     </div>
   </div>
 </template>
@@ -24,9 +32,16 @@
 <script setup lang="ts">
 import ProgressBar from '@/components/ProgressBar.vue'
 import { ThoughtInput } from '@/composables/useThoughtInputs.ts'
+import { useUser } from '@/composables/useUser.ts'
+import { ref, onMounted } from 'vue'
+
 const props = defineProps<{
   thoughtInput: ThoughtInput
 }>()
+
+const { getUserById } = useUser()
+const inputAuthor = ref(null)
+onMounted(async () => (inputAuthor.value = await getUserById(props.thoughtInput.input_user_id)))
 
 const formatDate = (date: Date) => {
   return date.toLocaleString('fr-FR', {
