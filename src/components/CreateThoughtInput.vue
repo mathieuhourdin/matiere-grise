@@ -4,24 +4,24 @@
     <TextInput label="titre de l'ouvrage" v-model="thoughtInput.resource_title" />
     <div class="flex flex-wrap">
       <TextInput
-        class="h-8 mx-auto"
+        class="h-8 w-full md:w-5/12"
         label="Nom de l'auteur"
         v-model="thoughtInput.resource_author_name"
       />
       <TextInput
-        class="h-8 mx-auto"
+        class="h-8 w-full md:w-5/12 md:ml-auto"
         label="type de resource"
         v-model="thoughtInput.resource_type"
       />
     </div>
     <div class="flex flex-wrap">
       <TextInput
-        class="h-8 mx-auto"
+        class="h-8 w-full md:w-5/12"
         label="Lien de la ressource"
         v-model="thoughtInput.resource_link"
       />
       <TextInput
-        class="h-8 mx-auto"
+        class="h-8 w-full md:w-5/12 md:ml-auto"
         label="Lien de l'image"
         v-model="thoughtInput.resource_image_link"
       />

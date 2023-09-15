@@ -33,6 +33,12 @@ const router = createRouter({
       component: () => import('@/views/SeeArticle.vue')
     },
     {
+        path: '/thought_inputs',
+        name: 'thoughtInputs',
+        props: false,
+        component: () => import('@/views/ThoughtInputsView.vue')
+    },
+    {
       path: '/problems',
       name: 'problemsList',
       component: () => import('@/views/ProblemsView.vue')

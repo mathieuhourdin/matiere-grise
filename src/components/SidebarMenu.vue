@@ -4,7 +4,7 @@
       <MenuItem v-if="user" :to="'/users/' + user.id">Mon profil</MenuItem>
       <MenuItem to="/problems">Problématiques</MenuItem>
       <MenuItem to="/">Productions</MenuItem>
-      <MenuItem to="/thought-inputs">Inspirations</MenuItem>
+      <MenuItem to="/thought_inputs">Inspirations</MenuItem>
       <MenuItem to="/friends">Amis</MenuItem>
     </div>
   </div>
