@@ -13,7 +13,7 @@
         ><PencilSquareIcon class="m-1"
       /></RoundLinkButton>
       <div class="md:flex my-8">
-        <ProgressBar :progress-value="thoughtOutput.progress" class="w-1/3" />
+        <ProgressBar :progress-value="thoughtOutput.progress" class="m-2 w-1/3" />
         <a class="ml-auto underline" :href="thoughtOutput.gdoc_url"> Ajouter un commentaire </a>
       </div>
     </div>
