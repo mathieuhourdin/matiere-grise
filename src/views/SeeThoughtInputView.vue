@@ -1,7 +1,6 @@
 <template>
   <div>
-    Coucou
-    <SeeThoughtInput v-if="thoughtInput" :thought-input="thoughtInput" />
+    <SeeThoughtInput v-if="thoughtInput" :thought-input="thoughtInput" class="m-2" />
   </div>
 </template>
 
