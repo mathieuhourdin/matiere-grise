@@ -42,7 +42,7 @@
       </div>
     </div>
     <div>
-      <ToggleButtonGroup :choices="tabChoices" default="ctnt" />
+      <ToggleButtonGroup :choices="tabChoices" :default="toggleDefault" />
     </div>
     <hr class="border-top border-zinc-400 my-4" />
     <div v-if="current_tab == 'ctnt'">
@@ -108,6 +108,8 @@ const tabChoices = ref([
   { text: 'Contenu', value: 'ctnt' },
   { text: 'Biblio', value: 'bbli' }
 ])
+
+const toggleDefault = ref(route.query.tab);
 
 const current_tab = ref(null)
 
