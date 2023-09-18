@@ -3,7 +3,7 @@
     <ModalSheet :open="modalOpen" @close="modalOpen = false">
       <SeeThoughtInput :thought-input="thoughtInput" />
     </ModalSheet>
-    <ThoughtInputCard class="md:w-96 w-full" :thought-input="thoughtInput" @click="modalOpen = true" />
+    <ThoughtInputCard class="md:w-96" :thought-input="thoughtInput" @click="modalOpen = true" />
   </div>
 </template>
 

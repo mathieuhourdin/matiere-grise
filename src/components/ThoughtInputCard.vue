@@ -1,5 +1,5 @@
 <template>
-  <div class="m-3 md:w-96">
+  <div class="w-full md:w-96">
     <div v-if="thoughtInput.usage_reason" class="text-xs italic mb-2">
       {{ thoughtInput.usage_reason }}
     </div>
