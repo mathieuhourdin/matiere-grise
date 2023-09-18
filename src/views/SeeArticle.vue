@@ -73,7 +73,7 @@
       <div @click="openAddThoughtInputUsage = true" class="text-sm italic underline">
         Ajouter une référence
       </div>
-      <ThoughtInputsList :thought-inputs="thoughtInputUsages.map((tiu) => tiu.thought_input)" />
+      <ThoughtInputsList :thought-inputs="thoughtInputUsages" />
     </div>
   </div>
 </template>
@@ -127,7 +127,10 @@ const thoughtInputUsages = ref([])
 const openAddThoughtInputUsage = ref(false)
 
 const loadBiblio = async () => {
-  thoughtInputUsages.value = await getThoughtInputUsagesForThoughtOutput(toRefs(props).id.value)
+  const response = await getThoughtInputUsagesForThoughtOutput(toRefs(props).id.value)
+  thoughtInputUsages.value = response.map((usage) => {
+    return { ...usage.thought_input, usage_reason: usage.usage_reason }
+  })
 }
 
 onMounted(() => loadBiblio())
