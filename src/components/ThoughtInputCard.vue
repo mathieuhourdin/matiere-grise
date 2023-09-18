@@ -7,7 +7,11 @@
       <div class="flex">
         <img class="w-8 h-fit mr-4" :src="thoughtInput.resource_image_link" />
         <div>
-          <div>{{ thoughtInput.resource_title }}</div>
+          <div>
+            <router-link :to="'/thought_inputs/' + thoughtInput.id">
+              {{ thoughtInput.resource_title }}</router-link
+            >
+          </div>
           <div class="flex flex-wrap w-full" style="margin-top: -8px">
             <div class="text-2xs italic">
               {{ thoughtInput.resource_author_name }}
@@ -38,7 +42,7 @@
 import ProgressBar from '@/components/ProgressBar.vue'
 import { ThoughtInput } from '@/composables/useThoughtInputs.ts'
 import { useUser } from '@/composables/useUser.ts'
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 
 const props = defineProps<{
   thoughtInput: ThoughtInput
@@ -46,6 +50,10 @@ const props = defineProps<{
 
 const { getUserById } = useUser()
 const inputAuthor = ref(null)
+const userIsAuthor = computed(() => {
+  return inputAuthor.value && inputAuthor.value.id === user.value.id
+})
+
 onMounted(async () => (inputAuthor.value = await getUserById(props.thoughtInput.input_user_id)))
 
 const formatDate = (date: Date) => {

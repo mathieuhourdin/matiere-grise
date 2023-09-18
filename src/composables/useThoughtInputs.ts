@@ -29,6 +29,11 @@ async function getThoughtInputs(): Promise<ThoughtInput[]> {
   return response.data.map((thoughtInput: any) => formatApiResponse(thoughtInput))
 }
 
+async function getThoughtInput(id: string): Promise<ThoughtInput> {
+  const response = await fetchWrapper.get('/thought_inputs/' + id)
+  return formatApiResponse(response.data)
+}
+
 async function getUserThoughtInputs(userId: string): Promise<[ThoughtInput]> {
   const response = await fetchWrapper.get('/users/' + userId + '/thought_inputs')
   return response.data.map((thoughtInput: any) => formatApiResponse(thoughtInput))
@@ -48,6 +53,7 @@ export function useThoughtInputs() {
     getUserThoughtInputs,
     newThoughtInput,
     createThoughtInput,
-    getThoughtInputs
+    getThoughtInputs,
+    getThoughtInput
   }
 }

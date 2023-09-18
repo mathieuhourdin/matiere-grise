@@ -1,7 +1,7 @@
 <template>
   <div>
     <div>Nouvel apport</div>
-    <TextInput label="titre de l'ouvrage" v-model="thoughtInput.resource_title" />
+    <TextInput label="Titre de l'ouvrage" v-model="thoughtInput.resource_title" />
     <div class="flex flex-wrap">
       <TextInput
         class="h-8 w-full md:w-5/12"

@@ -31,6 +31,6 @@ const props = defineProps<{
   author?: Object
 }>()
 const articleLink = computed(() => {
-  return '/articles/' + props.uuid
+  return '/thought_outputs/' + props.uuid
 })
 </script>
