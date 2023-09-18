@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-slate-200">
+  <div class="bg-slate-200 z-10">
     <div>
       <MenuItem v-if="user" :to="'/users/' + user.id">Mon profil</MenuItem>
       <MenuItem to="/problems">Problématiques</MenuItem>
