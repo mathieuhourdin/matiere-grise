@@ -10,6 +10,9 @@
       class="max-w-xl overflow-y-scroll max-h-screen mb-10 bg-white mx-auto mt-6 p-4 rounded shadow"
       @click.stop=""
     >
+      <div class="flex">
+        <div class="ml-auto" @click="emit('close')">x</div>
+      </div>
       <slot />
     </div>
   </div>
@@ -31,7 +34,12 @@ onMounted(() => {
 })
 watchEffect(() => {
   const closeOnEscape = (event) => {
-    if (event.key === 'Escape' || event.key === 'Enter' || event.key === 'Esc' || event.keyCode === 27) {
+    if (
+      event.key === 'Escape' ||
+      event.key === 'Enter' ||
+      event.key === 'Esc' ||
+      event.keyCode === 27
+    ) {
       // Call the closeModal method when ESC is pressed
       emit('close')
     }
