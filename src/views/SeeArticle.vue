@@ -9,6 +9,14 @@
       </div>
       <h1 class="text-3xl my-3 font-mplus md:text-center text-left">{{ thoughtOutput.title }}</h1>
       <div class="md:text-center text-left">{{ thoughtOutput.description }}</div>
+      <div class="md:text-center text-left">
+      <router-link
+        v-if="thoughtOutputUser"
+        :to="'/users/' + thoughtOutputUser.id"
+        class="text-sm underline"
+        >{{ thoughtOutputUser.first_name }} {{ thoughtOutputUser.last_name }}</router-link
+      >
+      </div>
       <RoundLinkButton v-if="isThoughtOutputAuthor" @click="setEditingMetaData(true)"
         ><PencilSquareIcon class="m-1"
       /></RoundLinkButton>
@@ -109,7 +117,7 @@ const tabChoices = ref([
   { text: 'Biblio', value: 'bbli' }
 ])
 
-const toggleDefault = ref(route.query.tab ?? 'ctnt');
+const toggleDefault = ref(route.query.tab ?? 'ctnt')
 
 const current_tab = ref(null)
 
@@ -180,11 +188,13 @@ const debouncedUpdateThoughtOutputContent = (newThoughtOutputContent) => {
 }
 
 /************** user section *********************/
-const { user } = useUser()
+const { user, getUserById } = useUser()
 const isThoughtOutputAuthor = computed(() => {
   if (!user.value) return false
   return thoughtOutput.value.author_id == user.value.id
 })
+
+const thoughtOutputUser = ref(null)
 
 /************** comments section *****************/
 const { getCommentsForThoughtOutput } = useComments()
@@ -193,6 +203,7 @@ const comments = ref([])
 onMounted(async () => {
   thoughtOutput.value = await getThoughtOutput(props.id)
   comments.value = await getCommentsForThoughtOutput(props.id)
+  thoughtOutputUser.value = await getUserById(thoughtOutput.value.author_id)
   const editing = route.query.editing
   editingMetaData.value = editing === 'false' ? false : !!editing
 })
