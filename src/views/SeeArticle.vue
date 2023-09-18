@@ -109,7 +109,7 @@ const tabChoices = ref([
   { text: 'Biblio', value: 'bbli' }
 ])
 
-const toggleDefault = ref(route.query.tab);
+const toggleDefault = ref(route.query.tab ?? 'ctnt');
 
 const current_tab = ref(null)
 
