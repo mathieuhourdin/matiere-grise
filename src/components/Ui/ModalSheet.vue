@@ -31,8 +31,7 @@ onMounted(() => {
 })
 watchEffect(() => {
   const closeOnEscape = (event) => {
-    console.log("closeOnEscape")
-    if (event.key === 'Escape' || event.key === 'Esc' || event.keyCode === 27) {
+    if (event.key === 'Escape' || event.key === 'Enter' || event.key === 'Esc' || event.keyCode === 27) {
       // Call the closeModal method when ESC is pressed
       emit('close')
     }
