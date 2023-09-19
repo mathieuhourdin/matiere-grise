@@ -7,7 +7,7 @@
       <CategoryProblemsCarousel
         class="mt-4"
         v-for="category in categories"
-        :category-title="getCategoryName(category.display_name)"
+        :category="category"
         :key="category.id"
         :problems-list="getProblemsForCategory(category)"
       />

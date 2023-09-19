@@ -1,3 +1,8 @@
+export interface Category {
+    id?: string
+    display_name: string
+}
+
 export interface ThoughtOutput {
   title: string
   description: string

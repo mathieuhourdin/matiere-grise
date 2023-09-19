@@ -1,6 +1,9 @@
 <template>
   <div>
-    <div>{{ categoryTitle }}</div>
+    <div class="flex">
+    <div>{{ getCategoryName(category.display_name) }}</div>
+    <div @click="createNewDraftProblemAndRedirect" class="ml-auto text-sm mr-2 underline">Ajouter</div>
+    </div>
     <hr class="border-top border-slate-800 border-dashed my-1" />
     <div class="flex overflow-scroll">
       <div v-for="(problem, i) in problemsList" :key="i"><ProblemCard :problem="problem" /></div>
@@ -9,10 +12,26 @@
 </template>
 
 <script setup lang="ts">
+import { Category } from '@/types/models'
+import { useProblem } from '@/composables/useProblem.ts'
+import { useRouter } from 'vue-router'
+const { newProblem, createProblem } = useProblem()
 import ProblemCard from '@/components/ProblemCard.vue'
 
 const props = defineProps<{
   problemsList: any[]
-  categoryTitle: string
+  category: Category
 }>()
+
+const router = useRouter()
+const createNewDraftProblemAndRedirect = async () => {
+  const problem = newProblem()
+  problem.category_id = props.category.id
+  const createdProblem = await createProblem(problem)
+  router.push({ path: '/thought_outputs/' + createdProblem.id, query: { editing: true } })
+}
+
+const getCategoryName = (categoryName) => {
+  return categoryName == 'default' ? 'Autres' : categoryName
+}
 </script>
