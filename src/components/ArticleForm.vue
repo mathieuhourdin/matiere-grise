@@ -19,18 +19,20 @@
         @update:modelValue="(event) => emitChange('progress', event)"
       />
       <div class="ml-auto h-6 m-4 w-1/3">
-        <label class="block text-2xs text-slate-800">Stade d'écriture</label>
-        <select
-          :value="article.maturing_state"
-          name="Stade d'écriture"
-          class="text-xs w-full p-1 block rounded border-2 border-neutral-400"
-          @input="(event) => emitChange('maturing_state', event.target.value)"
-        >
-          <option disabled value="">Choisissez</option>
-          <option value="fnsh">Terminé</option>
-          <option value="rvew">Relecture</option>
-          <option value="idea">Idée</option>
-        </select>
+        <SelectInput
+          label="Catégorie"
+          :choices="categoryOptions"
+          :model-value="article.category_id"
+          @update:modelValue="(event) => emitChange('category_id', event)"
+        />
+      </div>
+      <div class="ml-auto h-6 m-4 w-1/3">
+        <SelectInput
+          label="Stade d'écriture"
+          :choices="maturingStateOptions "
+          :model-value="article.maturing_state"
+          @update:modelValue="(event) => emitChange('maturing_state', event)"
+        />
       </div>
     </div>
     <div class="flex">
@@ -62,15 +64,29 @@
 </template>
 
 <script setup lang="ts">
+import SelectInput from '@/components/Ui/SelectInput.vue'
 import TextInput from '@/components/Ui/TextInput.vue'
 import NumberInput from '@/components/Ui/NumberInput.vue'
 import TextAreaInput from '@/components/Ui/TextAreaInput.vue'
+import { useCategories } from '@/composables/useCategories.ts'
 import { Article } from '@/composables/useArticle.ts'
+import { ref, computed } from 'vue'
 
 const emit = defineEmits(['change'])
 const props = defineProps<{
   article: Article
 }>()
+
+const maturingStateOptions = ref([
+  { text: "Terminé", value: "fnsh"},
+  { text: "Relecture", value: "rvew"},
+  { text: "Idée", value: "idea"},
+])
+
+const { categories } = useCategories();
+const categoryOptions = computed(() => {
+  return categories.value.map((category) => ({ text: category.display_name, value: category.id }))
+})
 
 const emitChange = (field, event) => {
   let article = { ...props.article }

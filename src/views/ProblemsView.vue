@@ -5,6 +5,7 @@
         Ajouter une problématique
       </div>
       <CategoryProblemsCarousel
+        class="mt-4"
         v-for="category in categories"
         :category-title="getCategoryName(category.display_name)"
         :key="category.id"
@@ -33,11 +34,12 @@ const createNewDraftProblemAndRedirect = async () => {
 }
 
 const getProblemsForCategory = (category) => {
-  if (category.display_name == "default") return problems.value.filter((problem) => problem.category_id == null)
+  if (category.display_name == 'default')
+    return problems.value.filter((problem) => problem.category_id == null)
   return problems.value.filter((problem) => problem.category_id == category.id)
 }
 const getCategoryName = (categoryName) => {
-  return categoryName == "default" ? "Autres" : categoryName
+  return categoryName == 'default' ? 'Autres' : categoryName
 }
 
 onMounted(async () => (problems.value = await getProblems()))
