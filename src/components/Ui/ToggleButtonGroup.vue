@@ -1,9 +1,9 @@
 <template>
-  <div class="mx-auto flex flex-wrap max-w-full">
+  <div class="justify-items-center mx-auto flex flex-wrap max-w-full">
     <ActionButton
       v-for="choice in choices"
       :key="choice.value"
-      class="w-24 mx-auto my-1 md:mx-1"
+      class="w-24 my-1 mx-1"
       :text="choice.text"
       @click="updateTab(choice.value)"
       :type="choice.value == tab ? 'valid' : 'abort'"

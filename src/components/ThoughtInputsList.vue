@@ -4,7 +4,7 @@
     <ThoughtInputCardWithPopup
       v-for="(thoughtInput, index) in thoughtInputs"
       :key="thoughtInput.id"
-      class="mx-auto max-w-full max-w-fit p-1"
+      class="mb-4 md:mb-1 mx-auto max-w-full max-w-fit p-1"
       :class="{ 'md:ml-0': (index % 2 == 0) && !center, 'md:mr-0': !center }"
       :thought-input="thoughtInput"
       @click="emitSelect(thoughtInput)"
