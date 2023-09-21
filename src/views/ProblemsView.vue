@@ -6,7 +6,9 @@
       </div>
       <CategoryProblemsCarousel
         class="mt-4"
-        v-for="category in displayedCategoriesWithProblems"
+        v-for="category in displayedCategoriesWithProblems.sort(
+          (a, b) => b.problemsLenght - a.problemsLenght
+        )"
         :category="category"
         :key="category.id"
         :problems-list="category.problems"
@@ -36,9 +38,10 @@ const createNewDraftProblemAndRedirect = async () => {
 const displayedCategoriesWithProblems = computed(() => {
   const returnCategories = categories.value.map((category) => {
     category.problems = getProblemsForCategory(category)
+    category.problemsLenght = category.problems.length
     return category
   })
-  return returnCategories.sort((a, b) => a.problems.length < b.problems.length)
+  return returnCategories
 })
 
 const getProblemsForCategory = (category) => {
