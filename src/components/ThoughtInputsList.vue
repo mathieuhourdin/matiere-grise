@@ -2,7 +2,7 @@
   <div class="relative max-w-full">
     <div v-if="!center" class="absolute md:border h-full start-1/2" />
     <ThoughtInputCardWithPopup
-      v-for="(thoughtInput, index) in thoughtInputs"
+      v-for="(thoughtInput, index) in sortedThoughtInputs(thoughtInputs)"
       :key="thoughtInput.id"
       class="mb-4 md:mb-1 mx-auto max-w-full max-w-fit p-1"
       :class="{ 'md:ml-0': (index % 2 == 0) && !center, 'md:mr-0': !center }"
@@ -14,7 +14,7 @@
 
 <script setup lang="ts">
 import ThoughtInputCardWithPopup from '@/components/ThoughtInputCardWithPopup.vue'
-import { ThoughtInput } from '@/composables/useThoughtInputs.ts'
+import { ThoughtInput } from '@/types/models'
 const emit = defineEmits(["select"])
 const props = withDefaults(
   defineProps<{
@@ -25,6 +25,10 @@ const props = withDefaults(
     center: false
   }
 )
+const sortedThoughtInputs = (inputs: ThoughtInputs[]) => {
+  return inputs.sort((a: ThoughtInput, b: ThoughtInput) => b.input_date - a.input_date)
+}
+
 const emitSelect = (thoughtInput) => {
   console.log("Select")
   emit('select', thoughtInput)

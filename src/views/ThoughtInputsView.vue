@@ -7,7 +7,7 @@
     <ModalSheet :open="openNewThoughtInput" @close="openNewThoughtInput = false">
       <CreateThoughtInput @close="openNewThoughtInput = false" />
     </ModalSheet>
-    <ThoughtInputsList :thought-inputs="thoughtInputs.sort((input) => input.input_date)" />
+    <ThoughtInputsList :thought-inputs="thoughtInputs" />
   </div>
 </template>
 
