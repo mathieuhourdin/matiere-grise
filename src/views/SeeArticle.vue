@@ -22,13 +22,13 @@
       /></RoundLinkButton>
       <div class="md:flex my-8">
         <ProgressBar :progress-value="thoughtOutput.progress" class="m-2 w-1/3" />
-        <a class="ml-auto underline" :href="thoughtOutput.gdoc_url"> Ajouter un commentaire </a>
+        <a v-if="thoughtOutput.output_type === 'atcl'" class="ml-auto underline" :href="article.gdoc_url"> Ajouter un commentaire </a>
       </div>
     </div>
     <div v-else>
       <ArticleForm
         v-if="thoughtOutput.output_type == 'atcl'"
-        :article="thoughtOutput"
+        :article="article"
         @change="(event) => debouncedUpdateThoughtOutput(thoughtOutput.id, event)"
       />
       <ProblemForm
@@ -103,13 +103,18 @@ import { useComments } from '@/composables/useComments'
 import { useUser } from '@/composables/useUser'
 import { useThoughtInputUsages } from '@/composables/useThoughtInputUsages'
 import { PencilSquareIcon } from '@heroicons/vue/24/outline'
-import { watch, toRefs, ref, computed, onMounted } from 'vue'
+import { watch, toRefs, ref, computed, onMounted, type Ref } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
-import { type ThoughtOutput, type ThoughtInputUsage } from '@/types/models'
+import { type Problem, type User, type ThoughtOutput, type Article, type ThoughtInputUsage, type ApiThoughtOutput } from '@/types/models'
 const props = defineProps<{
   id: string
 }>()
 const route = useRoute()
+
+const article = computed((): Article => {
+  const article = thoughtOutput.value as Article
+  return article
+})
 
 /************** tabs ******************/
 
@@ -149,7 +154,7 @@ onMounted(() => loadBiblio())
 /************** thoughtOutput section ******************/
 const { newThoughtOutput, getThoughtOutput, updateThoughtOutput } = useThoughtOutput()
 const debouncedUpdate = ref<number | null>(null)
-const thoughtOutput = ref<ThoughtOutput>(newThoughtOutput())
+const thoughtOutput: Ref<ApiThoughtOutput> = ref<ApiThoughtOutput>(newThoughtOutput())
 const router = useRouter()
 watch(
   () => route.query.editing,
@@ -159,8 +164,8 @@ watch(
   }
 )
 const editingMetaData = ref(false)
-const setEditingMetaData = (value: string) => {
-  router.push({ query: { editing: value } })
+const setEditingMetaData = (value: boolean) => {
+  router.push({ query: { editing: value.toString() } })
 }
 
 const publishThoughtOutput = () => {
@@ -169,7 +174,7 @@ const publishThoughtOutput = () => {
   updateThoughtOutput(thoughtOutput.value.id, thoughtOutput.value)
 }
 
-const debouncedUpdateThoughtOutput = (id: string, newThoughtOutput: ThoughtOutput) => {
+const debouncedUpdateThoughtOutput = (id: string, newThoughtOutput: ApiThoughtOutput) => {
   thoughtOutput.value = newThoughtOutput
   if (debouncedUpdate.value !== null) clearTimeout(debouncedUpdate.value)
   debouncedUpdate.value = setTimeout(async () => {
@@ -196,7 +201,7 @@ const isThoughtOutputAuthor = computed(() => {
   return thoughtOutput.value.author_id == user.value.id
 })
 
-const thoughtOutputUser = ref(null)
+const thoughtOutputUser: Ref<User | null> = ref<User | null>(null)
 
 /************** comments section *****************/
 const { getCommentsForThoughtOutput } = useComments()

@@ -1,8 +1,9 @@
 import { fetchWrapper } from '@/helpers'
-import { type ThoughtOutput } from '@/types/models'
+import { type ThoughtOutput, type ApiThoughtOutput } from '@/types/models'
 
-const newThoughtOutput = (): ThoughtOutput => {
+const newThoughtOutput = (): ApiThoughtOutput => {
   return {
+    id: '',
     title: '',
     description: '',
     content: '',
@@ -11,7 +12,7 @@ const newThoughtOutput = (): ThoughtOutput => {
   }
 }
 
-const getThoughtOutput = async (id: string): Promise<ThoughtOutput> => {
+const getThoughtOutput = async (id: string): Promise<ApiThoughtOutput> => {
   const response = await fetchWrapper.get('/thought_outputs/' + id)
   return response.data
 }

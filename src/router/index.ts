@@ -13,7 +13,7 @@ const router = createRouter({
     {
       path: '/platform-presentation',
       name: 'platformPresentation',
-      component: () => import('@/views/PlatformPresentation.vue')
+      component: () => import('@/views/PlatformPresentationView.vue')
     },
     {
       path: '/login',
