@@ -9,7 +9,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import LoginForm from '@/components/LoginForm.vue'
 import SignInForm from '@/components/SignInForm.vue'
 import { ref } from 'vue'

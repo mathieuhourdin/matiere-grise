@@ -7,12 +7,13 @@
 <script setup lang="ts">
 import SeeThoughtInput from '@/components/SeeThoughtInput.vue'
 import { ref, onMounted } from 'vue'
-import { useThoughtInputs } from '@/composables/useThoughtInputs.ts'
+import { useThoughtInputs } from '@/composables/useThoughtInputs'
+import { type ThoughtInput } from '@/types/models'
 const props = defineProps<{
   id: string
 }>()
 
-const thoughtInput = ref(null)
+const thoughtInput = ref<null|ThoughtInput>(null)
 
 const { getThoughtInput } = useThoughtInputs()
 

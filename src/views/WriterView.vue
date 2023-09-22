@@ -11,16 +11,17 @@
 
 <script setup lang="ts">
 import TextInterface from '@/components/TextInterface.vue'
+import { type Comment } from '@/types/models'
 import { ref } from "vue"
 
 const text = ref("Salut à tous c'est le texte")
-const comments = ref([])
+const comments = ref<Comment[]>([])
 
-const changeComments = (comments) => {
-  comments.value = comments;
+const changeComments = (updatedComments: Comment[]) => {
+  comments.value = updatedComments;
 }
 
-const changeText = (text) => {
+const changeText = (text: string) => {
   console.log('Changed the text: ', text)
 }
 </script>

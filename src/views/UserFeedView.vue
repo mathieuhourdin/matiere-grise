@@ -24,8 +24,9 @@ import CreateThoughtInput from '@/components/CreateThoughtInput.vue'
 import RoundLinkButton from '@/components/Ui/RoundLinkButton.vue'
 import ThoughtInputsList from '@/components/ThoughtInputsList.vue'
 import { ref, onMounted } from 'vue'
-import { useUser } from '@/composables/useUser.ts'
-import { useThoughtInputs } from '@/composables/useThoughtInputs.ts'
+import { useUser } from '@/composables/useUser'
+import { useThoughtInputs } from '@/composables/useThoughtInputs'
+import { type ThoughtInput } from '@/types/models'
 
 const props = defineProps<{
   pageUserId: string
@@ -38,7 +39,7 @@ const { getUserById, user } = useUser()
 const pageUser = ref(null)
 
 const { getUserThoughtInputs } = useThoughtInputs()
-const thoughtInputs = ref([])
+const thoughtInputs = ref<ThoughtInput[]>([])
 
 onMounted(async () => {
   pageUser.value = await getUserById(props.pageUserId)

@@ -98,15 +98,16 @@ import ActionButton from '@/components/Ui/ActionButton.vue'
 import TextAreaInput from '@/components/Ui/TextAreaInput.vue'
 import ThoughtInputsList from '@/components/ThoughtInputsList.vue'
 import ModalSheet from '@/components/Ui/ModalSheet.vue'
-import { useThoughtOutput } from '@/composables/useThoughtOutput.ts'
-import { useComments } from '@/composables/useComments.ts'
-import { useUser } from '@/composables/useUser.ts'
-import { useThoughtInputUsages } from '@/composables/useThoughtInputUsages.ts'
+import { useThoughtOutput } from '@/composables/useThoughtOutput'
+import { useComments } from '@/composables/useComments'
+import { useUser } from '@/composables/useUser'
+import { useThoughtInputUsages } from '@/composables/useThoughtInputUsages'
 import { PencilSquareIcon } from '@heroicons/vue/24/outline'
 import { watch, toRefs, ref, computed, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
+import { type ThoughtOutput, type ThoughtInputUsage } from '@/types/models'
 const props = defineProps<{
-  id: String
+  id: string
 }>()
 const route = useRoute()
 
@@ -117,15 +118,15 @@ const tabChoices = ref([
   { text: 'Biblio', value: 'bbli' }
 ])
 
-const toggleDefault = ref(route.query.tab ?? 'ctnt')
+const toggleDefault = ref(route.query.tab && typeof route.query.tab === 'string' ? route.query.tab : 'ctnt')
 
-const current_tab = ref(null)
+const current_tab = ref<string | null>(null)
 
 watch(
   () => route.query.tab,
   (newValue) => {
     console.log('new route query', newValue)
-    current_tab.value = newValue
+    if (typeof newValue === 'string') current_tab.value = newValue
   }
 )
 
@@ -138,7 +139,7 @@ const openAddThoughtInputUsage = ref(false)
 
 const loadBiblio = async () => {
   const response = await getThoughtInputUsagesForThoughtOutput(toRefs(props).id.value)
-  thoughtInputUsages.value = response.map((usage) => {
+  thoughtInputUsages.value = response.map((usage: ThoughtInputUsage) => {
     return { ...usage.thought_input, usage_reason: usage.usage_reason }
   })
 }
@@ -146,9 +147,9 @@ const loadBiblio = async () => {
 onMounted(() => loadBiblio())
 
 /************** thoughtOutput section ******************/
-const { getThoughtOutput, updateThoughtOutput } = useThoughtOutput()
-const debouncedUpdate = ref(null)
-const thoughtOutput = ref(null)
+const { newThoughtOutput, getThoughtOutput, updateThoughtOutput } = useThoughtOutput()
+const debouncedUpdate = ref<number | null>(null)
+const thoughtOutput = ref<ThoughtOutput>(newThoughtOutput())
 const router = useRouter()
 watch(
   () => route.query.editing,
@@ -158,18 +159,19 @@ watch(
   }
 )
 const editingMetaData = ref(false)
-const setEditingMetaData = (value) => {
+const setEditingMetaData = (value: string) => {
   router.push({ query: { editing: value } })
 }
 
 const publishThoughtOutput = () => {
+  if (!thoughtOutput.value || !thoughtOutput.value.id) return
   thoughtOutput.value.publishing_state = 'pbsh'
   updateThoughtOutput(thoughtOutput.value.id, thoughtOutput.value)
 }
 
-const debouncedUpdateThoughtOutput = (id, newThoughtOutput) => {
+const debouncedUpdateThoughtOutput = (id: string, newThoughtOutput: ThoughtOutput) => {
   thoughtOutput.value = newThoughtOutput
-  clearTimeout(debouncedUpdate.value)
+  if (debouncedUpdate.value !== null) clearTimeout(debouncedUpdate.value)
   debouncedUpdate.value = setTimeout(async () => {
     try {
       await updateThoughtOutput(id, thoughtOutput.value)
@@ -179,7 +181,7 @@ const debouncedUpdateThoughtOutput = (id, newThoughtOutput) => {
   }, 1000)
 }
 
-const debouncedUpdateThoughtOutputContent = (newThoughtOutputContent) => {
+const debouncedUpdateThoughtOutputContent = (newThoughtOutputContent: string) => {
   if (newThoughtOutputContent == '\n') return
   debouncedUpdateThoughtOutput(toRefs(props).id.value, {
     ...thoughtOutput.value,
@@ -203,7 +205,7 @@ const comments = ref([])
 onMounted(async () => {
   thoughtOutput.value = await getThoughtOutput(props.id)
   comments.value = await getCommentsForThoughtOutput(props.id)
-  thoughtOutputUser.value = await getUserById(thoughtOutput.value.author_id)
+  if (thoughtOutput.value.author_id) thoughtOutputUser.value = await getUserById(thoughtOutput.value.author_id)
   const editing = route.query.editing
   editingMetaData.value = editing === 'false' ? false : !!editing
 })

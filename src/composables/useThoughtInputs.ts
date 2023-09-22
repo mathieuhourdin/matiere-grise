@@ -34,7 +34,7 @@ async function getThoughtInput(id: string): Promise<ThoughtInput> {
   return formatApiResponse(response.data)
 }
 
-async function getUserThoughtInputs(userId: string): Promise<[ThoughtInput]> {
+async function getUserThoughtInputs(userId: string): Promise<ThoughtInput[]> {
   const response = await fetchWrapper.get('/users/' + userId + '/thought_inputs')
   return response.data.map((thoughtInput: any) => formatApiResponse(thoughtInput))
 }

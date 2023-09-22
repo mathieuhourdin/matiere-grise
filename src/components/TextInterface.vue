@@ -78,7 +78,7 @@ const emit = defineEmits(['change', 'changeComments'])
 
 const props = withDefaults(
   defineProps<{
-    ressourceId: string
+    resourceId?: string
     fullText: string
     extComments?: Array
     editable?: boolean
@@ -240,7 +240,7 @@ const loadComments = (extComments) => {
 
 const addComment = async () => {
   console.log('Add Comment')
-  const newComment = await createComment(props.ressourceId, menuIndex.value);
+  const newComment = await createComment(props.resourceId, menuIndex.value);
   comments.value.push(newComment)
 }
 

@@ -18,7 +18,7 @@ import { ThoughtInput } from '@/composables/useThoughtInputs.ts'
 const emit = defineEmits(["select"])
 const props = withDefaults(
   defineProps<{
-    thoughtInputs: [ThoughtInput]
+    thoughtInputs: ThoughtInput[]
     center?: boolean
   }>(),
   {

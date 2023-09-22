@@ -1,7 +1,17 @@
 import { fetchWrapper } from '@/helpers'
 import { type ThoughtOutput } from '@/types/models'
 
-const getThoughtOutput = async (id: string) => {
+const newThoughtOutput = (): ThoughtOutput => {
+  return {
+    title: '',
+    description: '',
+    content: '',
+    publishing_state: '',
+    output_type: ''
+  }
+}
+
+const getThoughtOutput = async (id: string): Promise<ThoughtOutput> => {
   const response = await fetchWrapper.get('/thought_outputs/' + id)
   return response.data
 }
@@ -17,6 +27,7 @@ const createThoughtOutput = async (thoughtOutput: ThoughtOutput) => {
 }
 export function useThoughtOutput() {
   return {
+    newThoughtOutput,
     getThoughtOutput,
     updateThoughtOutput,
     createThoughtOutput

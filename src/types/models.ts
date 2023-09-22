@@ -4,6 +4,7 @@ export interface Category {
 }
 
 export interface ThoughtOutput {
+  id?: string
   title: string
   description: string
   content: string
@@ -66,4 +67,13 @@ export interface ThoughtInputUsage {
     thought_input_id?: string
     thought_input?: ThoughtInput
     usage_reason: string
+}
+
+export interface Comment {
+    id?: string
+    start_index: number
+    end_index: number
+    content: string
+    created_at: Date
+    updated_at: Date
 }
