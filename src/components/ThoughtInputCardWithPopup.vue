@@ -1,21 +1,22 @@
 <template>
   <div class="w-fit">
     <ModalSheet :open="modalOpen" @close="modalOpen = false">
-      <SeeThoughtInput :thought-input="thoughtInput" />
+      <SeeThoughtInput :thought-input="thoughtInput" :usage-reason="usageReason" />
     </ModalSheet>
-    <ThoughtInputCard class="md:w-96" :thought-input="thoughtInput" @click="modalOpen = true" />
+    <ThoughtInputCard class="md:w-96" :thought-input="thoughtInput" :usage-reason="usageReason" @click="modalOpen = true" />
   </div>
 </template>
 
 <script setup lang="ts">
-import { type ThoughtInput } from '@/types/models'
+import { type ApiThoughtInput } from '@/types/models'
 import SeeThoughtInput from '@/components/SeeThoughtInput.vue'
 import ModalSheet from '@/components/Ui/ModalSheet.vue'
 import ThoughtInputCard from '@/components/ThoughtInputCard.vue'
 import { ref } from 'vue'
 
 const props = defineProps<{
-  thoughtInput: ThoughtInput
+  thoughtInput: ApiThoughtInput,
+  usageReason?: string
 }>()
 
 const modalOpen = ref(false)

@@ -33,7 +33,7 @@ onMounted(() => {
   modalOpen.value = props.open
 })
 watchEffect(() => {
-  const closeOnEscape = (event) => {
+  const closeOnEscape = (event: any) => {
     if (
       event.key === 'Escape' ||
       event.key === 'Enter' ||

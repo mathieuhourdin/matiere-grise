@@ -8,11 +8,11 @@
 <script setup lang="ts">
   const emit = defineEmits(['update:modelValue']);
   const props = defineProps<{
-    label?: String,
-    modelValue?: String,
-    placeholder?: String,
+    label?: string,
+    modelValue?: string,
+    placeholder?: string,
   }>();
-  const onInput = (event) => {
+  const onInput = (event: any) => {
     emit("update:modelValue", event.target.value);
   };
 </script>

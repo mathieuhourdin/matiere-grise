@@ -11,15 +11,15 @@
   import { computed } from 'vue';
   const emit = defineEmits(['click']);
   const props = withDefaults(defineProps<{
-    text: String,
-    type: String,
-    size?: String,
+    text: string,
+    type: string,
+    size?: string,
     rounded?: boolean,
   }>(), {
     size: "base",
     rounded: false
   });
-  const textSize = (size) => {
+  const textSize = (size: string) => {
     if (size == "2xs") {
       return "py-0.5 px-1 text-2xs";
     }
@@ -34,7 +34,7 @@
     }
     return "py-2 px-4 text-" + size;
   };
-  const roundedClass = (rounded) => {
+  const roundedClass = (rounded: boolean) => {
     if (rounded) return "rounded-xl";
     return "rounded";
   };

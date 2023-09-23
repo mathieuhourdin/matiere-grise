@@ -6,7 +6,7 @@
 </template>
 
 <script setup lang="ts">
-import { User } from '@/composables/useUser.ts'
+import { type User } from '@/types/models'
 const props = defineProps<{
   user: User
 }>()

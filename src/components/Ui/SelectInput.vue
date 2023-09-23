@@ -21,7 +21,7 @@ const props = defineProps<{
   choices: any[]
   modelValue: any
 }>()
-const emitChange = (event) => {
+const emitChange = (event: any) => {
   emit('update:modelValue', event.target.value)
 }
 </script>

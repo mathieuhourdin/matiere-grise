@@ -1,7 +1,7 @@
 <template>
   <div class="w-full md:w-96">
-    <div v-if="thoughtInput.usage_reason" class="text-xs italic mb-2">
-      {{ thoughtInput.usage_reason }}
+    <div v-if="usageReason" class="text-xs italic mb-2">
+      {{ usageReason }}
     </div>
     <div class="border shadow-lg rounded p-4 md:w-96">
       <div class="flex">
@@ -40,23 +40,21 @@
 
 <script setup lang="ts">
 import ProgressBar from '@/components/ProgressBar.vue'
-import { ThoughtInput } from '@/composables/useThoughtInputs.ts'
-import { useUser } from '@/composables/useUser.ts'
-import { ref, onMounted, computed } from 'vue'
+import { type ApiThoughtInput, type User } from '@/types/models'
+import { useUser } from '@/composables/useUser'
+import { ref, onMounted } from 'vue'
 
 const props = defineProps<{
-  thoughtInput: ThoughtInput
+  thoughtInput: ApiThoughtInput,
+  usageReason?: string
 }>()
 
 const { getUserById } = useUser()
-const inputAuthor = ref(null)
-const userIsAuthor = computed(() => {
-  return inputAuthor.value && inputAuthor.value.id === user.value.id
-})
+const inputAuthor = ref<User | null>(null)
 
 onMounted(async () => (inputAuthor.value = await getUserById(props.thoughtInput.input_user_id)))
 
-const formatDate = (date: Date) => {
+const formatDate = (date: Date): string => {
   return date.toLocaleString('fr-FR', {
     hour: 'numeric',
     weekday: 'short',
@@ -65,7 +63,7 @@ const formatDate = (date: Date) => {
     year: '2-digit'
   })
 }
-const formatText = (text) => {
+const formatText = (text: string): string => {
   return text.length > 200 ? text.slice(0, 150) + '...' : text
 }
 </script>

@@ -1,5 +1,5 @@
 import { fetchWrapper } from '@/helpers'
-import { type ThoughtInput } from '@/types/models'
+import { type ThoughtInput, type ApiThoughtInput } from '@/types/models'
 
 function newThoughtInput(): ThoughtInput {
   const thought_input: ThoughtInput = {
@@ -17,29 +17,29 @@ function newThoughtInput(): ThoughtInput {
   return thought_input
 }
 
-function formatApiResponse(apiThoughtInput: any): ThoughtInput {
+function formatApiResponse(apiThoughtInput: any): ApiThoughtInput {
   console.log('Date : ', apiThoughtInput.input_date)
   apiThoughtInput.input_date = new Date(apiThoughtInput.input_date)
-  const response: ThoughtInput = apiThoughtInput
+  const response: ApiThoughtInput = apiThoughtInput
   return response
 }
 
-async function getThoughtInputs(): Promise<ThoughtInput[]> {
+async function getThoughtInputs(): Promise<ApiThoughtInput[]> {
   const response = await fetchWrapper.get('/thought_inputs')
   return response.data.map((thoughtInput: any) => formatApiResponse(thoughtInput))
 }
 
-async function getThoughtInput(id: string): Promise<ThoughtInput> {
+async function getThoughtInput(id: string): Promise<ApiThoughtInput> {
   const response = await fetchWrapper.get('/thought_inputs/' + id)
   return formatApiResponse(response.data)
 }
 
-async function getUserThoughtInputs(userId: string): Promise<ThoughtInput[]> {
+async function getUserThoughtInputs(userId: string): Promise<ApiThoughtInput[]> {
   const response = await fetchWrapper.get('/users/' + userId + '/thought_inputs')
   return response.data.map((thoughtInput: any) => formatApiResponse(thoughtInput))
 }
 
-async function createThoughtInput(thoughtInput: ThoughtInput): Promise<ThoughtInput> {
+async function createThoughtInput(thoughtInput: ThoughtInput): Promise<ApiThoughtInput> {
   const date_input_date = new Date(thoughtInput.input_date)
   console.log('Date : ', date_input_date)
   const input_date = date_input_date.toISOString().split('.')[0]

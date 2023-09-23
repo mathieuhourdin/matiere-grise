@@ -10,19 +10,25 @@
       <h1 class="text-3xl my-3 font-mplus md:text-center text-left">{{ thoughtOutput.title }}</h1>
       <div class="md:text-center text-left">{{ thoughtOutput.description }}</div>
       <div class="md:text-center text-left">
-      <router-link
-        v-if="thoughtOutputUser"
-        :to="'/users/' + thoughtOutputUser.id"
-        class="text-sm underline"
-        >{{ thoughtOutputUser.first_name }} {{ thoughtOutputUser.last_name }}</router-link
-      >
+        <router-link
+          v-if="thoughtOutputUser"
+          :to="'/users/' + thoughtOutputUser.id"
+          class="text-sm underline"
+          >{{ thoughtOutputUser.first_name }} {{ thoughtOutputUser.last_name }}</router-link
+        >
       </div>
       <RoundLinkButton v-if="isThoughtOutputAuthor" @click="setEditingMetaData(true)"
         ><PencilSquareIcon class="m-1"
       /></RoundLinkButton>
       <div class="md:flex my-8">
         <ProgressBar :progress-value="thoughtOutput.progress" class="m-2 w-1/3" />
-        <a v-if="thoughtOutput.output_type === 'atcl'" class="ml-auto underline" :href="article.gdoc_url"> Ajouter un commentaire </a>
+        <a
+          v-if="thoughtOutput.output_type === 'atcl'"
+          class="ml-auto underline"
+          :href="article.gdoc_url"
+        >
+          Ajouter un commentaire
+        </a>
       </div>
     </div>
     <div v-else>
@@ -81,7 +87,10 @@
       <div @click="openAddThoughtInputUsage = true" class="text-sm italic underline">
         Ajouter une référence
       </div>
-      <ThoughtInputsList :thought-inputs="thoughtInputUsages" />
+      <ThoughtInputsList
+        :thought-inputs="thoughtInputUsages.map((usage: ThoughtInputUsage) => usage.thought_input)"
+        :usage-reason="thoughtInputUsages.map((usage: ThoughtInputUsage) => usage.usage_reason)"
+      />
     </div>
   </div>
 </template>
@@ -105,7 +114,14 @@ import { useThoughtInputUsages } from '@/composables/useThoughtInputUsages'
 import { PencilSquareIcon } from '@heroicons/vue/24/outline'
 import { watch, toRefs, ref, computed, onMounted, type Ref } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
-import { type Problem, type User, type ThoughtOutput, type Article, type ThoughtInputUsage, type ApiThoughtOutput } from '@/types/models'
+import {
+  type Problem,
+  type User,
+  type ThoughtOutput,
+  type Article,
+  type ThoughtInputUsage,
+  type ApiThoughtOutput
+} from '@/types/models'
 const props = defineProps<{
   id: string
 }>()
@@ -123,7 +139,9 @@ const tabChoices = ref([
   { text: 'Biblio', value: 'bbli' }
 ])
 
-const toggleDefault = ref(route.query.tab && typeof route.query.tab === 'string' ? route.query.tab : 'ctnt')
+const toggleDefault = ref(
+  route.query.tab && typeof route.query.tab === 'string' ? route.query.tab : 'ctnt'
+)
 
 const current_tab = ref<string | null>(null)
 
@@ -143,10 +161,7 @@ const thoughtInputUsages = ref([])
 const openAddThoughtInputUsage = ref(false)
 
 const loadBiblio = async () => {
-  const response = await getThoughtInputUsagesForThoughtOutput(toRefs(props).id.value)
-  thoughtInputUsages.value = response.map((usage: ThoughtInputUsage) => {
-    return { ...usage.thought_input, usage_reason: usage.usage_reason }
-  })
+  thoughtInputUsages.value = await getThoughtInputUsagesForThoughtOutput(toRefs(props).id.value)
 }
 
 onMounted(() => loadBiblio())
@@ -210,7 +225,8 @@ const comments = ref([])
 onMounted(async () => {
   thoughtOutput.value = await getThoughtOutput(props.id)
   comments.value = await getCommentsForThoughtOutput(props.id)
-  if (thoughtOutput.value.author_id) thoughtOutputUser.value = await getUserById(thoughtOutput.value.author_id)
+  if (thoughtOutput.value.author_id)
+    thoughtOutputUser.value = await getUserById(thoughtOutput.value.author_id)
   const editing = route.query.editing
   editingMetaData.value = editing === 'false' ? false : !!editing
 })

@@ -83,11 +83,16 @@ export interface ThoughtInput {
   updated_at?: Date
 }
 
+export type ApiThoughtInput = ThoughtInput & {
+  id: string
+  input_user_id: string
+}
+
 export interface ThoughtInputUsage {
   id?: string
   thought_output_id?: string
   thought_input_id?: string
-  thought_input?: ThoughtInput
+  thought_input: ApiThoughtInput
   usage_reason: string
 }
 

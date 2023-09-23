@@ -11,7 +11,7 @@
 </template>
 
 <script setup lang="ts">
-import { useUser } from '@/composables/useUser.ts'
+import { useUser } from '@/composables/useUser'
 import { ArrowRightOnRectangleIcon } from '@heroicons/vue/24/outline'
 import { onMounted } from 'vue'
 
