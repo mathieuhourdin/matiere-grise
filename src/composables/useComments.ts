@@ -1,18 +1,8 @@
 import { type User, useUser } from '@/composables/useUser'
+import { type Comment } from '@/types/models'
 import { fetchWrapper } from '@/helpers'
 
-interface Comment {
-  id?: string
-  article_id: string
-  created_at: Date
-  content: string
-  start_index: number
-  end_index: number
-  author: User
-  editing: boolean
-}
-
-const createComment = async (articleId: string, startIndex: number) => {
+const createComment = async (articleId: string, startIndex: number): Promise<Comment> => {
   const { user } = useUser()
   const payload = {
     start_index: startIndex,
@@ -27,6 +17,7 @@ const createComment = async (articleId: string, startIndex: number) => {
     return comment;
   } catch (error) {
       console.log("error : ", error);
+      throw error;
   }
 }
 
@@ -49,7 +40,7 @@ const updateComment = async (comment: Comment) => {
     }
 }
 
-const batchUpdateComments = async (comments: [Comment]) => {
+const batchUpdateComments = async (comments: Comment[]) => {
     console.log("comments : ", comments)
     comments.map((comment) => updateComment(comment));
 }

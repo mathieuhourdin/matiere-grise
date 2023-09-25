@@ -73,6 +73,7 @@ import CommentCard from '@/components/CommentCard.vue'
 import { ref, computed, onMounted, watch, toRefs } from 'vue'
 import { useComments } from '@/composables/useComments.ts'
 import { useUser } from '@/composables/useUser.ts'
+import { type Comment } from '@/types/models'
 
 const emit = defineEmits(['change', 'changeComments'])
 
@@ -92,31 +93,29 @@ const props = withDefaults(
 interface Char {
   id: number
   char: string
+  comment?: Comment
 }
 
 interface Line {
-  startIndex: number
-  text: [Char]
+  id: number
+  words: {id: number, text: Char[]}[]
+  comments: Comment[]
+  lineStyle?: string | null
 }
 
 /******************* Manage cursor **********************/
-const selectCursorPosition = (letter) => {
+const selectCursorPosition = (letter: Char) => {
   console.log('selectCursorPosition letter : ', letter)
   if (props.editable) currentCursorPosition.value = { id: letter.id, char: letter.char }
 }
-const currentCursorPosition = ref(null)
+const currentCursorPosition = ref<Char | null>(null)
 
 /******************** Manage text ***********************/
 
-const text: [Char] = ref([]) // main data, list of single cars
+const text = ref<Char[]>([]) // main data, list of single cars
 
-const lines: [Line] = computed(() => {
-  return calculateLinesFromText(text.value)
-})
-
-const calculateLinesFromText = (textString) => {
-  console.log('textArrayFromString textString: ', textString)
-  let lines = [{ id: 0, words: [{ id: 0, text: [] }], comments: [] }]
+const lines = computed((): Line[] => {
+  let lines: Line[] = [{ id: 0, words: [{ id: 0, text: [] }], comments: [] }]
   let linesIndex = 0
   let wordsIndex = 0
   for (var i = 0; i < text.value.length; i++) {
@@ -126,7 +125,7 @@ const calculateLinesFromText = (textString) => {
       lines.push({
         id: linesIndex,
         words: [{ id: 0, text: [] }],
-        lineStyle: (i < text.value.length -1) ? text.value[i+1].char : null,
+        lineStyle: i < text.value.length - 1 ? text.value[i + 1].char : null,
         comments: []
       })
     }
@@ -144,38 +143,42 @@ const calculateLinesFromText = (textString) => {
     }
   }
   return lines
-}
+})
 
-const moveCommentsAfterTextChange = (offset) => {
+const moveCommentsAfterTextChange = (offset: number) => {
   if (offset == 1) {
     comments.value.forEach((comment) => {
-      if (comment.start_index > currentCursorPosition.value.id) comment.start_index += 1;
-      if (comment.end_index > currentCursorPosition.value.id) comment.end_index += 1;
-    });
+      if (currentCursorPosition.value && comment.start_index > currentCursorPosition.value.id)
+        comment.start_index += 1
+      if (currentCursorPosition.value && comment.end_index > currentCursorPosition.value.id)
+        comment.end_index += 1
+    })
   } else if (offset == -1) {
     comments.value.forEach((comment) => {
-      if (comment.start_index >= currentCursorPosition.value.id) comment.start_index -= 1;
-      if (comment.end_index >= currentCursorPosition.value.id) comment.end_index -= 1;
-    });
+      if (currentCursorPosition.value && comment.start_index >= currentCursorPosition.value.id)
+        comment.start_index -= 1
+      if (currentCursorPosition.value && comment.end_index >= currentCursorPosition.value.id)
+        comment.end_index -= 1
+    })
   }
 }
 
-const insertChar = (key) => {
+const insertChar = (key: any) => {
+  if (!currentCursorPosition.value) return
   text.value
     .filter((letter) => {
-      return letter.id >= currentCursorPosition.value.id + 1
+      return currentCursorPosition.value && letter.id >= currentCursorPosition.value.id + 1
     })
     .forEach((letter) => (letter.id += 1))
   text.value.splice(currentCursorPosition.value.id + 1, 0, {
     id: currentCursorPosition.value.id + 1,
-    char: key,
-    line: 0
+    char: key
   })
-  moveCommentsAfterTextChange(1);
+  moveCommentsAfterTextChange(1)
   currentCursorPosition.value.id += 1
 }
 
-const handleWrite = (event) => {
+const handleWrite = (event: any) => {
   console.log('Writes : ', event.key)
   if (currentCursorPosition.value === null) return
   const key = event.key
@@ -189,7 +192,7 @@ const handleWrite = (event) => {
   } else if (key == 'Backspace') {
     text.value.splice(currentCursorPosition.value.id, 1)
     text.value
-      .filter((letter) => letter.id > currentCursorPosition.value.id)
+      .filter((letter) => currentCursorPosition.value && letter.id > currentCursorPosition.value.id)
       .forEach((letter) => (letter.id -= 1))
     moveCommentsAfterTextChange(-1)
     currentCursorPosition.value.id -= 1
@@ -222,67 +225,66 @@ const pasteClipboard = async () => {
   }
 }
 
-const handleRelease = (event) => {
+const handleRelease = (event: any) => {
   if (event.key == 'Control') isControlOn.value = false
 }
 
 /***************** Comments **********************/
 
-const { createComment, batchUpdateComments } = useComments();
+const { createComment, batchUpdateComments } = useComments()
 
-const comments = ref([])
-const debouncedEditCommentTimeout = ref(null);
+const comments = ref<Comment[]>([])
+const debouncedEditCommentTimeout = ref<number | null>(null)
 
-const loadComments = (extComments) => {
+const loadComments = (extComments: Comment[]) => {
   console.log('Comments loading : ', extComments)
   comments.value = extComments
 }
 
 const addComment = async () => {
   console.log('Add Comment')
-  const newComment = await createComment(props.resourceId, menuIndex.value);
+  if (!props.resourceId || !menuIndex.value) return
+  const newComment = await createComment(props.resourceId, menuIndex.value)
   comments.value.push(newComment)
 }
 
 watch(
   comments,
   (comments) => {
-    console.log('Watch comments triggered : ', comments.value)
+    console.log('Watch comments triggered : ', comments)
     if (mounted.value) {
-      console.log("Comments : ", comments);
-      emit('changeComments', comments.value)
-      clearTimeout(debouncedEditCommentTimeout.value);
-      debouncedEditCommentTimeout.value = setTimeout(() => batchUpdateComments(comments), 1000);
+      console.log('Comments : ', comments)
+      emit('changeComments', comments)
+      if (debouncedEditCommentTimeout.value !== null)
+        clearTimeout(debouncedEditCommentTimeout.value)
+      debouncedEditCommentTimeout.value = setTimeout(() => batchUpdateComments(comments), 1000)
     }
   },
   { deep: true }
 )
 
-watch(
-  toRefs(props).extComments,
-  (extComments) => {
-    comments.value = extComments
-  },
-)
+watch(toRefs(props).extComments, (extComments) => {
+  comments.value = extComments
+})
 
 /*****************  Manage dropdown menu ******************/
 const menuOpen = ref(false)
-const menuIndex = ref(null)
+const menuIndex = ref<number | null>(null)
 
 const menuStyle = ref({
   position: 'absolute',
   'z-index': 90,
-  top: 0,
-  left: 0,
+  top: '0px',
+  left: '0px',
   height: '106px',
   width: '260px'
 })
 
 const { user } = useUser()
 
-const rightClick = (event, index) => {
+const rightClick = (event: any, index: number) => {
   event.preventDefault()
-  if (!user.value) return;
+  if (!user.value) return
   currentCursorPosition.value = null
   menuStyle.value.top = `${event.layerY}px`
   menuStyle.value.left = `${event.layerX}px`
@@ -293,7 +295,7 @@ const rightClick = (event, index) => {
 }
 
 /*****************  Interact with parent ******************/
-const textArrayFromString = (textString) => {
+const textArrayFromString = (textString: string) => {
   console.log('textArrayFromString textString: ', textString)
   text.value = []
   if (textString === undefined || textString == '') {
@@ -307,7 +309,7 @@ const textArrayFromString = (textString) => {
   }
 }
 
-const formatText = (textArray: [Char]) => {
+const formatText = (textArray: Char[]) => {
   return textArray.reduce((resultText, char) => resultText + char.char, '')
 }
 
