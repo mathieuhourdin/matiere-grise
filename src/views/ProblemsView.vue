@@ -1,9 +1,6 @@
 <template>
   <div>
     <div v-if="problems" class="m-4">
-      <div class="underline italic" @click="createNewDraftProblemAndRedirect">
-        Ajouter une problématique
-      </div>
       <CategoryProblemsCarousel
         class="mt-4"
         v-for="category in displayedCategoriesWithProblems.sort(
@@ -19,24 +16,16 @@
 <script setup lang="ts">
 import CategoryProblemsCarousel from '@/components/CategoryProblemsCarousel.vue'
 import { useProblem } from '@/composables/useProblem'
-import { useRouter } from 'vue-router'
 import { computed, onMounted, ref } from 'vue'
 import { useCategories } from '@/composables/useCategories'
 import { type Problem, type Category } from '@/types/models'
 
-const router = useRouter()
-const { getProblems, newProblem, createProblem } = useProblem()
+const { getProblems } = useProblem()
 const problems = ref<Problem[] | null>(null)
 
 const { categories } = useCategories()
 
-const createNewDraftProblemAndRedirect = async () => {
-  const problem = newProblem()
-  const createdProblem = await createProblem(problem)
-  router.push({ path: '/thought_outputs/' + createdProblem.id, query: { editing: "true" } })
-}
-
-type CategoryWithProblems = Category & { problems: Problem[], problems_count: number};
+type CategoryWithProblems = Category & { problems: Problem[]; problems_count: number }
 const displayedCategoriesWithProblems = computed(() => {
   const returnCategories = categories.value.map((category: Category) => {
     category.problems = getProblemsForCategory(category)
