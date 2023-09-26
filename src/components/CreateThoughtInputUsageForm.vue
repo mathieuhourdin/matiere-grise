@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div>{{ user.first_name }}</div>
+    <div v-if="user">Nouvelle utilisation par {{ user.first_name }} {{ user.last_name }}</div>
     <ThoughtInputsList
       v-if="!selectedThoughtInput"
       :thought-inputs="thoughtInputs"
@@ -21,10 +21,11 @@
 import ActionButton from '@/components/Ui/ActionButton.vue'
 import TextAreaInput from '@/components/Ui/TextAreaInput.vue'
 import ThoughtInputsList from '@/components/ThoughtInputsList.vue'
-import { useUser } from '@/composables/useUser.ts'
-import { useThoughtInputs } from '@/composables/useThoughtInputs.ts'
-import { useThoughtInputUsages } from '@/composables/useThoughtInputUsages.ts'
+import { useUser } from '@/composables/useUser'
+import { useThoughtInputs } from '@/composables/useThoughtInputs'
+import { useThoughtInputUsages } from '@/composables/useThoughtInputUsages'
 import { ref, onMounted } from 'vue'
+import { type ApiThoughtInput } from '@/types/models'
 const { user } = useUser()
 
 const emit = defineEmits(['close', 'refresh'])
@@ -32,14 +33,15 @@ const props = defineProps<{
   thoughtOutput: any
 }>()
 
-const thoughtInputs = ref([])
-const selectedThoughtInput = ref(null)
+const thoughtInputs = ref<ApiThoughtInput[]>([])
+const selectedThoughtInput = ref<ApiThoughtInput | null>(null)
 const usage_reason = ref('')
 
 const { createThoughtInputUsage } = useThoughtInputUsages()
 
 const localCreateThoughtInputUsage = async () => {
   console.log('create')
+  if (!selectedThoughtInput.value) return
   const thought_input_usage = {
     thought_output_id: props.thoughtOutput.id,
     thought_input_id: selectedThoughtInput.value.id,
@@ -52,9 +54,12 @@ const localCreateThoughtInputUsage = async () => {
 
 const { getUserThoughtInputs } = useThoughtInputs()
 
-const selectThoughtInput = (thoughtInput) => {
+const selectThoughtInput = (thoughtInput: ApiThoughtInput) => {
   selectedThoughtInput.value = thoughtInput
 }
 
-onMounted(async () => (thoughtInputs.value = await getUserThoughtInputs(user.value.id)))
+onMounted(async () => {
+  if (!user.value || !user.value.id) return
+  thoughtInputs.value = await getUserThoughtInputs(user.value.id)
+})
 </script>

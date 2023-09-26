@@ -6,6 +6,8 @@ const newThoughtOutput = (): ApiThoughtOutput => {
     id: '',
     title: '',
     description: '',
+    image_url: '',
+    progress: 0,
     content: '',
     publishing_state: '',
     output_type: ''

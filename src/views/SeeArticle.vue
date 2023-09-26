@@ -120,7 +120,8 @@ import {
   type ThoughtOutput,
   type Article,
   type ThoughtInputUsage,
-  type ApiThoughtOutput
+  type ApiThoughtOutput,
+  type Comment
 } from '@/types/models'
 const props = defineProps<{
   id: string
@@ -220,7 +221,7 @@ const thoughtOutputUser: Ref<User | null> = ref<User | null>(null)
 
 /************** comments section *****************/
 const { getCommentsForThoughtOutput } = useComments()
-const comments = ref([])
+const comments = ref<Comment[]>([])
 
 onMounted(async () => {
   thoughtOutput.value = await getThoughtOutput(props.id)

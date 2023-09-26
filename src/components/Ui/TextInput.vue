@@ -15,7 +15,7 @@
 const emit = defineEmits(['update:modelValue', 'input'])
 const props = withDefaults(defineProps<{
   label?: string
-  modelValue?: string
+  modelValue?: string | Date | number
   placeholder?: string
   type?: string
 }>(),

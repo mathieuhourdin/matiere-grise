@@ -46,7 +46,7 @@
 import TextInput from '@/components/Ui/TextInput.vue'
 import ActionButton from '@/components/Ui/ActionButton.vue'
 import { ref } from 'vue'
-import { useThoughtInputs } from '@/composables/useThoughtInputs.ts'
+import { useThoughtInputs } from '@/composables/useThoughtInputs'
 
 const emit = defineEmits(['close'])
 

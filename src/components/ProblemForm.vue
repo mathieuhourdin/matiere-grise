@@ -42,8 +42,8 @@
 import SelectInput from '@/components/Ui/SelectInput.vue'
 import TextInput from '@/components/Ui/TextInput.vue'
 import NumberInput from '@/components/Ui/NumberInput.vue'
-import { useCategories } from '@/composables/useCategories.ts'
-import { Problem } from '@/types/models'
+import { useCategories } from '@/composables/useCategories'
+import { type Problem } from '@/types/models'
 import { computed } from 'vue'
 
 const emit = defineEmits(['change'])
@@ -55,8 +55,8 @@ const { categories } = useCategories();
 const categoryOptions = computed(() => {
   return categories.value.map((category) => ({ text: category.display_name, value: category.id }))
 })
-const emitChange = (field, event) => {
-  let problem = { ...props.problem }
+const emitChange = (field: string, event: any) => {
+  let problem: any = { ...props.problem }
   problem[field] = event
   emit('change', problem)
 }

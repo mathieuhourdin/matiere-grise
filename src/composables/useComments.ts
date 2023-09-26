@@ -10,7 +10,7 @@ const createComment = async (articleId: string, startIndex: number): Promise<Com
   }
   try {
     const response = await fetchWrapper.post('/thought_outputs/' + articleId + '/comments', payload)
-    const comment = response.data;
+    const comment = formatComment(response.data);
     if (user.value && comment.author_id == user.value.id) {
         comment.author = user.value;
     }
@@ -21,20 +21,27 @@ const createComment = async (articleId: string, startIndex: number): Promise<Com
   }
 }
 
-const getCommentsForThoughtOutput = async (articleId: string, withUsers: boolean = true) => {
+const formatComment = (apiComment: any): Comment => {
+    apiComment.updated_at = new Date(apiComment.updated_at.split(".")[0])
+    apiComment.created_at = new Date(apiComment.created_at.split(".")[0])
+    return apiComment as Comment
+}
+
+const getCommentsForThoughtOutput = async (articleId: string, withUsers: boolean = true): Promise<Comment[]> => {
     const userParams = withUsers ? "?author=true" : "";
     try {
         const response = await fetchWrapper.get('/thought_outputs/' + articleId + '/comments' + userParams);
-        return response.data;
+        return response.data.map((comment: any) => formatComment(comment))
     } catch (error) {
         console.log("error : ", error);
+        throw error;
     }
 }
 
 const updateComment = async (comment: Comment) => {
     try {
         const response = await fetchWrapper.put('/comments/' + comment.id, comment);
-        return response.data;
+        return formatComment(response.data);
     } catch (error) {
         console.log("error : ", error)
     }

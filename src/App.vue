@@ -3,8 +3,8 @@ import { RouterLink, RouterView } from 'vue-router'
 import AppHeader from './components/AppHeader.vue'
 import SidebarMenu from '@/components/SidebarMenu.vue'
 import { onMounted } from 'vue'
-import { useCategories } from'@/composables/useCategories.ts'
-import { useMenu } from '@/composables/useMenu.ts'
+import { useCategories } from'@/composables/useCategories'
+import { useMenu } from '@/composables/useMenu'
 const { menuOpen } = useMenu()
 const { loadCategories } = useCategories()
 onMounted(async () => await loadCategories())

@@ -15,7 +15,7 @@
 const emit = defineEmits(['update:modelValue', 'input'])
 const props = defineProps<{
   label?: string
-  modelValue?: string
+  modelValue?: number
   placeholder?: string
 }>()
 const onInput = (event: any) => {

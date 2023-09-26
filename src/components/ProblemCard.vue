@@ -5,8 +5,8 @@
         <img class="h-28 mx-auto mb-4" :src="problem.image_url" />
         <div class="h-full">
           <div class="mb-2">{{ problem.title }}</div>
-          <div class="text-2xs italic" style="margin-top: -8px">
-            {{ problem.owner_id }}
+          <div v-if="problemAuthor" class="text-2xs italic" style="margin-top: -8px">
+            {{ problemAuthor.first_name }} {{ problemAuthor.last_name }}
           </div>
           <div class="text-2xs mb-auto">{{ formatText(problem.description) }}</div>
           <div class="flex mt-2">
@@ -20,17 +20,18 @@
 </template>
 
 <script setup lang="ts">
-import { Problem } from '@/composables/useProblem.ts'
-import { useThoughtInputUsages } from '@/composables/useThoughtInputUsages.ts'
+import { type Problem, type ThoughtInput, type User } from '@/types/models'
+import { useThoughtInputUsages } from '@/composables/useThoughtInputUsages'
 import { onMounted, ref } from 'vue'
+import { useUser } from '@/composables/useUser'
 
 const props = defineProps<{
   problem: Problem
 }>()
 
-const formatDate = (date: string) => {
-  let formatDate = new Date(date.split(".")[0])
-  return formatDate.toLocaleString('fr-FR', {
+const formatDate = (date?: Date) => {
+  if (!date) return ''
+  return date.toLocaleString('fr-FR', {
     hour: 'numeric',
     weekday: 'short',
     day: 'numeric',
@@ -39,16 +40,28 @@ const formatDate = (date: string) => {
   })
 }
 
-const formatText = (text) => {
+const problemAuthor = ref<User | null>(null)
+
+const formatText = (text: string) => {
   return text.length > 200 ? text.slice(0, 150) + '...' : text
 }
 
-const thoughtInputs = ref([])
+const thoughtInputs = ref<ThoughtInput[]>([])
 const { getThoughtInputUsagesForThoughtOutput } = useThoughtInputUsages()
 const loadThoughtInputs = async () => {
+  if (!props.problem.id) return
   thoughtInputs.value = await getThoughtInputUsagesForThoughtOutput(props.problem.id)
 }
 
-onMounted(() => loadThoughtInputs())
+const { getUserById } = useUser()
 
+const loadUser = async () => {
+  if (!props.problem.author_id) return
+  problemAuthor.value = await getUserById(props.problem.author_id)
+}
+
+onMounted(async () => {
+  await loadThoughtInputs()
+  await loadUser()
+})
 </script>

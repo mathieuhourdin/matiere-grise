@@ -5,9 +5,9 @@ export const fetchWrapper = {
   delete: request('DELETE')
 }
 
-function request(method) {
-  return (url, body) => {
-    const requestOptions = {
+function request(method: string) {
+  return (url: string, body?: any) => {
+    const requestOptions: any = {
       method,
       headers: {}
     }
@@ -33,8 +33,8 @@ function request(method) {
     return {}
   }
 }*/
-function handleResponse(response) {
-  return response.text().then((text) => {
+function handleResponse(response: any) {
+  return response.text().then((text: string) => {
     const data = text && JSON.parse(text)
 
     if (!response.ok) {

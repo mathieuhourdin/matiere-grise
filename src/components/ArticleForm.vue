@@ -68,8 +68,8 @@ import SelectInput from '@/components/Ui/SelectInput.vue'
 import TextInput from '@/components/Ui/TextInput.vue'
 import NumberInput from '@/components/Ui/NumberInput.vue'
 import TextAreaInput from '@/components/Ui/TextAreaInput.vue'
-import { useCategories } from '@/composables/useCategories.ts'
-import { Article } from '@/composables/useArticle.ts'
+import { useCategories } from '@/composables/useCategories'
+import { type Article } from '@/types/models'
 import { ref, computed } from 'vue'
 
 const emit = defineEmits(['change'])
@@ -88,8 +88,8 @@ const categoryOptions = computed(() => {
   return categories.value.map((category) => ({ text: category.display_name, value: category.id }))
 })
 
-const emitChange = (field, event) => {
-  let article = { ...props.article }
+const emitChange = (field: string, event: any) => {
+  let article: any = { ...props.article }
   article[field] = event
   emit('change', article)
 }

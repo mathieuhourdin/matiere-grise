@@ -26,8 +26,11 @@ export interface ThoughtOutput {
   image_url: string
   author_id?: string
   publishing_state: string
+  category_id?: string
   output_type: string
   progress?: number
+  created_at?: Date
+  updated_at?: Date
 }
 
 export type ApiThoughtOutput = ApiObject &
@@ -41,6 +44,7 @@ export interface Article extends ThoughtOutput {
   content: string
   potential_improvements: string
   author_id?: string
+  author?: User
   progress: number
   maturing_state: string
   publishing_state: string
@@ -103,4 +107,7 @@ export interface Comment {
   content: string
   created_at: Date
   updated_at: Date
+  author_id?: string
+  author?: User
+  editing: boolean
 }

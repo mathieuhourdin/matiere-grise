@@ -17,12 +17,13 @@
 import TextInput from '@/components/Ui/TextInput.vue'
 import ActionButton from '@/components/Ui/ActionButton.vue'
 import { ref } from 'vue'
-import { useUser } from '@/composables/useUser.ts'
+import { useUser } from '@/composables/useUser'
 
 const { createNewUser } = useUser()
 
 const newUser = ref({
   username: '',
+  email: '',
   first_name: '',
   last_name: '',
   handle: '',

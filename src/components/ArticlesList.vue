@@ -33,7 +33,12 @@
         :type="isSelected('drft')"
         >Mes brouillons</ActionButton
       >
-      <RoundLinkButton class="md:absolute mx-auto md:mx-0" v-if="user" @click="createDraftArticleAndRedirect">+</RoundLinkButton>
+      <RoundLinkButton
+        class="md:absolute mx-auto md:mx-0"
+        v-if="user"
+        @click="createDraftArticleAndRedirect"
+        >+</RoundLinkButton
+      >
     </div>
     <div class="text-center mb-8 text-sm">{{ maturingStateTexts(tab) }}</div>
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -56,9 +61,10 @@ import { ref, toRefs, onMounted } from 'vue'
 import ArticleCard from '@/components/ArticleCard.vue'
 import RoundLinkButton from '@/components/Ui/RoundLinkButton.vue'
 import ActionButton from '@/components/Ui/ActionButton.vue'
-import { useArticle } from '@/composables/useArticle.ts'
+import { useArticle } from '@/composables/useArticle'
 import { useRouter, useRoute } from 'vue-router'
-import { useUser } from '@/composables/useUser.ts'
+import { useUser } from '@/composables/useUser'
+import { type Article } from '@/types/models'
 
 const props = defineProps<{
   maturingState?: string
@@ -66,10 +72,11 @@ const props = defineProps<{
 
 const articles = ref([])
 const draftArticles = ref([])
-const tab = ref(null)
+const tab = ref<string | null>(null)
 
-const maturingStateTexts = (maturingState) => {
-  const match = {
+const maturingStateTexts = (maturingState: string | null) => {
+  if (!maturingState) return ''
+  const match: any = {
     idea: "Simples idées qu'on a eu en passant, et qui peuvent être reprises par d'autres",
     rvew: "Articles déjà bien strucutrés, qui ont besoin d'être relus pour gagner en qualité",
     fnsh: 'Articles qui peuvent donner lieu à des discussions mais qui ont atteint un stade abouti, lisible par le grand public'
@@ -79,19 +86,20 @@ const maturingStateTexts = (maturingState) => {
 
 const router = useRouter()
 const route = useRoute()
-const updateTab = (tabValue) => {
+const updateTab = (tabValue: string) => {
   tab.value = tabValue
-  router.push({ path: '/', query: { maturing_state: tabValue} })
+  router.push({ path: '/', query: { maturing_state: tabValue } })
 }
 
-const { getArticles, newArticle, createArticle } = useArticle();
+const { getArticles, newArticle, createArticle } = useArticle()
 
-const filterArticles = (filter, articles) => {
+const filterArticles = (filter: string | null, articles: Article[]) => {
+  if (!filter) return []
   if (filter == 'drft') return draftArticles.value
   return articles.filter((article) => article.maturing_state == filter)
 }
 
-const isSelected = (type) => {
+const isSelected = (type: string) => {
   return tab.value == type ? 'valid' : 'abort'
 }
 
@@ -100,9 +108,9 @@ const isSelected = (type) => {
 const { user } = useUser()
 
 const createDraftArticleAndRedirect = async () => {
-  const draftArticle = newArticle();
-  const createdArticle = await createArticle(draftArticle.value);
-  router.push({ path: '/articles/' + createdArticle.id, query: { editing: true }})
+  const draftArticle = newArticle()
+  const createdArticle = await createArticle(draftArticle.value)
+  router.push({ path: '/articles/' + createdArticle.id, query: { editing: 'true' } })
 }
 
 /*********************/
@@ -110,7 +118,11 @@ const createDraftArticleAndRedirect = async () => {
 onMounted(async () => {
   articles.value = await getArticles({ author: true })
   draftArticles.value = await getArticles({ author: false, drafts: true })
-  tab.value = route.query.maturing_state || 'fnsh'
+  if (typeof route.query.maturing_state === 'string') {
+    tab.value = route.query.maturing_state
+  } else {
+    tab.value = 'fnsh'
+  }
   updateTab(tab.value)
 })
 </script>

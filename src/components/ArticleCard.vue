@@ -22,15 +22,17 @@
 <script setup lang="ts">
 import ProgressBar from '@/components/ProgressBar.vue'
 import { computed } from 'vue'
+import { type User } from '@/types/models'
 const props = defineProps<{
-  uuid: String
-  title: String
-  description: String
-  imageUrl: String
-  progress: Number
-  author?: Object
+  uuid?: string
+  title: string
+  description: string
+  imageUrl: string
+  progress: number
+  author?: User
 }>()
 const articleLink = computed(() => {
+  if (!props.uuid) return ''
   return '/thought_outputs/' + props.uuid
 })
 </script>

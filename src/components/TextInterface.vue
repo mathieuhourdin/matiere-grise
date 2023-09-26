@@ -30,7 +30,6 @@
             <div v-for="(word, windex) in line.words" :key="windex" class="flex flex-wrap">
               <div
                 v-for="(letter, tindex) in word.text"
-                :id="letter.id"
                 :key="tindex"
                 class="border-blue-400"
                 :class="{
@@ -71,8 +70,8 @@
 <script setup lang="ts">
 import CommentCard from '@/components/CommentCard.vue'
 import { ref, computed, onMounted, watch, toRefs } from 'vue'
-import { useComments } from '@/composables/useComments.ts'
-import { useUser } from '@/composables/useUser.ts'
+import { useComments } from '@/composables/useComments'
+import { useUser } from '@/composables/useUser'
 import { type Comment } from '@/types/models'
 
 const emit = defineEmits(['change', 'changeComments'])
@@ -81,7 +80,7 @@ const props = withDefaults(
   defineProps<{
     resourceId?: string
     fullText: string
-    extComments?: Array
+    extComments?: Comment[]
     editable?: boolean
   }>(),
   {
@@ -272,7 +271,7 @@ const menuOpen = ref(false)
 const menuIndex = ref<number | null>(null)
 
 const menuStyle = ref({
-  position: 'absolute',
+  position: 'absolute' as 'absolute',
   'z-index': 90,
   top: '0px',
   left: '0px',

@@ -7,7 +7,7 @@
 </template>
 
 <script setup lang="ts">
-import { useMenu } from '@/composables/useMenu.ts'
+import { useMenu } from '@/composables/useMenu'
 const props = defineProps<{
   to: string
 }>()

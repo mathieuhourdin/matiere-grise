@@ -1,7 +1,9 @@
 <template>
   <div class="bg-slate-100 border p-1 m-1 rounded shadow-xl">
     <div class="flex">
-      <div class="text-xs mt-0.5 font-bold">{{ author.first_name }} {{ author.last_name }}</div>
+      <div v-if="author" class="text-xs mt-0.5 font-bold">
+        {{ author.first_name }} {{ author.last_name }}
+      </div>
       <div class="text-2xs italic ml-auto mr-1 my-auto">{{ formattedDate }}</div>
     </div>
     <div v-if="editing">
@@ -32,22 +34,19 @@
 </template>
 
 <script setup lang="ts">
-import TextAreaInput from '@/components/Ui/TextAreaInput.vue'
 import ActionButton from '@/components/Ui/ActionButton.vue'
+import { type User } from '@/types/models'
 import { computed, toRefs } from 'vue'
 const emit = defineEmits(['update:modelValue', 'validate', 'abort'])
 const props = defineProps<{
   editing: boolean
   modelValue: string
-  author: Object
-  createdAt?: string
+  author?: User
+  createdAt?: Date
 }>()
 const formattedDate = computed(() => {
-  console.log(`date : ${props.createdAt}`)
-  console.log(toRefs(props).createdAt.value.split('.')[0])
-  const jsDate = new Date(toRefs(props).createdAt.value.split('.')[0])
-  console.log(jsDate)
-  return jsDate.toLocaleString('fr-FR', {
+  if (!props.createdAt) return ''
+  return props.createdAt.toLocaleString('fr-FR', {
     hour: 'numeric',
     weekday: 'short',
     day: 'numeric',
@@ -55,7 +54,7 @@ const formattedDate = computed(() => {
     year: '2-digit'
   })
 })
-const onInput = (event) => {
+const onInput = (event: any) => {
   emit('update:modelValue', event.target.value)
 }
 const validateComment = () => {

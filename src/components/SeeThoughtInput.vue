@@ -23,14 +23,14 @@
     <TextInterface
       class="border text-sm"
       :full-text="thoughtInput.resource_comment"
-      :editable="isThoughtOutputAuthor"
+      :editable="isThoughtInputAuthor"
     />
     <hr class="border-top border-zinc-400 my-4" />
     <div class="text-xs">Pourquoi la lire</div>
     <TextInterface
       class="border text-sm"
       :full-text="thoughtInput.input_comment"
-      :editable="isThoughtOutputAuthor"
+      :editable="isThoughtInputAuthor"
     />
   </div>
 </template>
@@ -38,17 +38,24 @@
 <script setup lang="ts">
 import TextInterface from '@/components/TextInterface.vue'
 import ProgressBar from '@/components/ProgressBar.vue'
-import { useUser } from '@/composables/useUser.ts'
-import { type ThoughtInput } from '@/types/models'
-import { ref, onMounted } from 'vue'
+import { useUser } from '@/composables/useUser'
+import { type ThoughtInput, type User } from '@/types/models'
+import { ref, computed, onMounted } from 'vue'
 
-const { getUserById } = useUser()
+const { getUserById, user } = useUser()
 
 const props = defineProps<{
   thoughtInput: ThoughtInput
 }>()
 
-const inputUser = ref(null)
+const inputUser = ref<User | null>(null)
 
-onMounted(async () => (inputUser.value = await getUserById(props.thoughtInput.input_user_id)))
+const isThoughtInputAuthor = computed(() => {
+  return user.value ? props.thoughtInput.input_user_id === user.value.id : false
+})
+
+onMounted(async () => {
+  if (props.thoughtInput.input_user_id)
+    inputUser.value = await getUserById(props.thoughtInput.input_user_id)
+})
 </script>

@@ -1,7 +1,8 @@
 import { fetchWrapper } from '@/helpers'
+import { type Category } from '@/types/models'
 import { ref } from 'vue'
 
-const categories = ref([])
+const categories = ref<Category[]>([])
 
 const getCategories = async () => {
     const response = await fetchWrapper.get('/categories')

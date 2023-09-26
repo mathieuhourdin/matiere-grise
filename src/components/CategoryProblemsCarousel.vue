@@ -12,8 +12,8 @@
 </template>
 
 <script setup lang="ts">
-import { Category, Problem } from '@/types/models'
-import { useProblem } from '@/composables/useProblem.ts'
+import { type Category, type Problem } from '@/types/models'
+import { useProblem } from '@/composables/useProblem'
 import { useRouter } from 'vue-router'
 const { newProblem, createProblem } = useProblem()
 import ProblemCard from '@/components/ProblemCard.vue'
@@ -28,10 +28,10 @@ const createNewDraftProblemAndRedirect = async () => {
   const problem = newProblem()
   problem.category_id = props.category.id
   const createdProblem = await createProblem(problem)
-  router.push({ path: '/thought_outputs/' + createdProblem.id, query: { editing: true } })
+  router.push({ path: '/thought_outputs/' + createdProblem.id, query: { editing: 'true' } })
 }
 
-const getCategoryName = (categoryName) => {
+const getCategoryName = (categoryName: string) => {
   return categoryName == 'default' ? 'Autres' : categoryName
 }
 </script>

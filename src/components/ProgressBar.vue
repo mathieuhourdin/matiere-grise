@@ -11,7 +11,7 @@
 <script setup lang="ts">
   import { computed } from 'vue';
   const props = defineProps<{
-    progressValue: Number,
+    progressValue: number,
   }>();
   const progressColor = computed(() => {
     if (props.progressValue > 70) return 'bg-green-400';

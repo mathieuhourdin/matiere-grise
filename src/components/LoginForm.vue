@@ -16,10 +16,8 @@
 <script setup lang="ts">
 import TextInput from '@/components/Ui/TextInput.vue'
 import ActionButton from '@/components/Ui/ActionButton.vue'
-import { fetchWrapper } from '@/helpers'
 import { ref } from 'vue'
-import router from '@/router'
-import { useUser } from '@/composables/useUser.ts'
+import { useUser } from '@/composables/useUser'
 
 const { authUser } = useUser()
 const username = ref('')
