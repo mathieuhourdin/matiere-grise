@@ -2,7 +2,7 @@
   <div>
     <div>
       <img
-        :src="thoughtInput.resource_image_link"
+        :src="thoughtInput.resource_image_url"
         class="border border-slate-300 dark:border-zinc-700 rounded-xl ml-auto mr-auto"
         style="max-height: 10rem"
       />
@@ -16,7 +16,7 @@
     </div>
     <div class="md:flex my-8">
       <ProgressBar :progress-value="thoughtInput.input_progress" class="m-2 w-1/3" />
-      <a class="ml-auto underline" :href="thoughtInput.resource_link"> ressource externe</a>
+      <a class="ml-auto underline" :href="thoughtInput.resource_external_content_url"> ressource externe</a>
     </div>
     <hr class="border-top border-zinc-400 my-4" />
     <div class="text-xs">Description de l'oeuvre</div>

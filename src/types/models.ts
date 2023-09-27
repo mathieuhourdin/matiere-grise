@@ -73,11 +73,14 @@ export interface Problem extends ThoughtOutput {
 export interface ThoughtInput {
   id?: string
   resource_title: string
+  resource_subtitle?: string
+  resource_content?: string
   resource_author_name: string
   resource_type: string
-  resource_link: string
-  resource_image_link: string
+  resource_external_content_url: string
+  resource_image_url: string
   resource_comment: string
+  resource_category_id?: string
   input_progress: number
   input_date: Date
   input_comment: string
