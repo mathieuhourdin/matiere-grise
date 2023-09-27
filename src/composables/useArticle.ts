@@ -1,30 +1,6 @@
 import { ref } from 'vue'
 import { fetchWrapper } from '@/helpers'
-
-export interface ThoughtOutput {
-    title: string
-    description: string
-    content: string
-    author_id?: string
-    publishing_state: string
-    output_type: string
-}
-
-export interface Article extends ThoughtOutput {
-  title: string
-  description: string
-  content: string
-  potential_improvements: string
-  author_id?: string
-  progress: number
-  maturing_state: string
-  publishing_state: string
-  parent_id?: string
-  gdoc_url: string
-  image_url: string
-  url_slug: string
-  output_type: string
-}
+import { type Article } from '@/types/models'
 
 export function useArticle() {
   const newArticle = () => {

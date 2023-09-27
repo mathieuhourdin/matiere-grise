@@ -169,7 +169,7 @@ onMounted(() => loadBiblio())
 
 /************** thoughtOutput section ******************/
 const { newThoughtOutput, getThoughtOutput, updateThoughtOutput } = useThoughtOutput()
-const debouncedUpdate = ref<string | null>(null)
+const debouncedUpdate = ref<number | null>(null)
 const thoughtOutput: Ref<ApiThoughtOutput> = ref<ApiThoughtOutput>(newThoughtOutput())
 const router = useRouter()
 watch(

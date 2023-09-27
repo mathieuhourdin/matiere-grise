@@ -1,15 +1,7 @@
 import { ref } from 'vue'
 import router from '@/router'
 import { fetchWrapper } from '@/helpers'
-
-export interface User {
-  id?: string
-  email: string
-  first_name: string
-  last_name: string
-  handle: string
-  password?: string
-}
+import { type User } from '@/types/models'
 
 const user = ref<User | null>(null)
 

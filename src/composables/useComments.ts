@@ -1,4 +1,4 @@
-import { type User, useUser } from '@/composables/useUser'
+import { useUser } from '@/composables/useUser'
 import { type Comment } from '@/types/models'
 import { fetchWrapper } from '@/helpers'
 
