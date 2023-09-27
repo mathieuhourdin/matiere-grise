@@ -14,7 +14,7 @@
         >
       </div>
       <div class="mt-3 text-xl font-bold">{{ title }}</div>
-      <div class="opacity-70">{{ description }}</div>
+      <div class="opacity-70">{{ subtitle }}</div>
     </router-link>
   </div>
 </template>
@@ -26,7 +26,7 @@ import { type User } from '@/types/models'
 const props = defineProps<{
   uuid?: string
   title: string
-  description: string
+  subtitle: string
   imageUrl: string
   progress: number
   author?: User

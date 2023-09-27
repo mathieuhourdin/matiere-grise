@@ -5,19 +5,19 @@ import { type Article } from '@/types/models'
 export function useArticle() {
   const newArticle = () => {
     return ref<Article>({
-      title: '',
-      description: '',
-      content: '',
-      potential_improvements: '',
+      resource_title: '',
+      resource_subtitle: '',
+      resource_content: '',
+      resource_comment: '',
       author_id: undefined,
       progress: 0,
       maturing_state: '',
       publishing_state: 'drft',
       parent_id: undefined,
-      gdoc_url: '',
-      image_url: '',
+      resource_external_content_url: '',
+      resource_image_url: '',
       url_slug: '',
-      output_type: 'atcl'
+      resource_type: 'atcl'
     })
   }
 

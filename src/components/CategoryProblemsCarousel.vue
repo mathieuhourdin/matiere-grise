@@ -26,7 +26,7 @@ const props = defineProps<{
 const router = useRouter()
 const createNewDraftProblemAndRedirect = async () => {
   const problem = newProblem()
-  problem.category_id = props.category.id
+  problem.resource_category_id = props.category.id
   const createdProblem = await createProblem(problem)
   router.push({ path: '/thought_outputs/' + createdProblem.id, query: { editing: 'true' } })
 }

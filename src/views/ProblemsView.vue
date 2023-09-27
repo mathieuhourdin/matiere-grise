@@ -37,8 +37,8 @@ const displayedCategoriesWithProblems = computed(() => {
 
 const getProblemsForCategory = (category: Category) => {
   if (category.display_name == 'default')
-    return problems.value?.filter((problem: Problem) => problem.category_id == null)
-  return problems.value?.filter((problem: Problem) => problem.category_id == category.id)
+    return problems.value?.filter((problem: Problem) => problem.resource_category_id == null)
+  return problems.value?.filter((problem: Problem) => problem.resource_category_id == category.id)
 }
 
 onMounted(async () => (problems.value = await getProblems()))

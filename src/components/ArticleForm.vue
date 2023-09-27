@@ -2,14 +2,14 @@
   <div>
     <TextInput
       label="Titre"
-      :modelValue="article.title"
-      @update:modelValue="(event) => emitChange('title', event)"
+      :modelValue="article.resource_title"
+      @update:modelValue="(event) => emitChange('resource_title', event)"
     />
     <TextInput
       class="h-6"
       label="Description"
-      :modelValue="article.description"
-      @update:modelValue="(event) => emitChange('description', event)"
+      :modelValue="article.resource_subtitle"
+      @update:modelValue="(event) => emitChange('resource_subtitle', event)"
     />
     <div class="flex">
       <NumberInput
@@ -22,8 +22,8 @@
         <SelectInput
           label="Catégorie"
           :choices="categoryOptions"
-          :model-value="article.category_id"
-          @update:modelValue="(event) => emitChange('category_id', event)"
+          :model-value="article.resource_category_id"
+          @update:modelValue="(event) => emitChange('resource_category_id', event)"
         />
       </div>
       <div class="ml-auto h-6 m-4 w-1/3">
@@ -39,14 +39,14 @@
       <TextInput
         class="h-6"
         label="Lien Gdoc"
-        :modelValue="article.gdoc_url"
-        @update:modelValue="(event) => emitChange('gdoc_url', event)"
+        :modelValue="article.resource_external_content_url"
+        @update:modelValue="(event) => emitChange('resource_external_content_url', event)"
       />
       <TextInput
         class="h-6"
         label="Lien image"
-        :modelValue="article.image_url"
-        @update:modelValue="(event) => emitChange('image_url', event)"
+        :modelValue="article.resource_image_url"
+        @update:modelValue="(event) => emitChange('resource_image_url', event)"
       />
       <TextInput
         class="h-6"
@@ -57,8 +57,8 @@
     </div>
     <TextAreaInput
       label="Pistes d'amélioration"
-      :modelValue="article.potential_improvements"
-      @update:modelValue="(event) => emitChange('potential_improvements', event)"
+      :modelValue="article.resource_comment"
+      @update:modelValue="(event) => emitChange('resource_comment', event)"
     />
   </div>
 </template>

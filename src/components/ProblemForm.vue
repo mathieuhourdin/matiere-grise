@@ -2,14 +2,14 @@
   <div>
     <TextInput
       label="Titre"
-      :modelValue="problem.title"
-      @update:modelValue="(event) => emitChange('title', event)"
+      :modelValue="problem.resource_title"
+      @update:modelValue="(event) => emitChange('resource_title', event)"
     />
     <TextInput
       class="h-6"
       label="Description"
-      :modelValue="problem.description"
-      @update:modelValue="(event) => emitChange('description', event)"
+      :modelValue="problem.resource_subtitle"
+      @update:modelValue="(event) => emitChange('resource_subtitle', event)"
     />
     <div class="flex">
       <NumberInput
@@ -22,8 +22,8 @@
         <SelectInput
           label="Catégorie"
           :choices="categoryOptions"
-          :model-value="problem.category_id"
-          @update:modelValue="(event) => emitChange('category_id', event)"
+          :model-value="problem.resource_category_id"
+          @update:modelValue="(event) => emitChange('resource_category_id', event)"
         />
       </div>
     </div>
@@ -31,8 +31,8 @@
       <TextInput
         class="h-6"
         label="Lien image"
-        :modelValue="problem.image_url"
-        @update:modelValue="(event) => emitChange('image_url', event)"
+        :modelValue="problem.resource_image_url"
+        @update:modelValue="(event) => emitChange('resource_image_url', event)"
       />
     </div>
   </div>

@@ -44,9 +44,9 @@
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
       <div v-for="(article, i) in filterArticles(tab, articles)" :key="i">
         <ArticleCard
-          :title="article.title"
-          :description="article.description"
-          :image-url="article.image_url"
+          :title="article.resource_title"
+          :subtitle="article.resource_subtitle"
+          :image-url="article.resource_image_url"
           :progress="article.progress"
           :uuid="article.id"
           :author="article.author"

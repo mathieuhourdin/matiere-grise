@@ -6,14 +6,14 @@ const { createThoughtOutput } = useThoughtOutput()
 
 const newProblem = () => {
   const problem: Problem = {
-    title: '',
-    description: '',
-    content: '',
+    resource_title: '',
+    resource_subtitle: '',
+    resource_content: '',
     publishing_state: 'drft',
-    image_url: '',
-    output_type: 'pblm',
+    resource_image_url: '',
+    resource_type: 'pblm',
     progress: 0,
-    potential_improvements: '',
+    resource_comment: '',
     maturing_state: ''
   }
   return problem

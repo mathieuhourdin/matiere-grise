@@ -20,14 +20,14 @@ export interface Category {
 
 export interface ThoughtOutput {
   id?: string
-  title: string
-  description: string
-  content: string
-  image_url: string
+  resource_title: string
+  resource_subtitle: string
+  resource_content: string
+  resource_image_url: string
   author_id?: string
   publishing_state: string
-  category_id?: string
-  output_type: string
+  resource_category_id?: string
+  resource_type: string
   progress?: number
   created_at?: Date
   updated_at?: Date
@@ -39,33 +39,33 @@ export type ApiThoughtOutput = ApiObject &
   }
 
 export interface Article extends ThoughtOutput {
-  title: string
-  description: string
-  content: string
-  potential_improvements: string
+  resource_title: string
+  resource_subtitle: string
+  resource_content: string
+  resource_comment: string
   author_id?: string
   author?: User
   progress: number
   maturing_state: string
   publishing_state: string
   parent_id?: string
-  gdoc_url: string
-  image_url: string
+  resource_external_content_url: string
+  resource_image_url: string
   url_slug: string
-  output_type: string
+  resource_type: string
 }
 
 export interface Problem extends ThoughtOutput {
-  title: string
-  description: string
-  content: string
+  resource_title: string
+  resource_subtitle: string
+  resource_content: string
   author_id?: string
   publishing_state: string
-  potential_improvements?: string
+  resource_comment?: string
   maturing_state?: string
-  output_type: string
-  image_url: string
-  category_id?: string
+  resource_type: string
+  resource_image_url: string
+  resource_category_id?: string
   related_articles?: Article[]
   related_thought_inputs?: ThoughtInput[]
 }

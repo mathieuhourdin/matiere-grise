@@ -3,12 +3,12 @@
     <div v-if="!editingMetaData">
       <div class="my-8">
         <img
-          :src="thoughtOutput.image_url"
+          :src="thoughtOutput.resource_image_url"
           class="border border-slate-300 dark:border-zinc-700 rounded-xl ml-auto mr-auto"
         />
       </div>
-      <h1 class="text-3xl my-3 font-mplus md:text-center text-left">{{ thoughtOutput.title }}</h1>
-      <div class="md:text-center text-left">{{ thoughtOutput.description }}</div>
+      <h1 class="text-3xl my-3 font-mplus md:text-center text-left">{{ thoughtOutput.resource_title }}</h1>
+      <div class="md:text-center text-left">{{ thoughtOutput.resource_subtitle }}</div>
       <div class="md:text-center text-left">
         <router-link
           v-if="thoughtOutputUser"
@@ -23,9 +23,9 @@
       <div class="md:flex my-8">
         <ProgressBar :progress-value="thoughtOutput.progress" class="m-2 w-1/3" />
         <a
-          v-if="thoughtOutput.output_type === 'atcl'"
+          v-if="thoughtOutput.resource_type === 'atcl'"
           class="ml-auto underline"
-          :href="article.gdoc_url"
+          :href="article.resource_external_content_url"
         >
           Ajouter un commentaire
         </a>
@@ -33,7 +33,7 @@
     </div>
     <div v-else>
       <ArticleForm
-        v-if="thoughtOutput.output_type == 'atcl'"
+        v-if="thoughtOutput.resource_type == 'atcl'"
         :article="article"
         @change="(event) => debouncedUpdateThoughtOutput(thoughtOutput.id, event)"
       />
@@ -64,7 +64,7 @@
         v-if="thoughtOutput.publishing_state != 'drft'"
         :ext-comments="comments"
         :ressource-id="thoughtOutput.id"
-        :full-text="thoughtOutput.content"
+        :full-text="thoughtOutput.resource_content"
         :editable="isThoughtOutputAuthor"
         @change="(event) => debouncedUpdateThoughtOutputContent(event)"
       />
@@ -72,7 +72,7 @@
         v-else
         class="h-96"
         label="Contenu"
-        :modelValue="thoughtOutput.content"
+        :modelValue="thoughtOutput.resource_content"
         @update:modelValue="(event) => debouncedUpdateThoughtOutputContent(event)"
       />
     </div>
@@ -206,7 +206,7 @@ const debouncedUpdateThoughtOutputContent = (newThoughtOutputContent: string) =>
   if (newThoughtOutputContent == '\n') return
   debouncedUpdateThoughtOutput(toRefs(props).id.value, {
     ...thoughtOutput.value,
-    content: newThoughtOutputContent
+    resource_content: newThoughtOutputContent
   })
 }
 

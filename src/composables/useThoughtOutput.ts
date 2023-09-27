@@ -4,13 +4,13 @@ import { type ThoughtOutput, type ApiThoughtOutput } from '@/types/models'
 const newThoughtOutput = (): ApiThoughtOutput => {
   return {
     id: '',
-    title: '',
-    description: '',
-    image_url: '',
+    resource_title: '',
+    resource_subtitle: '',
+    resource_image_url: '',
     progress: 0,
-    content: '',
+    resource_content: '',
     publishing_state: '',
-    output_type: ''
+    resource_type: ''
   }
 }
 
