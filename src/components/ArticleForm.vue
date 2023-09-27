@@ -7,7 +7,7 @@
     />
     <TextInput
       class="h-6"
-      label="Description"
+      label="Sous-titre"
       :modelValue="article.resource_subtitle"
       @update:modelValue="(event) => emitChange('resource_subtitle', event)"
     />
@@ -38,7 +38,7 @@
     <div class="flex">
       <TextInput
         class="h-6"
-        label="Lien Gdoc"
+        label="Lien contenu externe"
         :modelValue="article.resource_external_content_url"
         @update:modelValue="(event) => emitChange('resource_external_content_url', event)"
       />
