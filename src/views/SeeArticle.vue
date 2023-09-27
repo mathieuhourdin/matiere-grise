@@ -89,7 +89,7 @@
       </div>
       <ThoughtInputsList
         :thought-inputs="thoughtInputUsages.map((usage: ThoughtInputUsage) => usage.thought_input)"
-        :usage-reason="thoughtInputUsages.map((usage: ThoughtInputUsage) => usage.usage_reason)"
+        :usage-reasons="thoughtInputUsages.map((usage: ThoughtInputUsage) => usage.usage_reason)"
       />
     </div>
   </div>
@@ -169,7 +169,7 @@ onMounted(() => loadBiblio())
 
 /************** thoughtOutput section ******************/
 const { newThoughtOutput, getThoughtOutput, updateThoughtOutput } = useThoughtOutput()
-const debouncedUpdate = ref<number | null>(null)
+const debouncedUpdate = ref<string | null>(null)
 const thoughtOutput: Ref<ApiThoughtOutput> = ref<ApiThoughtOutput>(newThoughtOutput())
 const router = useRouter()
 watch(
