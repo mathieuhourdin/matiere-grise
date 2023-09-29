@@ -7,9 +7,9 @@ const newThoughtOutput = (): ApiThoughtOutput => {
     resource_title: '',
     resource_subtitle: '',
     resource_image_url: '',
-    progress: 0,
+    interaction_progress: 0,
     resource_content: '',
-    publishing_state: '',
+    resource_publishing_state: '',
     resource_type: ''
   }
 }
@@ -19,12 +19,12 @@ const getThoughtOutput = async (id: string): Promise<ApiThoughtOutput> => {
   return response.data
 }
 const updateThoughtOutput = async (id: string, thoughtOutput: ThoughtOutput) => {
-  thoughtOutput.progress = Number(thoughtOutput.progress)
+  thoughtOutput.interaction_progress = Number(thoughtOutput.interaction_progress)
   const response = await fetchWrapper.put('/thought_outputs/' + id, thoughtOutput)
   return response
 }
 const createThoughtOutput = async (thoughtOutput: ThoughtOutput) => {
-  thoughtOutput.progress = Number(thoughtOutput.progress)
+  thoughtOutput.interaction_progress = Number(thoughtOutput.interaction_progress)
   const response = await fetchWrapper.post('/thought_outputs', thoughtOutput)
   return response.data
 }

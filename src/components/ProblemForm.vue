@@ -15,7 +15,7 @@
       <NumberInput
         class="mr-auto h-6"
         label="Progression"
-        :modelValue="problem.progress"
+        :modelValue="problem.interaction_progress"
         @update:modelValue="(event) => emitChange('progress', event)"
       />
       <div class="ml-auto h-6 m-4 w-1/3">

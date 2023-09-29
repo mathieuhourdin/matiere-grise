@@ -47,7 +47,7 @@
           :title="article.resource_title"
           :subtitle="article.resource_subtitle"
           :image-url="article.resource_image_url"
-          :progress="article.progress"
+          :progress="article.interaction_progress"
           :uuid="article.id"
           :author="article.author"
         />
@@ -96,7 +96,7 @@ const { getArticles, newArticle, createArticle } = useArticle()
 const filterArticles = (filter: string | null, articles: Article[]) => {
   if (!filter) return []
   if (filter == 'drft') return draftArticles.value
-  return articles.filter((article) => article.maturing_state == filter)
+  return articles.filter((article) => article.resource_maturing_state == filter)
 }
 
 const isSelected = (type: string) => {

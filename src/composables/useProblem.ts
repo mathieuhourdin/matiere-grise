@@ -9,12 +9,12 @@ const newProblem = () => {
     resource_title: '',
     resource_subtitle: '',
     resource_content: '',
-    publishing_state: 'drft',
+    resource_publishing_state: 'drft',
     resource_image_url: '',
     resource_type: 'pblm',
-    progress: 0,
+    interaction_progress: 0,
     resource_comment: '',
-    maturing_state: ''
+    resource_maturing_state: ''
   }
   return problem
 }

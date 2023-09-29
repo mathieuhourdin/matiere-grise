@@ -15,7 +15,7 @@
       <span v-if="inputUser"> lu par {{ inputUser.first_name }} {{ inputUser.last_name }}</span>
     </div>
     <div class="md:flex my-8">
-      <ProgressBar :progress-value="thoughtInput.input_progress" class="m-2 w-1/3" />
+      <ProgressBar :progress-value="thoughtInput.interaction_progress" class="m-2 w-1/3" />
       <a class="ml-auto underline" :href="thoughtInput.resource_external_content_url"> ressource externe</a>
     </div>
     <hr class="border-top border-zinc-400 my-4" />
@@ -29,7 +29,7 @@
     <div class="text-xs">Pourquoi la lire</div>
     <TextInterface
       class="border text-sm"
-      :full-text="thoughtInput.input_comment"
+      :full-text="thoughtInput.interaction_comment"
       :editable="isThoughtInputAuthor"
     />
   </div>
@@ -51,11 +51,11 @@ const props = defineProps<{
 const inputUser = ref<User | null>(null)
 
 const isThoughtInputAuthor = computed(() => {
-  return user.value ? props.thoughtInput.input_user_id === user.value.id : false
+  return user.value ? props.thoughtInput.interaction_user_id === user.value.id : false
 })
 
 onMounted(async () => {
-  if (props.thoughtInput.input_user_id)
-    inputUser.value = await getUserById(props.thoughtInput.input_user_id)
+  if (props.thoughtInput.interaction_user_id)
+    inputUser.value = await getUserById(props.thoughtInput.interaction_user_id)
 })
 </script>

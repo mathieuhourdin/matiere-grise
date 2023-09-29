@@ -27,9 +27,9 @@
       />
     </div>
     <TextInput label="Commentaire sur l'ouvrage" v-model="thoughtInput.resource_comment" />
-    <TextInput label="Avancement de l'ouvrage" v-model="thoughtInput.input_progress" type="number"/>
-    <TextInput label="Date de lecture" v-model="thoughtInput.input_date" type="date" />
-    <TextInput label="Pourquoi s'y être interessé ?" v-model="thoughtInput.input_comment" />
+    <TextInput label="Avancement de l'ouvrage" v-model="thoughtInput.interaction_progress" type="number"/>
+    <TextInput label="Date de lecture" v-model="thoughtInput.interaction_date" type="date" />
+    <TextInput label="Pourquoi s'y être interessé ?" v-model="thoughtInput.interaction_comment" />
     <div class="flex flex-row-reverse">
       <ActionButton
         @click="validate"

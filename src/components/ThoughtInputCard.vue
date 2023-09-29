@@ -17,15 +17,15 @@
               {{ thoughtInput.resource_author_name }}
             </div>
             <div class="ml-auto m-1 w-1/3">
-              <ProgressBar :progress-value="thoughtInput.input_progress" />
+              <ProgressBar :progress-value="thoughtInput.interaction_progress" />
             </div>
           </div>
-          <div class="text-2xs">{{ formatText(thoughtInput.input_comment) }}</div>
+          <div class="text-2xs">{{ formatText(thoughtInput.interaction_comment) }}</div>
         </div>
       </div>
       <div class="flex flex-wrap">
-        <div v-if="thoughtInput.input_date" class="text-2xs italic">
-          {{ formatDate(thoughtInput.input_date) }}
+        <div v-if="thoughtInput.interaction_date" class="text-2xs italic">
+          {{ formatDate(thoughtInput.interaction_date) }}
         </div>
         <router-link
           v-if="inputAuthor"
@@ -52,7 +52,9 @@ const props = defineProps<{
 const { getUserById } = useUser()
 const inputAuthor = ref<User | null>(null)
 
-onMounted(async () => (inputAuthor.value = await getUserById(props.thoughtInput.input_user_id)))
+onMounted(async () => {
+  if (props.thoughtInput.interaction_user_id) inputAuthor.value = await getUserById(props.thoughtInput.interaction_user_id)
+})
 
 const formatDate = (date: Date): string => {
   return date.toLocaleString('fr-FR', {

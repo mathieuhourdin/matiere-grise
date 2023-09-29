@@ -15,7 +15,7 @@
       <NumberInput
         class="mr-auto h-6"
         label="Progression"
-        :modelValue="article.progress"
+        :modelValue="article.interaction_progress"
         @update:modelValue="(event) => emitChange('progress', event)"
       />
       <div class="ml-auto h-6 m-4 w-1/3">
@@ -30,7 +30,7 @@
         <SelectInput
           label="Stade d'écriture"
           :choices="maturingStateOptions "
-          :model-value="article.maturing_state"
+          :model-value="article.resource_maturing_state"
           @update:modelValue="(event) => emitChange('maturing_state', event)"
         />
       </div>
@@ -47,12 +47,6 @@
         label="Lien image"
         :modelValue="article.resource_image_url"
         @update:modelValue="(event) => emitChange('resource_image_url', event)"
-      />
-      <TextInput
-        class="h-6"
-        label="Suffix url"
-        :modelValue="article.url_slug"
-        @update:modelValue="(event) => emitChange('url_slug', event)"
       />
     </div>
     <TextAreaInput

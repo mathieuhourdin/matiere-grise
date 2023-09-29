@@ -9,14 +9,13 @@ export function useArticle() {
       resource_subtitle: '',
       resource_content: '',
       resource_comment: '',
-      author_id: undefined,
-      progress: 0,
-      maturing_state: '',
-      publishing_state: 'drft',
-      parent_id: undefined,
+      interaction_user_id: undefined,
+      interaction_progress: 0,
+      resource_maturing_state: '',
+      resource_publishing_state: 'drft',
+      resource_parent_id: undefined,
       resource_external_content_url: '',
       resource_image_url: '',
-      url_slug: '',
       resource_type: 'atcl'
     })
   }
@@ -33,13 +32,13 @@ export function useArticle() {
   }
 
   const createArticle = async (article: Article) => {
-    article.progress = Number(article.progress)
+    article.interaction_progress = Number(article.interaction_progress)
     const response = await fetchWrapper.post('/articles', article)
     return response.data
   }
 
   const updateArticle = async (id: string, article: Article) => {
-    article.progress = Number(article.progress)
+    article.interaction_progress = Number(article.interaction_progress)
     const response = await fetchWrapper.put('/thought_outputs/' + id, article)
     return response
   }

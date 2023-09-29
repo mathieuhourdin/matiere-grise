@@ -56,8 +56,8 @@ const loadThoughtInputs = async () => {
 const { getUserById } = useUser()
 
 const loadUser = async () => {
-  if (!props.problem.author_id) return
-  problemAuthor.value = await getUserById(props.problem.author_id)
+  if (!props.problem.interaction_user_id) return
+  problemAuthor.value = await getUserById(props.problem.interaction_user_id)
 }
 
 onMounted(async () => {

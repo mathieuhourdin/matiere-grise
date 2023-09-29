@@ -24,18 +24,18 @@ export interface ThoughtOutput {
   resource_subtitle: string
   resource_content: string
   resource_image_url: string
-  author_id?: string
-  publishing_state: string
+  interaction_user_id?: string
+  resource_publishing_state: string
   resource_category_id?: string
   resource_type: string
-  progress?: number
+  interaction_progress?: number
   created_at?: Date
   updated_at?: Date
 }
 
 export type ApiThoughtOutput = ApiObject &
   ThoughtOutput & {
-    progress: number
+    interaction_progress: number
   }
 
 export interface Article extends ThoughtOutput {
@@ -43,15 +43,14 @@ export interface Article extends ThoughtOutput {
   resource_subtitle: string
   resource_content: string
   resource_comment: string
-  author_id?: string
+  interaction_user_id?: string
   author?: User
-  progress: number
-  maturing_state: string
-  publishing_state: string
-  parent_id?: string
+  interaction_progress: number
+  resource_maturing_state: string
+  resource_publishing_state: string
+  resource_parent_id?: string
   resource_external_content_url: string
   resource_image_url: string
-  url_slug: string
   resource_type: string
 }
 
@@ -59,10 +58,10 @@ export interface Problem extends ThoughtOutput {
   resource_title: string
   resource_subtitle: string
   resource_content: string
-  author_id?: string
-  publishing_state: string
+  interaction_user_id?: string
+  resource_publishing_state: string
   resource_comment?: string
-  maturing_state?: string
+  resource_maturing_state?: string
   resource_type: string
   resource_image_url: string
   resource_category_id?: string
@@ -81,11 +80,12 @@ export interface ThoughtInput {
   resource_image_url: string
   resource_comment: string
   resource_category_id?: string
-  input_progress: number
-  input_date: Date
-  input_comment: string
-  input_is_public: boolean
-  input_user_id?: string
+  interaction_progress: number
+  interaction_date: Date
+  interaction_comment: string
+  interaction_is_public: boolean
+  interaction_user_id?: string
+  interaction_type?: string
   created_at?: Date
   updated_at?: Date
 }

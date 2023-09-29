@@ -21,7 +21,7 @@
         ><PencilSquareIcon class="m-1"
       /></RoundLinkButton>
       <div class="md:flex my-8">
-        <ProgressBar :progress-value="thoughtOutput.progress" class="m-2 w-1/3" />
+        <ProgressBar :progress-value="thoughtOutput.interaction_progress" class="m-2 w-1/3" />
         <a
           v-if="thoughtOutput.resource_type === 'atcl'"
           class="ml-auto underline"
@@ -47,7 +47,7 @@
           >Ok</ActionButton
         >
         <ActionButton
-          v-if="thoughtOutput.publishing_state == 'drft'"
+          v-if="thoughtOutput.resource_publishing_state == 'drft'"
           @click="publishThoughtOutput"
           type="valid"
           text="Publier"
@@ -61,7 +61,7 @@
     <hr class="border-top border-zinc-400 my-4" />
     <div v-if="current_tab == 'ctnt'">
       <TextInterface
-        v-if="thoughtOutput.publishing_state != 'drft'"
+        v-if="thoughtOutput.resource_publishing_state != 'drft'"
         :ext-comments="comments"
         :ressource-id="thoughtOutput.id"
         :full-text="thoughtOutput.resource_content"
@@ -186,7 +186,7 @@ const setEditingMetaData = (value: boolean) => {
 
 const publishThoughtOutput = () => {
   if (!thoughtOutput.value || !thoughtOutput.value.id) return
-  thoughtOutput.value.publishing_state = 'pbsh'
+  thoughtOutput.value.resource_publishing_state = 'pbsh'
   updateThoughtOutput(thoughtOutput.value.id, thoughtOutput.value)
 }
 
@@ -214,7 +214,7 @@ const debouncedUpdateThoughtOutputContent = (newThoughtOutputContent: string) =>
 const { user, getUserById } = useUser()
 const isThoughtOutputAuthor = computed(() => {
   if (!user.value) return false
-  return thoughtOutput.value.author_id == user.value.id
+  return thoughtOutput.value.interaction_user_id == user.value.id
 })
 
 const thoughtOutputUser: Ref<User | null> = ref<User | null>(null)
@@ -226,8 +226,8 @@ const comments = ref<Comment[]>([])
 onMounted(async () => {
   thoughtOutput.value = await getThoughtOutput(props.id)
   comments.value = await getCommentsForThoughtOutput(props.id)
-  if (thoughtOutput.value.author_id)
-    thoughtOutputUser.value = await getUserById(thoughtOutput.value.author_id)
+  if (thoughtOutput.value.interaction_user_id)
+    thoughtOutputUser.value = await getUserById(thoughtOutput.value.interaction_user_id)
   const editing = route.query.editing
   editingMetaData.value = editing === 'false' ? false : !!editing
 })

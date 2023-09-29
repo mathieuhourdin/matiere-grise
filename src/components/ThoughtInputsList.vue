@@ -35,7 +35,7 @@ const getUsageReasonFromIndex = (index: number): string | undefined => {
 
 const sortedThoughtInputs = (inputs: ApiThoughtInput[]) => {
   return inputs.sort((a: ApiThoughtInput, b: ApiThoughtInput) =>
-    Number(b.input_date > a.input_date)
+    Number(b.interaction_date > a.interaction_date)
   )
 }
 

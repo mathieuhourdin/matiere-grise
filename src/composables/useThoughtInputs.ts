@@ -9,17 +9,17 @@ function newThoughtInput(): ThoughtInput {
     resource_external_content_url: '',
     resource_image_url: '',
     resource_comment: '',
-    input_progress: 0,
-    input_date: new Date(Date.now()),
-    input_comment: '',
-    input_is_public: true
+    interaction_progress: 0,
+    interaction_date: new Date(Date.now()),
+    interaction_comment: '',
+    interaction_is_public: true
   }
   return thought_input
 }
 
 function formatApiResponse(apiThoughtInput: any): ApiThoughtInput {
-  console.log('Date : ', apiThoughtInput.input_date)
-  apiThoughtInput.input_date = new Date(apiThoughtInput.input_date)
+  console.log('Date : ', apiThoughtInput.interaction_date)
+  apiThoughtInput.interaction_date = new Date(apiThoughtInput.interaction_date)
   const response: ApiThoughtInput = apiThoughtInput
   return response
 }
@@ -40,11 +40,11 @@ async function getUserThoughtInputs(userId: string): Promise<ApiThoughtInput[]> 
 }
 
 async function createThoughtInput(thoughtInput: ThoughtInput): Promise<ApiThoughtInput> {
-  const date_input_date = new Date(thoughtInput.input_date)
-  console.log('Date : ', date_input_date)
-  const input_date = date_input_date.toISOString().split('.')[0]
-  thoughtInput.input_progress = Number(thoughtInput.input_progress)
-  const response = await fetchWrapper.post('/thought_inputs', { ...thoughtInput, input_date })
+  const date_interaction_date = new Date(thoughtInput.interaction_date)
+  console.log('Date : ', date_interaction_date)
+  const interaction_date = date_interaction_date.toISOString().split('.')[0]
+  thoughtInput.interaction_progress = Number(thoughtInput.interaction_progress)
+  const response = await fetchWrapper.post('/thought_inputs', { ...thoughtInput, interaction_date })
   return formatApiResponse(response.data)
 }
 
