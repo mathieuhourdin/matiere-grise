@@ -2,11 +2,14 @@
 import { RouterLink, RouterView } from 'vue-router'
 import AppHeader from './components/AppHeader.vue'
 import SidebarMenu from '@/components/SidebarMenu.vue'
+import UiSnackbar from '@/components/Ui/UiSnackbar.vue'
 import { onMounted } from 'vue'
 import { useCategories } from'@/composables/useCategories'
 import { useMenu } from '@/composables/useMenu'
+import { useSnackbar } from '@/composables/useSnackbar.ts'
 const { menuOpen } = useMenu()
 const { loadCategories } = useCategories()
+const { snackbar } = useSnackbar()
 onMounted(async () => await loadCategories())
 </script>
 
@@ -16,4 +19,5 @@ onMounted(async () => await loadCategories())
     <SidebarMenu v-if="menuOpen" style="min-height: 800px" class="md:w-250px w-full absolute md:static" />
     <RouterView :style="{width: menuOpen ? '1450px' : '100%'}"/>
   </div>
+  <UiSnackbar v-if="snackbar" :message="snackbar.message" :type="snackbar.type" />
 </template>

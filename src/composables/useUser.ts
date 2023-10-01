@@ -1,6 +1,7 @@
 import { ref } from 'vue'
 import router from '@/router'
 import { fetchWrapper } from '@/helpers'
+import { useSnackbar } from '@/composables/useSnackbar.ts'
 import { type User } from '@/types/models'
 
 const user = ref<User | null>(null)
@@ -30,14 +31,17 @@ function logOut() {
   user.value = null
 }
 
+const { launchSnackbar } = useSnackbar()
 async function authUser(login: any, redirectPath: string = '/') {
-  const response = await fetchWrapper.post('/sessions', login)
-  if (response.status == 200) {
+  try {
+    const response = await fetchWrapper.post('/sessions', login)
     const responseData = response.data
     localStorage.setItem('sessionId', responseData.id)
     localStorage.setItem('userId', responseData.user_id)
     await loadUser()
     router.push(redirectPath)
+  } catch (error) {
+    launchSnackbar('Wrong password or email', 'error')
   }
 }
 
@@ -61,6 +65,6 @@ export function useUser() {
     authUser,
     createNewUser,
     logOut,
-    getUserById,
+    getUserById
   }
 }
