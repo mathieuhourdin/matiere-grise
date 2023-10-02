@@ -63,7 +63,7 @@
       <TextInterface
         v-if="thoughtOutput.resource_publishing_state != 'drft'"
         :ext-comments="comments"
-        :ressource-id="thoughtOutput.id"
+        :resource-id="thoughtOutput.id"
         :full-text="thoughtOutput.resource_content"
         :editable="isThoughtOutputAuthor"
         @change="(event) => debouncedUpdateThoughtOutputContent(event)"

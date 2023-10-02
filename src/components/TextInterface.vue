@@ -242,7 +242,10 @@ const loadComments = (extComments: Comment[]) => {
 
 const addComment = async () => {
   console.log('Add Comment')
+  console.log(props.resourceId)
+  console.log(menuIndex.value)
   if (!props.resourceId || !menuIndex.value) return
+  console.log('Add Comment 2')
   const newComment = await createComment(props.resourceId, menuIndex.value)
   comments.value.push(newComment)
 }
