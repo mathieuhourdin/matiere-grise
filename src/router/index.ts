@@ -16,6 +16,11 @@ const router = createRouter({
       component: () => import('@/views/PlatformPresentationView.vue')
     },
     {
+      path: '/resources',
+      name: 'resourcesList',
+      component: () => import('@/views/ResourcesListView.vue')
+    },
+    {
       path: '/login',
       name: 'login',
       component: () => import('@/views/LoginView.vue')
@@ -24,7 +29,7 @@ const router = createRouter({
       path: '/thought_outputs/:id',
       name: 'seeArticle',
       props: true,
-      component: () => import('@/views/SeeArticle.vue')
+      component: () => import('@/views/SeeResourceView.vue')
     },
     {
       path: '/thought_inputs/:id',

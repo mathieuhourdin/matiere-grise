@@ -1,13 +1,16 @@
 <template>
-  <div v-if="!!thoughtOutput" class="px-8 mx-auto">
+  <div v-if="!!thoughtOutput" class="mx-auto">
     <div v-if="!editingMetaData">
       <div class="my-8">
         <img
           :src="thoughtOutput.resource_image_url"
           class="border border-slate-300 dark:border-zinc-700 rounded-xl ml-auto mr-auto"
+          style="max-height: 20rem"
         />
       </div>
-      <h1 class="text-3xl my-3 font-mplus md:text-center text-left">{{ thoughtOutput.resource_title }}</h1>
+      <h1 class="text-3xl my-3 font-mplus md:text-center text-left">
+        {{ thoughtOutput.resource_title }}
+      </h1>
       <div class="md:text-center text-left">{{ thoughtOutput.resource_subtitle }}</div>
       <div class="md:text-center text-left">
         <router-link
@@ -60,6 +63,13 @@
     </div>
     <hr class="border-top border-zinc-400 my-4" />
     <div v-if="current_tab == 'ctnt'">
+      <div class="text-xs italic">Commentaire</div>
+      <TextInterface
+        :full-text="thoughtOutput.resource_comment"
+        :editable="isThoughtOutputAuthor"
+      />
+      <hr class="border-top border-zinc-400 my-4" />
+      <div class="text-xs italic">Contenu</div>
       <TextInterface
         v-if="thoughtOutput.resource_publishing_state != 'drft'"
         :ext-comments="comments"
