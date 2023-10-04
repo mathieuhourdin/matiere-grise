@@ -1,0 +1,1 @@
+import{o as r,c as n,f as a,g as _}from"./index-7f0fbf45.js";const i=(e,t)=>{const s=e.__vccOpts||e;for(const[c,o]of t)s[c]=o;return s},d={},u={class:"p-4"},l=_("div",{class:"text-sm italic underline"},"Ajouter une resource externe non existante",-1);function f(e,t){return r(),n("div",u,[a(" Ressources "),l])}const p=i(d,[["render",f]]);export{p as default};
