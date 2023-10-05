@@ -14,60 +14,45 @@ export interface User {
 export interface Category {
   id?: string
   display_name: string
-  problems?: Problem[]
+  problems?: Resource[]
   problems_count?: number
 }
 
-export interface ThoughtOutput {
-  id?: string
+export interface Resource {
+  resource_id: string
   resource_title: string
   resource_subtitle: string
   resource_content: string
+  resource_external_content_url: string
+  resource_comment: string
   resource_image_url: string
-  interaction_user_id?: string
+  resource_maturing_state: string
   resource_publishing_state: string
-  resource_category_id?: string
   resource_type: string
-  interaction_progress?: number
+  resource_category_id: string
+  resource_created_at?: string
+  resource_updated_at?: string
+}
+
+export type ApiResource = Resource & ApiObject
+
+export interface Interaction {
+  id?: string
+  interaction_progress: number
+  interaction_date: Date
+  interaction_comment: string
+  interaction_is_public: boolean
+  interaction_user_id?: string
+  interaction_type?: string
+  author?: User
   created_at?: Date
   updated_at?: Date
 }
 
-export type ApiThoughtOutput = ApiObject &
-  ThoughtOutput & {
+export type ApiInteraction = ApiObject &
+  Interaction & {
     interaction_progress: number
   }
-
-export interface Article extends ThoughtOutput {
-  resource_title: string
-  resource_subtitle: string
-  resource_content: string
-  resource_comment: string
-  interaction_user_id?: string
-  author?: User
-  interaction_progress: number
-  resource_maturing_state: string
-  resource_publishing_state: string
-  resource_parent_id?: string
-  resource_external_content_url: string
-  resource_image_url: string
-  resource_type: string
-}
-
-export interface Problem extends ThoughtOutput {
-  resource_title: string
-  resource_subtitle: string
-  resource_content: string
-  interaction_user_id?: string
-  resource_publishing_state: string
-  resource_comment?: string
-  resource_maturing_state?: string
-  resource_type: string
-  resource_image_url: string
-  resource_category_id?: string
-  related_articles?: Article[]
-  related_thought_inputs?: ThoughtInput[]
-}
 
 export interface ThoughtInput {
   id?: string

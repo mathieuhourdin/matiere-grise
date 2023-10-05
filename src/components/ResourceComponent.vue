@@ -1,32 +1,32 @@
 <template>
-  <div v-if="!!thoughtOutput" class="mx-auto">
+  <div v-if="!!resource" class="mx-auto">
     <div v-if="!editingMetaData">
       <div class="my-8">
         <img
-          :src="thoughtOutput.resource_image_url"
+          :src="resource.resource_image_url"
           class="border border-slate-300 dark:border-zinc-700 rounded-xl ml-auto mr-auto"
           style="max-height: 20rem"
         />
       </div>
       <h1 class="text-3xl my-3 font-mplus md:text-center text-left">
-        {{ thoughtOutput.resource_title }}
+        {{ resource.resource_title }}
       </h1>
-      <div class="md:text-center text-left">{{ thoughtOutput.resource_subtitle }}</div>
+      <div class="md:text-center text-left">{{ resource.resource_subtitle }}</div>
       <div class="md:text-center text-left">
         <router-link
-          v-if="thoughtOutputUser"
-          :to="'/users/' + thoughtOutputUser.id"
+          v-if="resourceUser"
+          :to="'/users/' + resourceUser.id"
           class="text-sm underline"
-          >{{ thoughtOutputUser.first_name }} {{ thoughtOutputUser.last_name }}</router-link
+          >{{ resourceUser.first_name }} {{ resourceUser.last_name }}</router-link
         >
       </div>
-      <RoundLinkButton v-if="isThoughtOutputAuthor" @click="setEditingMetaData(true)"
+      <RoundLinkButton v-if="isResourceAuthor" @click="setEditingMetaData(true)"
         ><PencilSquareIcon class="m-1"
       /></RoundLinkButton>
       <div class="md:flex my-8">
-        <ProgressBar :progress-value="thoughtOutput.interaction_progress" class="m-2 w-1/3" />
+        <ProgressBar :progress-value="resource.interaction_progress" class="m-2 w-1/3" />
         <a
-          v-if="thoughtOutput.resource_type === 'atcl'"
+          v-if="resource.resource_type === 'atcl'"
           class="ml-auto underline"
           :href="article.resource_external_content_url"
         >
@@ -36,22 +36,22 @@
     </div>
     <div v-else>
       <ArticleForm
-        v-if="thoughtOutput.resource_type == 'atcl'"
+        v-if="resource.resource_type == 'atcl'"
         :article="article"
-        @change="(event) => debouncedUpdateThoughtOutput(thoughtOutput.id, event)"
+        @change="(event) => debouncedUpdateResource(resource.id, event)"
       />
       <ProblemForm
         v-else
-        :problem="thoughtOutput"
-        @change="(event) => debouncedUpdateThoughtOutput(thoughtOutput.id, event)"
+        :problem="resource"
+        @change="(event) => debouncedUpdateResource(resource.id, event)"
       />
       <div class="flex flex-row-reverse">
         <ActionButton class="mx-4" @click="setEditingMetaData(false)" type="valid" text="Preview"
           >Ok</ActionButton
         >
         <ActionButton
-          v-if="thoughtOutput.resource_publishing_state == 'drft'"
-          @click="publishThoughtOutput"
+          v-if="resource.resource_publishing_state == 'drft'"
+          @click="publishResource"
           type="valid"
           text="Publier"
         />
@@ -65,25 +65,25 @@
     <div v-if="current_tab == 'ctnt'">
       <div class="text-xs italic">Commentaire</div>
       <TextInterface
-        :full-text="thoughtOutput.resource_comment"
-        :editable="isThoughtOutputAuthor"
+        :full-text="resource.resource_comment"
+        :editable="isResourceAuthor"
       />
       <hr class="border-top border-zinc-400 my-4" />
       <div class="text-xs italic">Contenu</div>
       <TextInterface
-        v-if="thoughtOutput.resource_publishing_state != 'drft'"
+        v-if="resource.resource_publishing_state != 'drft'"
         :ext-comments="comments"
-        :resource-id="thoughtOutput.id"
-        :full-text="thoughtOutput.resource_content"
-        :editable="isThoughtOutputAuthor"
-        @change="(event) => debouncedUpdateThoughtOutputContent(event)"
+        :resource-id="resource.id"
+        :full-text="resource.resource_content"
+        :editable="isResourceAuthor"
+        @change="(event) => debouncedUpdateResourceContent(event)"
       />
       <TextAreaInput
         v-else
         class="h-96"
         label="Contenu"
-        :modelValue="thoughtOutput.resource_content"
-        @update:modelValue="(event) => debouncedUpdateThoughtOutputContent(event)"
+        :modelValue="resource.resource_content"
+        @update:modelValue="(event) => debouncedUpdateResourceContent(event)"
       />
     </div>
     <div v-else>
@@ -91,7 +91,7 @@
         <CreateThoughtInputUsageForm
           @refresh="loadBiblio"
           @close="openAddThoughtInputUsage = false"
-          :thought-output="thoughtOutput"
+          :thought-output="resource"
         />
       </ModalSheet>
       <div @click="openAddThoughtInputUsage = true" class="text-sm italic underline">
@@ -117,7 +117,7 @@ import ActionButton from '@/components/Ui/ActionButton.vue'
 import TextAreaInput from '@/components/Ui/TextAreaInput.vue'
 import ThoughtInputsList from '@/components/ThoughtInputsList.vue'
 import ModalSheet from '@/components/Ui/ModalSheet.vue'
-import { useThoughtOutput } from '@/composables/useThoughtOutput'
+import { useResource } from '@/composables/useResource'
 import { useComments } from '@/composables/useComments'
 import { useUser } from '@/composables/useUser'
 import { useThoughtInputUsages } from '@/composables/useThoughtInputUsages'
@@ -127,10 +127,10 @@ import { useRouter, useRoute } from 'vue-router'
 import {
   type Problem,
   type User,
-  type ThoughtOutput,
+  type Resource,
   type Article,
   type ThoughtInputUsage,
-  type ApiThoughtOutput,
+  type ApiResource,
   type Comment
 } from '@/types/models'
 const props = defineProps<{
@@ -139,7 +139,7 @@ const props = defineProps<{
 const route = useRoute()
 
 const article = computed((): Article => {
-  const article = thoughtOutput.value as Article
+  const article = resource.value as Article
   return article
 })
 
@@ -177,10 +177,10 @@ const loadBiblio = async () => {
 
 onMounted(() => loadBiblio())
 
-/************** thoughtOutput section ******************/
-const { newThoughtOutput, getThoughtOutput, updateThoughtOutput } = useThoughtOutput()
+/************** resource section ******************/
+const { newResource, getResource, updateResource, getAuthorInteractionForResource } = useResource()
 const debouncedUpdate = ref<number | null>(null)
-const thoughtOutput: Ref<ApiThoughtOutput> = ref<ApiThoughtOutput>(newThoughtOutput())
+const resource: Ref<ApiResource> = ref<ApiResource>(newResource())
 const router = useRouter()
 watch(
   () => route.query.editing,
@@ -194,50 +194,53 @@ const setEditingMetaData = (value: boolean) => {
   router.push({ query: { editing: value.toString() } })
 }
 
-const publishThoughtOutput = () => {
-  if (!thoughtOutput.value || !thoughtOutput.value.id) return
-  thoughtOutput.value.resource_publishing_state = 'pbsh'
-  updateThoughtOutput(thoughtOutput.value.id, thoughtOutput.value)
+const publishResource = () => {
+  if (!resource.value || !resource.value.id) return
+  resource.value.resource_publishing_state = 'pbsh'
+  updateResource(resource.value.id, resource.value)
 }
 
-const debouncedUpdateThoughtOutput = (id: string, newThoughtOutput: ApiThoughtOutput) => {
-  thoughtOutput.value = newThoughtOutput
+const debouncedUpdateResource = (id: string, newResource: ApiResource) => {
+  resource.value = newResource
   if (debouncedUpdate.value !== null) clearTimeout(debouncedUpdate.value)
   debouncedUpdate.value = setTimeout(async () => {
     try {
-      await updateThoughtOutput(id, thoughtOutput.value)
+      await updateResource(id, resource.value)
     } catch (error) {
       console.log('An error : ', error)
     }
   }, 1000)
 }
 
-const debouncedUpdateThoughtOutputContent = (newThoughtOutputContent: string) => {
-  if (newThoughtOutputContent == '\n') return
-  debouncedUpdateThoughtOutput(toRefs(props).id.value, {
-    ...thoughtOutput.value,
-    resource_content: newThoughtOutputContent
+const debouncedUpdateResourceContent = (newResourceContent: string) => {
+  if (newResourceContent == '\n') return
+  debouncedUpdateResource(toRefs(props).id.value, {
+    ...resource.value,
+    resource_content: newResourceContent
   })
 }
 
 /************** user section *********************/
 const { user, getUserById } = useUser()
-const isThoughtOutputAuthor = computed(() => {
-  if (!user.value) return false
-  return thoughtOutput.value.interaction_user_id == user.value.id
+const isResourceAuthor = computed(() => {
+  if (!user.value || !resourceUser.value) return false
+  return resourceUser.value.id == user.value.id
 })
 
-const thoughtOutputUser: Ref<User | null> = ref<User | null>(null)
+const resourceUser: Ref<User | null> = ref<User | null>(null)
+const authorInteraction = ref<Interaction | null>(null)
 
 /************** comments section *****************/
 const { getCommentsForThoughtOutput } = useComments()
 const comments = ref<Comment[]>([])
 
 onMounted(async () => {
-  thoughtOutput.value = await getThoughtOutput(props.id)
+  resource.value = await getResource(props.id)
   comments.value = await getCommentsForThoughtOutput(props.id)
-  if (thoughtOutput.value.interaction_user_id)
-    thoughtOutputUser.value = await getUserById(thoughtOutput.value.interaction_user_id)
+  authorInteraction.value = await getAuthorInteractionForResource(props.id)
+
+  if (authorInteraction.value)
+    resourceUser.value = await getUserById(authorInteraction.value.interaction_user_id)
   const editing = route.query.editing
   editingMetaData.value = editing === 'false' ? false : !!editing
 })

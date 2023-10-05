@@ -298,7 +298,6 @@ const rightClick = (event: any, index: number) => {
 
 /*****************  Interact with parent ******************/
 const textArrayFromString = (textString: string) => {
-  console.log('textArrayFromString textString: ', textString)
   text.value = []
   if (textString === undefined || textString == '') {
     text.value = [{ id: 0, char: '\n' }]

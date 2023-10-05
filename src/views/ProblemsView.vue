@@ -18,7 +18,7 @@ import CategoryProblemsCarousel from '@/components/CategoryProblemsCarousel.vue'
 import { useProblem } from '@/composables/useProblem'
 import { computed, onMounted, ref } from 'vue'
 import { useCategories } from '@/composables/useCategories'
-import { type Problem, type Category } from '@/types/models'
+import { type Interaction, type Category } from '@/types/models'
 
 const { getProblems } = useProblem()
 const problems = ref<Problem[] | null>(null)

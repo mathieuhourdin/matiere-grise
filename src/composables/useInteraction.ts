@@ -1,0 +1,53 @@
+import { fetchWrapper } from '@/helpers'
+import { type Interaction, type ApiInteraction } from '@/types/models'
+
+function newInteraction(): Interaction {
+  const interaction: Interaction = {
+    interaction_progress: 0,
+    interaction_date: new Date(Date.now()),
+    interaction_comment: '',
+    interaction_is_public: true
+  }
+  return interaction
+}
+
+function formatApiResponse(apiInteraction: any): ApiInteraction {
+  console.log('Date : ', apiInteraction.interaction_date)
+  apiInteraction.interaction_date = new Date(apiInteraction.interaction_date)
+  const response: ApiInteraction = apiInteraction
+  return response
+}
+
+async function getInteractions(): Promise<ApiInteraction[]> {
+  const response = await fetchWrapper.get('/thought_inputs')
+  return response.data.map((thoughtInput: any) => formatApiResponse(thoughtInput))
+}
+
+async function getInteraction(id: string): Promise<ApiInteraction> {
+  const response = await fetchWrapper.get('/thought_inputs/' + id)
+  return formatApiResponse(response.data)
+}
+
+async function getUserInteractions(userId: string): Promise<ApiInteraction[]> {
+  const response = await fetchWrapper.get('/users/' + userId + '/thought_inputs')
+  return response.data.map((thoughtInput: any) => formatApiResponse(thoughtInput))
+}
+
+async function createInteraction(thoughtInput: Interaction): Promise<ApiInteraction> {
+  const date_interaction_date = new Date(thoughtInput.interaction_date)
+  console.log('Date : ', date_interaction_date)
+  const interaction_date = date_interaction_date.toISOString().split('.')[0]
+  thoughtInput.interaction_progress = Number(thoughtInput.interaction_progress)
+  const response = await fetchWrapper.post('/thought_inputs', { ...thoughtInput, interaction_date })
+  return formatApiResponse(response.data)
+}
+
+export function useInteractions() {
+  return {
+    getUserInteractions,
+    newInteraction,
+    createInteraction,
+    getInteractions,
+    getInteraction,
+  }
+}
