@@ -166,13 +166,13 @@ watch(
 
 /************** Biblio *****************/
 
-const { getThoughtInputUsagesForThoughtOutput } = useThoughtInputUsages()
+const { getThoughtInputUsagesForResource } = useThoughtInputUsages()
 
 const thoughtInputUsages = ref([])
 const openAddThoughtInputUsage = ref(false)
 
 const loadBiblio = async () => {
-  thoughtInputUsages.value = await getThoughtInputUsagesForThoughtOutput(toRefs(props).id.value)
+  thoughtInputUsages.value = await getThoughtInputUsagesForResource(toRefs(props).id.value)
 }
 
 onMounted(() => loadBiblio())

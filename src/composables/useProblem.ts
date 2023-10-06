@@ -1,8 +1,8 @@
 import { type Resource } from '@/types/models'
 import { fetchWrapper } from '@/helpers'
-import { useThoughtOutput } from '@/composables/useThoughtOutput'
+import { useResource } from '@/composables/useResource'
 
-const { createThoughtOutput } = useThoughtOutput()
+const { createResource } = useResource()
 
 const newProblem = () => {
   const problem: Resource = {
@@ -35,5 +35,5 @@ const getProblems = async (): Promise<Resource[]> => {
 }
 
 export function useProblem() {
-  return { newProblem, getProblems, createProblem: createThoughtOutput }
+  return { newProblem, getProblems, createProblem: createResource }
 }

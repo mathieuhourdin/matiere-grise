@@ -47,10 +47,10 @@ const formatText = (text: string) => {
 }
 
 const thoughtInputs = ref<ThoughtInput[]>([])
-const { getThoughtInputUsagesForThoughtOutput } = useThoughtInputUsages()
+const { getThoughtInputUsagesForResource } = useThoughtInputUsages()
 const loadThoughtInputs = async () => {
   if (!props.problem.id) return
-  thoughtInputs.value = await getThoughtInputUsagesForThoughtOutput(props.problem.id)
+  thoughtInputs.value = await getThoughtInputUsagesForResource(props.problem.id)
 }
 
 const { getUserById } = useUser()
