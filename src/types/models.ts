@@ -30,8 +30,8 @@ export interface Resource {
   resource_publishing_state: string
   resource_type: string
   resource_category_id: string
-  resource_created_at?: string
-  resource_updated_at?: string
+  created_at?: Date
+  updated_at?: Date
 }
 
 export type ApiResource = Resource & ApiObject
@@ -42,49 +42,26 @@ export interface Interaction {
   interaction_date: Date
   interaction_comment: string
   interaction_is_public: boolean
-  interaction_user_id?: string
+  interaction_user_id: string
   interaction_type?: string
   author?: User
   created_at?: Date
   updated_at?: Date
+  resource_id?: string
+  resource?: Resource
 }
 
 export type ApiInteraction = ApiObject &
   Interaction & {
     interaction_progress: number
+    resource: Resource
   }
-
-export interface ThoughtInput {
-  id?: string
-  resource_title: string
-  resource_subtitle?: string
-  resource_content?: string
-  resource_author_name: string
-  resource_type: string
-  resource_external_content_url: string
-  resource_image_url: string
-  resource_comment: string
-  resource_category_id?: string
-  interaction_progress: number
-  interaction_date: Date
-  interaction_comment: string
-  interaction_is_public: boolean
-  interaction_user_id?: string
-  interaction_type?: string
-  created_at?: Date
-  updated_at?: Date
-}
-
-export type ApiThoughtInput = ThoughtInput & {
-  id: string
-  input_user_id: string
-}
 
 export interface ThoughtInputUsage {
   id?: string
-  thought_output_id?: string
+  resource_id?: string
   thought_input_id?: string
-  thought_input: ApiThoughtInput
+  thought_input: ApiInteraction
   usage_reason: string
 }
 

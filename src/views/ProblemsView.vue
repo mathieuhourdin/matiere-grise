@@ -18,14 +18,14 @@ import CategoryProblemsCarousel from '@/components/CategoryProblemsCarousel.vue'
 import { useProblem } from '@/composables/useProblem'
 import { computed, onMounted, ref } from 'vue'
 import { useCategories } from '@/composables/useCategories'
-import { type Interaction, type Category } from '@/types/models'
+import { type Resource, type Category } from '@/types/models'
 
 const { getProblems } = useProblem()
-const problems = ref<Problem[] | null>(null)
+const problems = ref<Resource[] | null>(null)
 
 const { categories } = useCategories()
 
-type CategoryWithProblems = Category & { problems: Problem[]; problems_count: number }
+type CategoryWithProblems = Category & { problems: Resource[]; problems_count: number }
 const displayedCategoriesWithProblems = computed(() => {
   const returnCategories = categories.value.map((category: Category) => {
     category.problems = getProblemsForCategory(category)
@@ -37,8 +37,8 @@ const displayedCategoriesWithProblems = computed(() => {
 
 const getProblemsForCategory = (category: Category) => {
   if (category.display_name == 'default')
-    return problems.value?.filter((problem: Problem) => problem.resource_category_id == null)
-  return problems.value?.filter((problem: Problem) => problem.resource_category_id == category.id)
+    return problems.value?.filter((problem: Resource) => problem.resource_category_id == null)
+  return problems.value?.filter((problem: Resource) => problem.resource_category_id == category.id)
 }
 
 onMounted(async () => (problems.value = await getProblems()))

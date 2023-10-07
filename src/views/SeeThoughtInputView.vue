@@ -8,12 +8,12 @@
 import SeeThoughtInput from '@/components/SeeThoughtInput.vue'
 import { ref, onMounted } from 'vue'
 import { useThoughtInputs } from '@/composables/useThoughtInputs'
-import { type ThoughtInput } from '@/types/models'
+import { type ApiInteraction } from '@/types/models'
 const props = defineProps<{
   id: string
 }>()
 
-const thoughtInput = ref<null|ThoughtInput>(null)
+const thoughtInput = ref<null|ApiInteraction>(null)
 
 const { getThoughtInput } = useThoughtInputs()
 

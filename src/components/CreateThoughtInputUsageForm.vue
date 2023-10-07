@@ -25,7 +25,7 @@ import { useUser } from '@/composables/useUser'
 import { useThoughtInputs } from '@/composables/useThoughtInputs'
 import { useThoughtInputUsages } from '@/composables/useThoughtInputUsages'
 import { ref, onMounted } from 'vue'
-import { type ApiThoughtInput } from '@/types/models'
+import { type ApiInteraction } from '@/types/models'
 const { user } = useUser()
 
 const emit = defineEmits(['close', 'refresh'])
@@ -33,8 +33,8 @@ const props = defineProps<{
   thoughtOutput: any
 }>()
 
-const thoughtInputs = ref<ApiThoughtInput[]>([])
-const selectedThoughtInput = ref<ApiThoughtInput | null>(null)
+const thoughtInputs = ref<ApiInteraction[]>([])
+const selectedThoughtInput = ref<ApiInteraction | null>(null)
 const usage_reason = ref('')
 
 const { createThoughtInputUsage } = useThoughtInputUsages()
@@ -54,7 +54,7 @@ const localCreateThoughtInputUsage = async () => {
 
 const { getUserThoughtInputs } = useThoughtInputs()
 
-const selectThoughtInput = (thoughtInput: ApiThoughtInput) => {
+const selectThoughtInput = (thoughtInput: ApiInteraction) => {
   selectedThoughtInput.value = thoughtInput
 }
 

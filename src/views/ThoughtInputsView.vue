@@ -17,7 +17,7 @@ import CreateThoughtInput from '@/components/CreateThoughtInput.vue'
 import ThoughtInputsList from '@/components/ThoughtInputsList.vue'
 import { useThoughtInputs } from '@/composables/useThoughtInputs'
 import { useUser } from '@/composables/useUser'
-import { type ApiThoughtInput } from '@/types/models'
+import { type ApiInteraction } from '@/types/models'
 import { ref, onMounted } from 'vue'
 
 const openNewThoughtInput = ref(false)
@@ -25,7 +25,7 @@ const openNewThoughtInput = ref(false)
 const { getThoughtInputs } = useThoughtInputs()
 const { user } = useUser()
 
-const thoughtInputs = ref<ApiThoughtInput[]>([])
+const thoughtInputs = ref<ApiInteraction[]>([])
 
 onMounted(async () => {
   thoughtInputs.value = await getThoughtInputs()

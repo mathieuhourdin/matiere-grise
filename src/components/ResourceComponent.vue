@@ -24,11 +24,11 @@
         ><PencilSquareIcon class="m-1"
       /></RoundLinkButton>
       <div class="md:flex my-8">
-        <ProgressBar :progress-value="resource.interaction_progress" class="m-2 w-1/3" />
+        <ProgressBar v-if="authorInteraction" :progress-value="authorInteraction.interaction_progress" class="m-2 w-1/3" />
         <a
           v-if="resource.resource_type === 'atcl'"
           class="ml-auto underline"
-          :href="article.resource_external_content_url"
+          :href="resource.resource_external_content_url"
         >
           Ajouter un commentaire
         </a>
@@ -37,7 +37,7 @@
     <div v-else>
       <ArticleForm
         v-if="resource.resource_type == 'atcl'"
-        :article="article"
+        :article="resource"
         @change="(event) => debouncedUpdateResource(resource.id, event)"
       />
       <ProblemForm
@@ -125,10 +125,9 @@ import { PencilSquareIcon } from '@heroicons/vue/24/outline'
 import { watch, toRefs, ref, computed, onMounted, type Ref } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import {
-  type Problem,
   type User,
   type Resource,
-  type Article,
+  type Interaction,
   type ThoughtInputUsage,
   type ApiResource,
   type Comment
@@ -137,11 +136,6 @@ const props = defineProps<{
   id: string
 }>()
 const route = useRoute()
-
-const article = computed((): Article => {
-  const article = resource.value as Article
-  return article
-})
 
 /************** tabs ******************/
 

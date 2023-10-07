@@ -26,7 +26,7 @@ import ThoughtInputsList from '@/components/ThoughtInputsList.vue'
 import { ref, onMounted } from 'vue'
 import { useUser } from '@/composables/useUser'
 import { useThoughtInputs } from '@/composables/useThoughtInputs'
-import { type ApiThoughtInput } from '@/types/models'
+import { type ApiInteraction } from '@/types/models'
 
 const props = defineProps<{
   pageUserId: string
@@ -39,7 +39,7 @@ const { getUserById, user } = useUser()
 const pageUser = ref(null)
 
 const { getUserThoughtInputs } = useThoughtInputs()
-const thoughtInputs = ref<ApiThoughtInput[]>([])
+const thoughtInputs = ref<ApiInteraction[]>([])
 
 onMounted(async () => {
   pageUser.value = await getUserById(props.pageUserId)

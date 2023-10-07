@@ -15,13 +15,13 @@ import TextInterface from '@/components/TextInterface.vue'
 import ResourceComponent from '@/components/ResourceComponent.vue'
 import ProgressBar from '@/components/ProgressBar.vue'
 import { useUser } from '@/composables/useUser'
-import { type ThoughtInput, type User } from '@/types/models'
+import { type ApiInteraction, type User } from '@/types/models'
 import { ref, computed, onMounted } from 'vue'
 
 const { getUserById, user } = useUser()
 
 const props = defineProps<{
-  thoughtInput: ThoughtInput
+  thoughtInput: ApiInteraction
 }>()
 
 const inputUser = ref<User | null>(null)

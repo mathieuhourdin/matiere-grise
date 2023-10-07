@@ -15,11 +15,11 @@
 
 <script setup lang="ts">
 import ThoughtInputCardWithPopup from '@/components/ThoughtInputCardWithPopup.vue'
-import { type ApiThoughtInput } from '@/types/models'
+import { type ApiInteraction } from '@/types/models'
 const emit = defineEmits(['select'])
 const props = withDefaults(
   defineProps<{
-    thoughtInputs: ApiThoughtInput[]
+    thoughtInputs: ApiInteraction[]
     usageReasons?: string[]
     center?: boolean
   }>(),
@@ -33,13 +33,13 @@ const getUsageReasonFromIndex = (index: number): string | undefined => {
   return props.usageReasons[index]
 }
 
-const sortedThoughtInputs = (inputs: ApiThoughtInput[]) => {
-  return inputs.sort((a: ApiThoughtInput, b: ApiThoughtInput) =>
+const sortedThoughtInputs = (inputs: ApiInteraction[]) => {
+  return inputs.sort((a: ApiInteraction, b: ApiInteraction) =>
     Number(b.interaction_date > a.interaction_date)
   )
 }
 
-const emitSelect = (thoughtInput: ApiThoughtInput) => {
+const emitSelect = (thoughtInput: ApiInteraction) => {
   console.log('Select')
   emit('select', thoughtInput)
 }

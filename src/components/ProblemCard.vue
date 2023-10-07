@@ -20,13 +20,14 @@
 </template>
 
 <script setup lang="ts">
-import { type Problem, type ThoughtInput, type User } from '@/types/models'
+import { type ApiResource, type Interaction, type User } from '@/types/models'
 import { useThoughtInputUsages } from '@/composables/useThoughtInputUsages'
 import { onMounted, ref } from 'vue'
+import { useResource } from '@/composables/useResource'
 import { useUser } from '@/composables/useUser'
 
 const props = defineProps<{
-  problem: Problem
+  problem: ApiResource
 }>()
 
 const formatDate = (date?: Date) => {
@@ -40,13 +41,15 @@ const formatDate = (date?: Date) => {
   })
 }
 
+const problemAuthorInteraction = ref<Interaction | null>(null)
 const problemAuthor = ref<User | null>(null)
 
 const formatText = (text: string) => {
   return text.length > 200 ? text.slice(0, 150) + '...' : text
 }
 
-const thoughtInputs = ref<ThoughtInput[]>([])
+const { getAuthorInteractionForResource } = useResource()
+const thoughtInputs = ref<Interaction[]>([])
 const { getThoughtInputUsagesForResource } = useThoughtInputUsages()
 const loadThoughtInputs = async () => {
   if (!props.problem.id) return
@@ -56,8 +59,9 @@ const loadThoughtInputs = async () => {
 const { getUserById } = useUser()
 
 const loadUser = async () => {
-  if (!props.problem.interaction_user_id) return
-  problemAuthor.value = await getUserById(props.problem.interaction_user_id)
+  problemAuthorInteraction.value = await getAuthorInteractionForResource(props.problem.id)
+  if (!problemAuthorInteraction.value) return
+  problemAuthor.value = await getUserById(problemAuthorInteraction.value.interaction_user_id)
 }
 
 onMounted(async () => {

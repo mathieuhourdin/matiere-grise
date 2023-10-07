@@ -12,12 +12,6 @@
       @update:modelValue="(event) => emitChange('resource_subtitle', event)"
     />
     <div class="flex">
-      <NumberInput
-        class="mr-auto h-6"
-        label="Progression"
-        :modelValue="problem.interaction_progress"
-        @update:modelValue="(event) => emitChange('progress', event)"
-      />
       <div class="ml-auto h-6 m-4 w-1/3">
         <SelectInput
           label="Catégorie"
@@ -43,12 +37,12 @@ import SelectInput from '@/components/Ui/SelectInput.vue'
 import TextInput from '@/components/Ui/TextInput.vue'
 import NumberInput from '@/components/Ui/NumberInput.vue'
 import { useCategories } from '@/composables/useCategories'
-import { type Problem } from '@/types/models'
+import { type Resource } from '@/types/models'
 import { computed } from 'vue'
 
 const emit = defineEmits(['change'])
 const props = defineProps<{
-  problem: Problem
+  problem: Resource
 }>()
 
 const { categories } = useCategories();
