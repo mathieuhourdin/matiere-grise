@@ -19,7 +19,6 @@ export interface Category {
 }
 
 export interface Resource {
-  resource_id: string
   resource_title: string
   resource_subtitle: string
   resource_content: string
@@ -29,7 +28,7 @@ export interface Resource {
   resource_maturing_state: string
   resource_publishing_state: string
   resource_type: string
-  resource_category_id: string
+  resource_category_id?: string
   created_at?: Date
   updated_at?: Date
 }
@@ -42,7 +41,7 @@ export interface Interaction {
   interaction_date: Date
   interaction_comment: string
   interaction_is_public: boolean
-  interaction_user_id: string
+  interaction_user_id?: string
   interaction_type?: string
   author?: User
   created_at?: Date

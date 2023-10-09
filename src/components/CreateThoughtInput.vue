@@ -1,32 +1,32 @@
 <template>
   <div>
     <div>Nouvel apport</div>
-    <TextInput label="Titre de l'ouvrage" v-model="thoughtInput.resource_title" />
+    <TextInput label="Titre de l'ouvrage" v-model="thoughtInput.resource.resource_title" />
     <div class="flex flex-wrap">
       <TextInput
         class="h-8 w-full md:w-5/12"
-        label="Nom de l'auteur"
-        v-model="thoughtInput.resource_author_name"
+        label="Sous-titre"
+        v-model="thoughtInput.resource.resource_subtitle"
       />
       <TextInput
         class="h-8 w-full md:w-5/12 md:ml-auto"
         label="type de resource"
-        v-model="thoughtInput.resource_type"
+        v-model="thoughtInput.resource.resource_type"
       />
     </div>
     <div class="flex flex-wrap">
       <TextInput
         class="h-8 w-full md:w-5/12"
         label="Lien de la ressource"
-        v-model="thoughtInput.resource_external_content_url"
+        v-model="thoughtInput.resource.resource_external_content_url"
       />
       <TextInput
         class="h-8 w-full md:w-5/12 md:ml-auto"
         label="Lien de l'image"
-        v-model="thoughtInput.resource_image_url"
+        v-model="thoughtInput.resource.resource_image_url"
       />
     </div>
-    <TextInput label="Commentaire sur l'ouvrage" v-model="thoughtInput.resource_comment" />
+    <TextInput label="Commentaire sur l'ouvrage" v-model="thoughtInput.resource.resource_comment" />
     <TextInput label="Avancement de l'ouvrage" v-model="thoughtInput.interaction_progress" type="number"/>
     <TextInput label="Date de lecture" v-model="thoughtInput.interaction_date" type="date" />
     <TextInput label="Pourquoi s'y être interessé ?" v-model="thoughtInput.interaction_comment" />

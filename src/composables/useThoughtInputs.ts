@@ -1,13 +1,24 @@
 import { fetchWrapper } from '@/helpers'
-import { type Interaction, type ApiInteraction } from '@/types/models'
+import { type Interaction, type Resource, type ApiInteraction } from '@/types/models'
 
 function newThoughtInput(): Interaction {
+  const resource: Resource = {
+    resource_title: '',
+    resource_subtitle: '',
+    resource_content: '',
+    resource_external_content_url: '',
+    resource_publishing_state: 'pbsh',
+    resource_maturing_state: 'fnsh',
+    resource_image_url: '',
+    resource_type: '',
+    resource_comment: '',
+  }
   const thought_input: Interaction = {
     interaction_progress: 0,
-    interaction_user_id: '',
     interaction_date: new Date(Date.now()),
     interaction_comment: '',
-    interaction_is_public: true
+    interaction_is_public: true,
+    resource: resource
   }
   return thought_input
 }
