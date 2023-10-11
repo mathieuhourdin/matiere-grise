@@ -1,1 +1,0 @@
-import{n as s}from"./index-fb06ad61.js";const n=async t=>(await s.get("/resource/"+t+"/thought_input_usages")).data,o=async t=>(await s.post("/thought_input_usages",t)).data;function u(){return{getThoughtInputUsagesForResource:n,createThoughtInputUsage:o}}export{u};
