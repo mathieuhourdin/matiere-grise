@@ -1,21 +1,18 @@
 import { ref } from 'vue'
 import { fetchWrapper } from '@/helpers'
-import { type Article } from '@/types/models'
+import { type Resource } from '@/types/models'
 import { useSnackbar } from '@/composables/useSnackbar'
 const { launchSnackbar } = useSnackbar()
 
 export function useArticle() {
   const newArticle = () => {
-    return ref<Article>({
+    return ref<Resource>({
       title: '',
       subtitle: '',
       content: '',
       comment: '',
-      interaction_user_id: undefined,
-      interaction_progress: 0,
       maturing_state: '',
       publishing_state: 'drft',
-      resource_parent_id: undefined,
       external_content_url: '',
       image_url: '',
       resource_type: 'atcl'
@@ -41,7 +38,7 @@ export function useArticle() {
     }
   }
 
-  const createArticle = async (article: Article) => {
+  const createArticle = async (article: Resource) => {
     try {
       article.interaction_progress = Number(article.interaction_progress)
       const response = await fetchWrapper.post('/articles', article)
@@ -51,7 +48,7 @@ export function useArticle() {
     }
   }
 
-  const updateArticle = async (id: string, article: Article) => {
+  const updateArticle = async (id: string, article: Resource) => {
     try {
       article.interaction_progress = Number(article.interaction_progress)
       const response = await fetchWrapper.put('/thought_outputs/' + id, article)

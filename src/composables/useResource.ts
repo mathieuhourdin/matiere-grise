@@ -6,7 +6,6 @@ const { launchSnackbar } = useSnackbar()
 const newResource = (): ApiResource => {
   return {
     id: '',
-    resource_id: '',
     title: '',
     subtitle: '',
     content: '',
@@ -26,6 +25,15 @@ const getResource = async (id: string): Promise<ApiResource> => {
     return response.data
   } catch (error) {
     launchSnackbar(`Error getting resource : ${error}`, 'error')
+    throw error
+  }
+}
+const getResources = async (): Promise<ApiResource[]> => {
+  try {
+    const response = await fetchWrapper.get('/resources')
+    return response.data
+  } catch (error) {
+    launchSnackbar(`Error getting resources : ${error}`, 'error')
     throw error
   }
 }
@@ -57,6 +65,7 @@ export function useResource() {
   return {
     newResource,
     getResource,
+    getResources,
     updateResource,
     createResource,
     getAuthorInteractionForResource
