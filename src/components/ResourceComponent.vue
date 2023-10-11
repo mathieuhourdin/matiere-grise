@@ -20,7 +20,7 @@
           >{{ resourceUser.first_name }} {{ resourceUser.last_name }}</router-link
         >
       </div>
-      <RoundLinkButton v-if="isResourceAuthor" @click="setEditingMetaData(true)"
+      <RoundLinkButton v-if="isResourceEditable" @click="setEditingMetaData(true)"
         ><PencilSquareIcon class="m-1"
       /></RoundLinkButton>
       <div class="md:flex my-8">
@@ -66,7 +66,7 @@
       <div class="text-xs italic">Commentaire</div>
       <TextInterface
         :full-text="resource.comment"
-        :editable="isResourceAuthor"
+        :editable="isResourceEditable"
       />
       <hr class="border-top border-zinc-400 my-4" />
       <div class="text-xs italic">Contenu</div>
@@ -75,7 +75,7 @@
         :ext-comments="comments"
         :resource-id="resource.id"
         :full-text="resource.content"
-        :editable="isResourceAuthor"
+        :editable="isResourceEditable"
         @change="(event) => debouncedUpdateResourceContent(event)"
       />
       <TextAreaInput
@@ -216,7 +216,8 @@ const debouncedUpdateResourceContent = (newResourceContent: string) => {
 
 /************** user section *********************/
 const { user, getUserById } = useUser()
-const isResourceAuthor = computed(() => {
+const isResourceEditable = computed(() => {
+  if (resource.value.is_external) return true
   if (!user.value || !resourceUser.value) return false
   return resourceUser.value.id == user.value.id
 })

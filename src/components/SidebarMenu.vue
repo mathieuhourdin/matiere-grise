@@ -1,12 +1,12 @@
 <template>
   <div class="bg-slate-200 z-10">
     <div>
-      <MenuItem v-if="user" :to="'/users/' + user.id">Mon profil</MenuItem>
-      <MenuItem to="/problems">Problématiques</MenuItem>
-      <MenuItem to="/">Productions</MenuItem>
-      <MenuItem to="/resources">Ressources</MenuItem>
-      <MenuItem to="/thought_inputs">Bibliographie</MenuItem>
-      <MenuItem to="/friends">Amis</MenuItem>
+      <MenuItem v-if="user" :to="'/users/' + user.id" title="Mon profil" />
+      <MenuItem to="/problems" title="Problématiques" subtitle="Carrefours des réflexions"/>
+      <MenuItem to="/" title="Productions" subtitle="Internes à la plateforme" />
+      <MenuItem to="/resources" title="Ressources" subtitle="Externes à la plateforme" />
+      <MenuItem to="/thought_inputs" title="Bibliographies" subtitle="Lues par les utilisateurs" />
+      <MenuItem to="/friends" title="Utilisateurs" />
     </div>
   </div>
 </template>
