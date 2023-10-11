@@ -1,12 +1,12 @@
 <template>
   <div>
     <div>Nouvel apport</div>
-    <TextInput label="Titre de l'ouvrage" v-model="thoughtInput.resource.resource_title" />
+    <TextInput label="Titre de l'ouvrage" v-model="thoughtInput.resource.title" />
     <div class="flex flex-wrap">
       <TextInput
         class="h-8 w-full md:w-5/12"
         label="Sous-titre"
-        v-model="thoughtInput.resource.resource_subtitle"
+        v-model="thoughtInput.resource.subtitle"
       />
       <TextInput
         class="h-8 w-full md:w-5/12 md:ml-auto"
@@ -18,15 +18,15 @@
       <TextInput
         class="h-8 w-full md:w-5/12"
         label="Lien de la ressource"
-        v-model="thoughtInput.resource.resource_external_content_url"
+        v-model="thoughtInput.resource.external_content_url"
       />
       <TextInput
         class="h-8 w-full md:w-5/12 md:ml-auto"
         label="Lien de l'image"
-        v-model="thoughtInput.resource.resource_image_url"
+        v-model="thoughtInput.resource.image_url"
       />
     </div>
-    <TextInput label="Commentaire sur l'ouvrage" v-model="thoughtInput.resource.resource_comment" />
+    <TextInput label="Commentaire sur l'ouvrage" v-model="thoughtInput.resource.comment" />
     <TextInput label="Avancement de l'ouvrage" v-model="thoughtInput.interaction_progress" type="number"/>
     <TextInput label="Date de lecture" v-model="thoughtInput.interaction_date" type="date" />
     <TextInput label="Pourquoi s'y être interessé ?" v-model="thoughtInput.interaction_comment" />

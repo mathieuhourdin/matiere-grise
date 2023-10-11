@@ -1,6 +1,6 @@
 <template>
   <div>
-    <ResourceComponent :id="thoughtInput.id" />
+    <ResourceComponent :id="thoughtInput.resource_id" />
     <hr class="border-top border-zinc-400 my-4" />
     <div class="text-xs italic">Raison de la lecture</div>
     <TextInterface
@@ -13,7 +13,6 @@
 <script setup lang="ts">
 import TextInterface from '@/components/TextInterface.vue'
 import ResourceComponent from '@/components/ResourceComponent.vue'
-import ProgressBar from '@/components/ProgressBar.vue'
 import { useUser } from '@/composables/useUser'
 import { type ApiInteraction, type User } from '@/types/models'
 import { ref, computed, onMounted } from 'vue'

@@ -8,15 +8,15 @@ const { createResource } = useResource()
 
 const newProblem = () => {
   const resource: Resource = {
-    resource_title: '',
-    resource_subtitle: '',
-    resource_content: '',
-    resource_external_content_url: '',
-    resource_publishing_state: 'drft',
-    resource_maturing_state: 'idea',
-    resource_image_url: '',
+    title: '',
+    subtitle: '',
+    content: '',
+    external_content_url: '',
+    publishing_state: 'drft',
+    maturing_state: 'idea',
+    image_url: '',
     resource_type: 'pblm',
-    resource_comment: '',
+    comment: '',
   }
   const problem: Interaction = {
     interaction_progress: 0,

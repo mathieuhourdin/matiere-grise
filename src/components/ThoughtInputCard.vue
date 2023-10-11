@@ -5,11 +5,11 @@
     </div>
     <div class="border shadow-lg rounded p-4 md:w-96">
       <div class="flex">
-        <img v-if="thoughtInput.resource" class="w-8 h-fit mr-4" :src="thoughtInput.resource.resource_image_url" />
+        <img v-if="thoughtInput.resource" class="w-8 h-fit mr-4" :src="thoughtInput.resource.image_url" />
         <div>
           <div>
             <router-link :to="'/thought_inputs/' + thoughtInput.id">
-              {{ thoughtInput.resource.resource_title }}</router-link
+              {{ thoughtInput.resource.title }}</router-link
             >
           </div>
           <div class="flex flex-wrap w-full" style="margin-top: -8px">

@@ -2,14 +2,14 @@
   <div>
     <TextInput
       label="Titre"
-      :modelValue="article.resource_title"
-      @update:modelValue="(event) => emitChange('resource_title', event)"
+      :modelValue="article.title"
+      @update:modelValue="(event) => emitChange('title', event)"
     />
     <TextInput
       class="h-6"
       label="Sous-titre"
-      :modelValue="article.resource_subtitle"
-      @update:modelValue="(event) => emitChange('resource_subtitle', event)"
+      :modelValue="article.subtitle"
+      @update:modelValue="(event) => emitChange('subtitle', event)"
     />
     <div class="flex">
       <NumberInput
@@ -22,15 +22,15 @@
         <SelectInput
           label="Catégorie"
           :choices="categoryOptions"
-          :model-value="article.resource_category_id"
-          @update:modelValue="(event) => emitChange('resource_category_id', event)"
+          :model-value="article.category_id"
+          @update:modelValue="(event) => emitChange('category_id', event)"
         />
       </div>
       <div class="ml-auto h-6 m-4 w-1/3">
         <SelectInput
           label="Stade d'écriture"
           :choices="maturingStateOptions "
-          :model-value="article.resource_maturing_state"
+          :model-value="article.maturing_state"
           @update:modelValue="(event) => emitChange('maturing_state', event)"
         />
       </div>
@@ -39,20 +39,20 @@
       <TextInput
         class="h-6"
         label="Lien contenu externe"
-        :modelValue="article.resource_external_content_url"
-        @update:modelValue="(event) => emitChange('resource_external_content_url', event)"
+        :modelValue="article.external_content_url"
+        @update:modelValue="(event) => emitChange('external_content_url', event)"
       />
       <TextInput
         class="h-6"
         label="Lien image"
-        :modelValue="article.resource_image_url"
-        @update:modelValue="(event) => emitChange('resource_image_url', event)"
+        :modelValue="article.image_url"
+        @update:modelValue="(event) => emitChange('image_url', event)"
       />
     </div>
     <TextAreaInput
       label="Pistes d'amélioration"
-      :modelValue="article.resource_comment"
-      @update:modelValue="(event) => emitChange('resource_comment', event)"
+      :modelValue="article.comment"
+      @update:modelValue="(event) => emitChange('comment', event)"
     />
   </div>
 </template>

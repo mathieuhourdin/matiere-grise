@@ -7,16 +7,16 @@ const newResource = (): ApiResource => {
   return {
     id: '',
     resource_id: '',
-    resource_title: '',
-    resource_subtitle: '',
-    resource_content: '',
-    resource_external_content_url: '',
-    resource_publishing_state: '',
-    resource_maturing_state: '',
-    resource_image_url: '',
+    title: '',
+    subtitle: '',
+    content: '',
+    external_content_url: '',
+    publishing_state: '',
+    maturing_state: '',
+    image_url: '',
     resource_type: '',
-    resource_comment: '',
-    resource_category_id: ''
+    comment: '',
+    category_id: ''
   }
 }
 

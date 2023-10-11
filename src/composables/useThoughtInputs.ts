@@ -3,15 +3,15 @@ import { type Interaction, type Resource, type ApiInteraction } from '@/types/mo
 
 function newThoughtInput(): Interaction {
   const resource: Resource = {
-    resource_title: '',
-    resource_subtitle: '',
-    resource_content: '',
-    resource_external_content_url: '',
-    resource_publishing_state: 'pbsh',
-    resource_maturing_state: 'fnsh',
-    resource_image_url: '',
+    title: '',
+    subtitle: '',
+    content: '',
+    external_content_url: '',
+    publishing_state: 'pbsh',
+    maturing_state: 'fnsh',
+    image_url: '',
     resource_type: '',
-    resource_comment: '',
+    comment: '',
   }
   const thought_input: Interaction = {
     interaction_progress: 0,

@@ -7,17 +7,17 @@ const { launchSnackbar } = useSnackbar()
 export function useArticle() {
   const newArticle = () => {
     return ref<Article>({
-      resource_title: '',
-      resource_subtitle: '',
-      resource_content: '',
-      resource_comment: '',
+      title: '',
+      subtitle: '',
+      content: '',
+      comment: '',
       interaction_user_id: undefined,
       interaction_progress: 0,
-      resource_maturing_state: '',
-      resource_publishing_state: 'drft',
+      maturing_state: '',
+      publishing_state: 'drft',
       resource_parent_id: undefined,
-      resource_external_content_url: '',
-      resource_image_url: '',
+      external_content_url: '',
+      image_url: '',
       resource_type: 'atcl'
     })
   }

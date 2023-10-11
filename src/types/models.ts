@@ -19,16 +19,16 @@ export interface Category {
 }
 
 export interface Resource {
-  resource_title: string
-  resource_subtitle: string
-  resource_content: string
-  resource_external_content_url: string
-  resource_comment: string
-  resource_image_url: string
-  resource_maturing_state: string
-  resource_publishing_state: string
+  title: string
+  subtitle: string
+  content: string
+  external_content_url: string
+  comment: string
+  image_url: string
+  maturing_state: string
+  publishing_state: string
   resource_type: string
-  resource_category_id?: string
+  category_id?: string
   created_at?: Date
   updated_at?: Date
 }

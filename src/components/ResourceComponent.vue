@@ -3,15 +3,15 @@
     <div v-if="!editingMetaData">
       <div class="my-8">
         <img
-          :src="resource.resource_image_url"
+          :src="resource.image_url"
           class="border border-slate-300 dark:border-zinc-700 rounded-xl ml-auto mr-auto"
           style="max-height: 20rem"
         />
       </div>
       <h1 class="text-3xl my-3 font-mplus md:text-center text-left">
-        {{ resource.resource_title }}
+        {{ resource.title }}
       </h1>
-      <div class="md:text-center text-left">{{ resource.resource_subtitle }}</div>
+      <div class="md:text-center text-left">{{ resource.subtitle }}</div>
       <div class="md:text-center text-left">
         <router-link
           v-if="resourceUser"
@@ -28,7 +28,7 @@
         <a
           v-if="resource.resource_type === 'atcl'"
           class="ml-auto underline"
-          :href="resource.resource_external_content_url"
+          :href="resource.external_content_url"
         >
           Ajouter un commentaire
         </a>
@@ -50,7 +50,7 @@
           >Ok</ActionButton
         >
         <ActionButton
-          v-if="resource.resource_publishing_state == 'drft'"
+          v-if="resource.publishing_state == 'drft'"
           @click="publishResource"
           type="valid"
           text="Publier"
@@ -65,16 +65,16 @@
     <div v-if="current_tab == 'ctnt'">
       <div class="text-xs italic">Commentaire</div>
       <TextInterface
-        :full-text="resource.resource_comment"
+        :full-text="resource.comment"
         :editable="isResourceAuthor"
       />
       <hr class="border-top border-zinc-400 my-4" />
       <div class="text-xs italic">Contenu</div>
       <TextInterface
-        v-if="resource.resource_publishing_state != 'drft'"
+        v-if="resource.publishing_state != 'drft'"
         :ext-comments="comments"
         :resource-id="resource.id"
-        :full-text="resource.resource_content"
+        :full-text="resource.content"
         :editable="isResourceAuthor"
         @change="(event) => debouncedUpdateResourceContent(event)"
       />
@@ -82,7 +82,7 @@
         v-else
         class="h-96"
         label="Contenu"
-        :modelValue="resource.resource_content"
+        :modelValue="resource.content"
         @update:modelValue="(event) => debouncedUpdateResourceContent(event)"
       />
     </div>
@@ -190,7 +190,7 @@ const setEditingMetaData = (value: boolean) => {
 
 const publishResource = () => {
   if (!resource.value || !resource.value.id) return
-  resource.value.resource_publishing_state = 'pbsh'
+  resource.value.publishing_state = 'pbsh'
   updateResource(resource.value.id, resource.value)
 }
 
@@ -210,7 +210,7 @@ const debouncedUpdateResourceContent = (newResourceContent: string) => {
   if (newResourceContent == '\n') return
   debouncedUpdateResource(toRefs(props).id.value, {
     ...resource.value,
-    resource_content: newResourceContent
+    content: newResourceContent
   })
 }
 

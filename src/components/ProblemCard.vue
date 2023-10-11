@@ -2,13 +2,13 @@
   <div class="border shadow-xl rounded m-2 p-4 h-72 w-60">
     <router-link :to="'/thought_outputs/' + problem.id">
       <div class="max-h-full">
-        <img class="h-28 mx-auto mb-4" :src="problem.resource_image_url" />
+        <img class="h-28 mx-auto mb-4" :src="problem.image_url" />
         <div class="h-full">
-          <div class="mb-2">{{ problem.resource_title }}</div>
+          <div class="mb-2">{{ problem.title }}</div>
           <div v-if="problemAuthor" class="text-2xs italic" style="margin-top: -8px">
             {{ problemAuthor.first_name }} {{ problemAuthor.last_name }}
           </div>
-          <div class="text-2xs mb-auto">{{ formatText(problem.resource_subtitle) }}</div>
+          <div class="text-2xs mb-auto">{{ formatText(problem.subtitle) }}</div>
           <div class="flex mt-2">
             <div class="text-2xs italic mt-auto">{{ formatDate(problem.created_at) }}</div>
             <div class="ml-auto text-2xs underline">{{ thoughtInputs.length }} inputs</div>
