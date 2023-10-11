@@ -26,6 +26,11 @@ async function getUserById(id: string) {
   return response.data
 }
 
+async function getUsers() {
+  const response = await fetchWrapper.get('/users')
+  return response.data
+}
+
 function logOut() {
   localStorage.removeItem('userId')
   user.value = null
@@ -65,6 +70,7 @@ export function useUser() {
     authUser,
     createNewUser,
     logOut,
-    getUserById
+    getUserById,
+    getUsers
   }
 }
