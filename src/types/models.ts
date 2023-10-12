@@ -9,6 +9,7 @@ export interface User {
   last_name: string
   handle: string
   password?: string
+  profile_picture_url?: string
 }
 
 export interface Category {

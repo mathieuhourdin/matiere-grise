@@ -3,7 +3,7 @@
     <router-link :to="'/users/' + user.id">
       <div class="px-20">
         <img
-          :src="image_src"
+          :src="user.profile_picture_url ? user.profile_picture_url : image_src"
           class="border border-slate-300 dark:border-zinc-700 rounded-xl max-w-full aspect-[2/2] object-cover object-center w-full"
         />
       </div>
@@ -21,6 +21,6 @@ const props = defineProps<{
 }>()
 
 const image_src = ref(
-  'https://media.licdn.com/dms/image/D4E03AQGRZ_CSCPLOIQ/profile-displayphoto-shrink_800_800/0/1683193168898?e=2147483647&v=beta&t=BDVbedpdVD1FxKeTYvs44DxHiC0ecpQRFXAnU5ist4w'
+  'https://st3.depositphotos.com/6672868/13701/v/450/depositphotos_137014128-stock-illustration-user-profile-icon.jpg'
 )
 </script>

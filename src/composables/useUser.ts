@@ -4,6 +4,8 @@ import { fetchWrapper } from '@/helpers'
 import { useSnackbar } from '@/composables/useSnackbar.ts'
 import { type User } from '@/types/models'
 
+const { launchSnackbar } = useSnackbar()
+
 const user = ref<User | null>(null)
 
 async function loadUser() {
@@ -31,12 +33,30 @@ async function getUsers() {
   return response.data
 }
 
+async function updateUser(id: string, user: User) {
+  const response = await fetchWrapper.put('/users/' + id, user)
+  return response.data
+}
+
+const debouncedTimeout = ref<number | null>(null)
+
+async function debouncedUpdateUser(id: string, user: User) {
+  if (debouncedTimeout.value !== null) clearTimeout(debouncedTimeout.value)
+  debouncedTimeout.value = setTimeout(async () => {
+    try {
+      await updateUser(id, user)
+    } catch (error) {
+      console.log('An error : ', error)
+      launchSnackbar('Cant update user', 'error')
+    }
+  }, 1000)
+}
+
 function logOut() {
   localStorage.removeItem('userId')
   user.value = null
 }
 
-const { launchSnackbar } = useSnackbar()
 async function authUser(login: any, redirectPath: string = '/') {
   try {
     const response = await fetchWrapper.post('/sessions', login)
@@ -51,7 +71,7 @@ async function authUser(login: any, redirectPath: string = '/') {
 }
 
 async function createNewUser(userPayload: User) {
-  if (!userPayload.handle.startsWith('@')) userPayload.handle += '@'
+  if (!userPayload.handle.startsWith('@')) userPayload.handle = '@' + userPayload.handle
   try {
     const response = await fetchWrapper.post('/users', userPayload)
     authUser(
@@ -71,6 +91,8 @@ export function useUser() {
     createNewUser,
     logOut,
     getUserById,
-    getUsers
+    getUsers,
+    updateUser,
+    debouncedUpdateUser
   }
 }

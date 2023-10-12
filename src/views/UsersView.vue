@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 p-16">
     <UserCard v-for="(user, i) in users" :key="i" :user="user" />
     </div>
   </div>
