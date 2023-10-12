@@ -16,7 +16,9 @@ import { useRouter, useRoute } from 'vue-router'
 import { ref, onMounted } from 'vue'
 const props = defineProps<{
   choices: {text: string, value: string}[],
-  default?: string
+  default?: string,
+  urlKey?: string
+
 }>();
 const tab = ref<string | null>(null)
 const router = useRouter()
@@ -25,7 +27,12 @@ const updateTab = (tabValue: string) => {
   tab.value = tabValue
   const query = route.query
   const path = route.path
-  router.push({ path: path, query: { ...query, tab: tabValue} })
+  const finalKey = props.urlKey ?? "tab"
+  console.log(finalKey)
+  const newQuery = {}
+  newQuery[finalKey] = tabValue
+  const lastQuery = { ...query, ...newQuery }
+  router.push({ path: path, query: lastQuery })
   console.log(`route : ${JSON.stringify(route)}`)
 }
 onMounted(() => updateTab(props.default?? ''))

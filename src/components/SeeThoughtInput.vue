@@ -1,6 +1,6 @@
 <template>
   <div>
-    <ResourceComponent :id="thoughtInput.resource_id" />
+    <ResourceComponent :id="thoughtInput.resource_id" second-level/>
     <hr class="border-top border-zinc-400 my-4" />
     <div class="text-xs italic">Raison de la lecture</div>
     <TextInterface

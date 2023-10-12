@@ -59,7 +59,7 @@
       </div>
     </div>
     <div>
-      <ToggleButtonGroup :choices="tabChoices" :default="toggleDefault" />
+      <ToggleButtonGroup :choices="tabChoices" :default="toggleDefault" :url-key="urlParam" />
     </div>
     <hr class="border-top border-zinc-400 my-4" />
     <div v-if="current_tab == 'ctnt'">
@@ -133,11 +133,20 @@ import {
   type Comment
 } from '@/types/models'
 const props = defineProps<{
-  id: string
+  id: string,
+  secondLevel?: boolean,
 }>()
 const route = useRoute()
 
 /************** tabs ******************/
+
+const urlParam = computed(() => {
+  if (props.secondLevel) {
+    return "popup_tab"
+  } else {
+    return "tab"
+  }
+})
 
 const tabChoices = ref([
   { text: 'Contenu', value: 'ctnt' },
@@ -145,13 +154,13 @@ const tabChoices = ref([
 ])
 
 const toggleDefault = ref(
-  route.query.tab && typeof route.query.tab === 'string' ? route.query.tab : 'ctnt'
+  (route.query[urlParam.value] && typeof route.query[urlParam.value] === 'string') ? route.query[urlParam.value] : 'ctnt'
 )
 
-const current_tab = ref<string | null>(null)
+const current_tab = ref<string | null>(route.query[urlParam.value])
 
 watch(
-  () => route.query.tab,
+  () => route.query[urlParam.value],
   (newValue) => {
     console.log('new route query', newValue)
     if (typeof newValue === 'string') current_tab.value = newValue

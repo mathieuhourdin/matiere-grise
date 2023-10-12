@@ -2,7 +2,8 @@
   <div>
     <div class="flex flex-wrap my-8">
       <div class="mx-auto flex flex-wrap max-w-full">
-        <ActionButton
+      <ToggleButtonGroup url-key="maturing_state" :choices="[{text: 'Terminés', value: 'fnsh'}, {text: 'Relecture', value: 'rvew'}, {text: 'Idées', value: 'idea'}]" default="fnsh" />
+        <!--<ActionButton
           class="w-24 mx-auto my-1"
           text="Terminés"
           @click="updateTab('fnsh')"
@@ -23,7 +24,7 @@
           :type="isSelected('idea')"
         >
           Idées
-        </ActionButton>
+        </ActionButton>-->
       </div>
       <ActionButton
         v-if="draftArticles.length > 0"
@@ -57,7 +58,8 @@
 </template>
 
 <script setup lang="ts">
-import { ref, toRefs, onMounted } from 'vue'
+import { ref, watch, onMounted } from 'vue'
+import ToggleButtonGroup from '@/components/Ui/ToggleButtonGroup.vue'
 import ArticleCard from '@/components/ArticleCard.vue'
 import RoundLinkButton from '@/components/Ui/RoundLinkButton.vue'
 import ActionButton from '@/components/Ui/ActionButton.vue'
@@ -74,6 +76,14 @@ const articles = ref([])
 const draftArticles = ref([])
 const tab = ref<string | null>(null)
 
+const route = useRoute()
+watch(
+  () => route.query.maturing_state,
+  (newValue) => {
+    console.log('new route query', newValue)
+    if (typeof newValue === 'string') tab.value = newValue
+  }
+)
 const maturingStateTexts = (maturingState: string | null) => {
   if (!maturingState) return ''
   const match: any = {
@@ -85,7 +95,6 @@ const maturingStateTexts = (maturingState: string | null) => {
 }
 
 const router = useRouter()
-const route = useRoute()
 const updateTab = (tabValue: string) => {
   tab.value = tabValue
   router.push({ path: '/', query: { maturing_state: tabValue } })
