@@ -4,12 +4,13 @@
       <UserInfos class="mx-auto border my-8" v-if="pageUser" :user="pageUser" />
       <div class="text-center m-4 italic text-sm">Derniers apports extérieurs</div>
 
-      <RoundLinkButton
-        class="mx-auto md:mx-0"
+      <div
         v-if="user && pageUserId == user.id"
+        class="italic underline text-xs"
         @click="openNewThoughtInput = true"
-        >+</RoundLinkButton
       >
+        Ajouter un nouvel apport
+      </div>
       <ModalSheet :open="openNewThoughtInput">
         <CreateThoughtInput @close="openNewThoughtInput = false" />
       </ModalSheet>
@@ -21,7 +22,6 @@
 import UserInfos from '@/components/UserInfos.vue'
 import ModalSheet from '@/components/Ui/ModalSheet.vue'
 import CreateThoughtInput from '@/components/CreateThoughtInput.vue'
-import RoundLinkButton from '@/components/Ui/RoundLinkButton.vue'
 import ThoughtInputsList from '@/components/ThoughtInputsList.vue'
 import { ref, onMounted } from 'vue'
 import { useUser } from '@/composables/useUser'

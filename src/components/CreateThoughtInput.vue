@@ -8,9 +8,10 @@
         label="Sous-titre"
         v-model="thoughtInput.resource.subtitle"
       />
-      <TextInput
-        class="h-8 w-full md:w-5/12 md:ml-auto"
-        label="type de resource"
+      <SelectInput
+        label="Type de ressource"
+        class="m-4 h-8 w-full md:w-5/12 md:ml-auto"
+        :choices="resourceTypeOptions "
         v-model="thoughtInput.resource.resource_type"
       />
     </div>
@@ -44,6 +45,7 @@
 
 <script setup lang="ts">
 import TextInput from '@/components/Ui/TextInput.vue'
+import SelectInput from '@/components/Ui/SelectInput.vue'
 import ActionButton from '@/components/Ui/ActionButton.vue'
 import { ref } from 'vue'
 import { useThoughtInputs } from '@/composables/useThoughtInputs'
@@ -58,6 +60,14 @@ const validate = () => {
   createThoughtInput(thoughtInput.value)
   emitClose()
 }
+
+const resourceTypeOptions = ref([
+  { text: "Livre", value: "book" },
+  { text: "Article de média", value: "natc" },
+  { text: "Article de recherche", value: "ratc" },
+  { text: "Film", value: "movi" },
+  { text: "Podcast", value: "pcst" }
+]);
 
 const emitClose = () => emit('close')
 </script>
