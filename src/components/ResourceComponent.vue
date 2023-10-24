@@ -36,15 +36,15 @@
     </div>
     <div v-else>
       <ArticleForm
-        v-if="resource.resource_type == 'atcl'"
         :article="resource"
         @change="(event) => debouncedUpdateResource(resource.id, event)"
       />
-      <ProblemForm
+      <ResourceAuthorPicker class="mx-4" :interaction="authorInteraction" :resource-id="id" @change="updateAuthorInteraction"/>
+    <!--<ProblemForm
         v-else
         :problem="resource"
         @change="(event) => debouncedUpdateResource(resource.id, event)"
-      />
+      />-->
       <div class="flex flex-row-reverse">
         <ActionButton class="mx-4" @click="setEditingMetaData(false)" type="valid" text="Preview"
           >Ok</ActionButton
@@ -112,6 +112,7 @@ import TextInterface from '@/components/TextInterface.vue'
 import ProgressBar from '@/components/ProgressBar.vue'
 import RoundLinkButton from '@/components/Ui/RoundLinkButton.vue'
 import ArticleForm from '@/components/ArticleForm.vue'
+import ResourceAuthorPicker from '@/components/ResourceAuthorPicker.vue'
 import ProblemForm from '@/components/ProblemForm.vue'
 import ActionButton from '@/components/Ui/ActionButton.vue'
 import TextAreaInput from '@/components/Ui/TextAreaInput.vue'
@@ -232,7 +233,17 @@ const isResourceEditable = computed(() => {
 })
 
 const resourceUser: Ref<User | null> = ref<User | null>(null)
+
+
+/************** interactions section *************/
+
 const authorInteraction = ref<Interaction | null>(null)
+
+
+const updateAuthorInteraction = async () => {
+  authorInteraction.value = await getAuthorInteractionForResource(props.id)
+}
+
 
 /************** comments section *****************/
 const { getCommentsForThoughtOutput } = useComments()

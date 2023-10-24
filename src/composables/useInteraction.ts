@@ -33,12 +33,39 @@ async function getUserInteractions(userId: string): Promise<ApiInteraction[]> {
   return response.data.map((thoughtInput: any) => formatApiResponse(thoughtInput))
 }
 
+async function updateInteraction(id: string, thoughtInput: any): Promise<ApiInteraction> {
+  const date_interaction_date = new Date(thoughtInput.interaction_date)
+  console.log('Date : ', date_interaction_date)
+  const interaction_date = date_interaction_date.toISOString().split('.')[0]
+  thoughtInput.interaction_progress = Number(thoughtInput.interaction_progress)
+  const response = await fetchWrapper.put('/interactions/' + id, {
+    ...thoughtInput,
+    interaction_date
+  })
+  return formatApiResponse(response.data)
+}
+
 async function createInteraction(thoughtInput: Interaction): Promise<ApiInteraction> {
   const date_interaction_date = new Date(thoughtInput.interaction_date)
   console.log('Date : ', date_interaction_date)
   const interaction_date = date_interaction_date.toISOString().split('.')[0]
   thoughtInput.interaction_progress = Number(thoughtInput.interaction_progress)
   const response = await fetchWrapper.post('/thought_inputs', { ...thoughtInput, interaction_date })
+  return formatApiResponse(response.data)
+}
+
+async function createInteractionForResource(
+  resource_id: string,
+  thoughtInput: Interaction
+): Promise<ApiInteraction> {
+  const date_interaction_date = new Date(thoughtInput.interaction_date)
+  console.log('Date : ', date_interaction_date)
+  const interaction_date = date_interaction_date.toISOString().split('.')[0]
+  thoughtInput.interaction_progress = Number(thoughtInput.interaction_progress)
+  const response = await fetchWrapper.post(`/resources/${resource_id}/interactions`, {
+    ...thoughtInput,
+    interaction_date
+  })
   return formatApiResponse(response.data)
 }
 
@@ -49,5 +76,7 @@ export function useInteractions() {
     createInteraction,
     getInteractions,
     getInteraction,
+    updateInteraction,
+    createInteractionForResource
   }
 }

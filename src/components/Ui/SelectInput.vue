@@ -8,7 +8,7 @@
       @input="(event) => emitChange(event)"
     >
       <option v-for="choice in choices" :key="choice.value" :value="choice.value">
-        {{ choice.text }}
+        {{ displayFunction(choice) }}
       </option>
     </select>
   </div>
@@ -16,12 +16,17 @@
 
 <script setup lang="ts">
 const emit = defineEmits(['update:modelValue'])
-const props = defineProps<{
-  label: string
-  choices: any[]
-  modelValue: any
-}>()
+const props = withDefaults(
+  defineProps<{
+    label: string
+    choices: any[]
+    modelValue: any
+    displayFunction: Function
+  }>(),
+  { displayFunction: (item) => item.text }
+)
 const emitChange = (event: any) => {
+  console.log(event.target.value)
   emit('update:modelValue', event.target.value)
 }
 </script>
