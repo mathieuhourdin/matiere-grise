@@ -21,9 +21,6 @@
         >
         <DateField v-if="authorInteraction" :date="authorInteraction.interaction_date" />
       </div>
-      <RoundLinkButton v-if="isResourceEditable" @click="setEditingMetaData(true)"
-        ><PencilSquareIcon class="m-1"
-      /></RoundLinkButton>
       <div class="md:flex my-8">
         <ProgressBar v-if="authorInteraction" :progress-value="authorInteraction.interaction_progress" class="m-2 w-1/3" />
         <a
@@ -103,11 +100,29 @@
         :usage-reasons="thoughtInputUsages.map((usage: ThoughtInputUsage) => usage.usage_reason)"
       />
     </div>
+    <div class="fixed right-3 bottom-5">
+      <RoundLinkButton v-if="isResourceEditable" title="Modifier" @click="setEditingMetaData(true)"
+        ><PencilSquareIcon class="m-1"
+      /></RoundLinkButton>
+      <RoundLinkButton class="mt-2" color="red" title="Marquer comme lu" v-if="isResourceEditable" @click="openAddInteraction = true"
+        ><ArrowDownOnSquareIcon class="m-1"
+      /></RoundLinkButton>
+      <ModalSheet :open="openAddInteraction" @close="openAddInteraction = false">
+        <CreateInteraction
+          @close="openAddInteraction = false"
+          :resource="resource"
+        />
+      </ModalSheet>
+      <RoundLinkButton class="mt-2" color="green" title="Relier à d'autres ressources" v-if="isResourceEditable" @click="setEditingMetaData(true)"
+        ><ShareIcon class="m-1"
+      /></RoundLinkButton>
+      </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import CreateThoughtInputUsageForm from '@/components/CreateThoughtInputUsageForm.vue'
+import CreateInteraction from '@/components/CreateInteraction.vue'
 import DateField from '@/components/Ui/DateField.vue'
 import ToggleButtonGroup from '@/components/Ui/ToggleButtonGroup.vue'
 import TextInterface from '@/components/TextInterface.vue'
@@ -124,7 +139,7 @@ import { useResource } from '@/composables/useResource'
 import { useComments } from '@/composables/useComments'
 import { useUser } from '@/composables/useUser'
 import { useThoughtInputUsages } from '@/composables/useThoughtInputUsages'
-import { PencilSquareIcon } from '@heroicons/vue/24/outline'
+import { PencilSquareIcon, ArrowDownOnSquareIcon, ShareIcon  } from '@heroicons/vue/24/outline'
 import { watch, toRefs, ref, computed, onMounted, type Ref } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import {
@@ -241,6 +256,7 @@ const resourceUser: Ref<User | null> = ref<User | null>(null)
 
 const authorInteraction = ref<Interaction | null>(null)
 
+const openAddInteraction = ref<boolean>(false)
 
 const updateAuthorInteraction = async () => {
   authorInteraction.value = await getAuthorInteractionForResource(props.id)
