@@ -19,6 +19,7 @@
           class="text-sm underline"
           >{{ resourceUser.first_name }} {{ resourceUser.last_name }}</router-link
         >
+        <DateField v-if="authorInteraction" :date="authorInteraction.interaction_date" />
       </div>
       <RoundLinkButton v-if="isResourceEditable" @click="setEditingMetaData(true)"
         ><PencilSquareIcon class="m-1"
@@ -107,6 +108,7 @@
 
 <script setup lang="ts">
 import CreateThoughtInputUsageForm from '@/components/CreateThoughtInputUsageForm.vue'
+import DateField from '@/components/Ui/DateField.vue'
 import ToggleButtonGroup from '@/components/Ui/ToggleButtonGroup.vue'
 import TextInterface from '@/components/TextInterface.vue'
 import ProgressBar from '@/components/ProgressBar.vue'
