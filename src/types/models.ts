@@ -34,6 +34,14 @@ export interface Resource {
   updated_at?: Date
 }
 
+export interface ContextualResource {
+  resource: Resource
+  user_id?: string
+  context_comment?: string
+  progress?: number
+  date: Date
+}
+
 export type ApiResource = Resource & ApiObject
 
 export interface Interaction {
@@ -57,12 +65,13 @@ export type ApiInteraction = ApiObject &
     resource: Resource
   }
 
-export interface ThoughtInputUsage {
+export interface ResourceRelation {
   id?: string
-  resource_id?: string
-  thought_input_id?: string
-  thought_input: ApiInteraction
-  usage_reason: string
+  target_resource_id?: string
+  origin_resource_id?: string
+  origin_resource: ApiResource
+  relation_comment: string
+  user_id: string
 }
 
 export interface Comment {

@@ -2,44 +2,37 @@
   <div class="relative max-w-full">
     <div v-if="!center" class="absolute md:border h-full start-1/2" />
     <ThoughtInputCardWithPopup
-      v-for="(thoughtInput, index) in sortedThoughtInputs(thoughtInputs)"
-      :key="thoughtInput.id"
+      v-for="(contextualResource, index) in sortedThoughtInputs(contextualResources)"
+      :key="contextualResource.id"
       class="mb-4 md:mb-1 mx-auto max-w-full max-w-fit p-1"
       :class="{ 'md:ml-0': index % 2 == 0 && !center, 'md:mr-0': !center }"
-      :thought-input="thoughtInput"
-      :usage-reason="getUsageReasonFromIndex(index)"
-      @click="emitSelect(thoughtInput)"
+      :thought-input="contextualResource"
+      @click="emitSelect(contextualResource)"
     />
   </div>
 </template>
 
 <script setup lang="ts">
 import ThoughtInputCardWithPopup from '@/components/ThoughtInputCardWithPopup.vue'
-import { type ApiInteraction } from '@/types/models'
+import { type ContextualResource } from '@/types/models'
 const emit = defineEmits(['select'])
 const props = withDefaults(
   defineProps<{
-    thoughtInputs: ApiInteraction[]
-    usageReasons?: string[]
+    contextualResources: ContextualResource[]
     center?: boolean
   }>(),
   {
     center: false
   }
 )
-const getUsageReasonFromIndex = (index: number): string | undefined => {
-  if (!props.usageReasons) return undefined
-  if (props.usageReasons.length !== props.thoughtInputs.length) return undefined
-  return props.usageReasons[index]
-}
 
-const sortedThoughtInputs = (inputs: ApiInteraction[]) => {
-  return inputs.sort((a: ApiInteraction, b: ApiInteraction) =>
-    Number(b.interaction_date > a.interaction_date)
+const sortedThoughtInputs = (inputs: ContextualResource[]) => {
+  return inputs.sort((a: ContextualResource, b: ContextualResource) =>
+    Number(b.date > a.date)
   )
 }
 
-const emitSelect = (thoughtInput: ApiInteraction) => {
+const emitSelect = (thoughtInput: ContextualResource) => {
   console.log('Select')
   emit('select', thoughtInput)
 }

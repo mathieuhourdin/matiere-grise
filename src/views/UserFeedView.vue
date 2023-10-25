@@ -14,7 +14,7 @@
       <ModalSheet :open="openNewThoughtInput">
         <CreateThoughtInput @close="openNewThoughtInput = false" />
       </ModalSheet>
-      <ThoughtInputsList class="mx-auto" :thought-inputs="thoughtInputs" />
+      <ThoughtInputsList class="mx-auto" :contextual-resources="contextualResources" />
     </div>
   </div>
 </template>
@@ -23,10 +23,10 @@ import UserInfos from '@/components/UserInfos.vue'
 import ModalSheet from '@/components/Ui/ModalSheet.vue'
 import CreateThoughtInput from '@/components/CreateThoughtInput.vue'
 import ThoughtInputsList from '@/components/ThoughtInputsList.vue'
-import { ref, onMounted } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useUser } from '@/composables/useUser'
 import { useThoughtInputs } from '@/composables/useThoughtInputs'
-import { type ApiInteraction } from '@/types/models'
+import { type ApiInteraction, type ContextualResource } from '@/types/models'
 
 const props = defineProps<{
   pageUserId: string
@@ -40,6 +40,18 @@ const pageUser = ref(null)
 
 const { getUserThoughtInputs } = useThoughtInputs()
 const thoughtInputs = ref<ApiInteraction[]>([])
+
+const contextualResources = computed(() => {
+  return thoughtInputs.value.map((thoughtInput) => {
+    return {
+      resource: thoughtInput.resource,
+      date: thoughtInput.interaction_date,
+      user_id: thoughtInput.interaction_user_id,
+      context_comment: thoughtInput.interaction_comment,
+      progress: thoughtInput.interaction_progress
+    }
+  })
+})
 
 onMounted(async () => {
   pageUser.value = await getUserById(props.pageUserId)

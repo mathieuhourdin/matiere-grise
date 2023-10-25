@@ -21,7 +21,7 @@
 
 <script setup lang="ts">
 import { type ApiResource, type Interaction, type User } from '@/types/models'
-import { useThoughtInputUsages } from '@/composables/useThoughtInputUsages'
+import { useResourceRelations } from '@/composables/useResourceRelations'
 import { onMounted, ref } from 'vue'
 import { useResource } from '@/composables/useResource'
 import { useUser } from '@/composables/useUser'
@@ -50,10 +50,10 @@ const formatText = (text: string) => {
 
 const { getAuthorInteractionForResource } = useResource()
 const thoughtInputs = ref<Interaction[]>([])
-const { getThoughtInputUsagesForResource } = useThoughtInputUsages()
+const { getResourceRelationsForResource } = useResourceRelations()
 const loadThoughtInputs = async () => {
   if (!props.problem.id) return
-  thoughtInputs.value = await getThoughtInputUsagesForResource(props.problem.id)
+  thoughtInputs.value = await getResourceRelationsForResource(props.problem.id)
 }
 
 const { getUserById } = useUser()

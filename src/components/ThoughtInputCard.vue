@@ -1,38 +1,52 @@
 <template>
   <div class="w-full md:w-96">
-    <div v-if="usageReason" class="text-xs italic mb-2">
-      {{ usageReason }}
+    <div v-if="contextualResource.context_comment" class="text-xs italic mb-2">
+      <div>
+        {{ contextualResource.context_comment }}
+      </div>
+      <div class="flex flex-wrap">
+        <router-link
+          v-if="contextAuthor"
+          :to="'/users/' + contextAuthor.id"
+          class="text-2xs underline"
+          >{{ contextAuthor.first_name }} {{ contextAuthor.last_name }}</router-link
+        >
+        <div v-if="contextualResource.date" class="text-2xs italic ml-2">
+          {{ formatDate(contextualResource.date) }}
+        </div>
+        <div v-if="contextualResource.progress" class="ml-auto m-1 w-1/3">
+          <ProgressBar :progress-value="contextualResource.progress" />
+        </div>
+      </div>
     </div>
     <div class="border shadow-lg rounded p-4 md:w-96">
       <div class="flex">
-        <img v-if="thoughtInput.resource" class="w-8 h-fit mr-4" :src="thoughtInput.resource.image_url" />
+        <img
+          v-if="contextualResource.resource"
+          class="w-8 h-fit mr-4"
+          :src="contextualResource.resource.image_url"
+        />
         <div>
           <div>
-            <router-link :to="'/thought_inputs/' + thoughtInput.id">
-              {{ thoughtInput.resource.title }}</router-link
+            <router-link :to="'/resources/' + contextualResource.resource.id">
+              {{ contextualResource.resource.title }} {{ contextualResource.resource.subtitle }}</router-link
             >
           </div>
           <div class="flex flex-wrap w-full" style="margin-top: -8px">
-            <div class="text-2xs italic">
-              Nom de l'auteur 
-            </div>
-            <div class="ml-auto m-1 w-1/3">
-              <ProgressBar :progress-value="thoughtInput.interaction_progress" />
-            </div>
+            <router-link
+              v-if="resourceAuthor"
+              :to="'/users/' + resourceAuthor.id"
+              class="text-2xs underline"
+              >{{ resourceAuthor.first_name }} {{ resourceAuthor.last_name }}</router-link
+            >
           </div>
-          <div class="text-2xs">{{ formatText(thoughtInput.interaction_comment) }}</div>
+          <div class="text-2xs">{{ formatText(contextualResource.resource.comment) }}</div>
         </div>
       </div>
       <div class="flex flex-wrap">
-        <div v-if="thoughtInput.interaction_date" class="text-2xs italic">
-          {{ formatDate(thoughtInput.interaction_date) }}
+        <div v-if="contextualResource.date" class="text-2xs italic">
+          {{ formatDate(contextualResource.resourcedate) }}
         </div>
-        <router-link
-          v-if="inputAuthor"
-          :to="'/users/' + inputAuthor.id"
-          class="ml-auto text-2xs underline"
-          >{{ inputAuthor.first_name }} {{ inputAuthor.last_name }}</router-link
-        >
       </div>
     </div>
   </div>
@@ -40,23 +54,34 @@
 
 <script setup lang="ts">
 import ProgressBar from '@/components/ProgressBar.vue'
-import { type ApiInteraction, type User } from '@/types/models'
+import { type ApiInteraction, type User, type ContextualResource } from '@/types/models'
 import { useUser } from '@/composables/useUser'
+import { useResource } from '@/composables/useResource'
 import { ref, onMounted } from 'vue'
 
 const props = defineProps<{
-  thoughtInput: ApiInteraction,
-  usageReason?: string
+  contextualResource: ContextualResource
 }>()
 
 const { getUserById } = useUser()
-const inputAuthor = ref<User | null>(null)
+const { getAuthorInteractionForResource } = useResource()
+
+const resourceAuthor = ref<User | null>(null)
+const resourceAuthorInteraction = ref<Interaction | null>(null)
+const contextAuthor = ref<User | null>(null)
 
 onMounted(async () => {
-  if (props.thoughtInput.interaction_user_id) inputAuthor.value = await getUserById(props.thoughtInput.interaction_user_id)
+  if (props.contextualResource.user_id)
+    contextAuthor.value = await getUserById(props.contextualResource.user_id)
+  resourceAuthorInteraction.value = await getAuthorInteractionForResource(
+    props.contextualResource.resource.id
+  )
+  if (resourceAuthorInteraction.value)
+    resourceAuthor.value = await getUserById(resourceAuthorInteraction.value.interaction_user_id)
 })
 
 const formatDate = (date: Date): string => {
+  if (!date) return ''
   return date.toLocaleString('fr-FR', {
     hour: 'numeric',
     weekday: 'short',

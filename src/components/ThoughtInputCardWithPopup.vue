@@ -3,19 +3,23 @@
     <ModalSheet :open="modalOpen" @close="modalOpen = false">
       <SeeThoughtInput :thought-input="thoughtInput" :usage-reason="usageReason" />
     </ModalSheet>
-    <ThoughtInputCard class="md:w-96" :thought-input="thoughtInput" :usage-reason="usageReason" @click="modalOpen = true" />
+    <ThoughtInputCard
+      class="md:w-96"
+      :contextual-resource="thoughtInput"
+      @click="modalOpen = true"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
-import { type ApiInteraction } from '@/types/models'
+import { type ContextualResource } from '@/types/models'
 import SeeThoughtInput from '@/components/SeeThoughtInput.vue'
 import ModalSheet from '@/components/Ui/ModalSheet.vue'
 import ThoughtInputCard from '@/components/ThoughtInputCard.vue'
 import { ref } from 'vue'
 
 const props = defineProps<{
-  thoughtInput: ApiInteraction,
+  thoughtInput: ContextualResource
   usageReason?: string
 }>()
 

@@ -1,13 +1,13 @@
 import { fetchWrapper } from '@/helpers'
 
-const getThoughtInputUsagesForResource = async (resource_id: string) => {
+const getResourceRelationsForResource = async (resource_id: string) => {
   const response = await fetchWrapper.get(
     '/resource/' + resource_id + '/thought_input_usages'
   )
   return response.data
 }
 
-const createThoughtInputUsage = async (thought_input_usage: any) => {
+const createResourceRelation = async (thought_input_usage: any) => {
     const response = await fetchWrapper.post(
         '/thought_input_usages',
         thought_input_usage
@@ -15,9 +15,9 @@ const createThoughtInputUsage = async (thought_input_usage: any) => {
     return response.data
 }
 
-export function useThoughtInputUsages() {
+export function useResourceRelations() {
   return {
-    getThoughtInputUsagesForResource,
-    createThoughtInputUsage
+    getResourceRelationsForResource,
+    createResourceRelation
   }
 }

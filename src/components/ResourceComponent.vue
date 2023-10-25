@@ -13,16 +13,17 @@
       </h1>
       <div class="md:text-center text-left">{{ resource.subtitle }}</div>
       <div class="md:text-center text-left">
-        <router-link
-          v-if="resourceUser"
-          :to="'/users/' + resourceUser.id"
-          class="text-sm underline"
+        <router-link v-if="resourceUser" :to="'/users/' + resourceUser.id" class="text-sm underline"
           >{{ resourceUser.first_name }} {{ resourceUser.last_name }}</router-link
         >
         <DateField v-if="authorInteraction" :date="authorInteraction.interaction_date" />
       </div>
       <div class="md:flex my-8">
-        <ProgressBar v-if="authorInteraction" :progress-value="authorInteraction.interaction_progress" class="m-2 w-1/3" />
+        <ProgressBar
+          v-if="authorInteraction"
+          :progress-value="authorInteraction.interaction_progress"
+          class="m-2 w-1/3"
+        />
         <a
           v-if="resource.resource_type === 'atcl'"
           class="ml-auto underline"
@@ -37,8 +38,13 @@
         :article="resource"
         @change="(event) => debouncedUpdateResource(resource.id, event)"
       />
-      <ResourceAuthorPicker class="mx-4" :interaction="authorInteraction" :resource-id="id" @change="updateAuthorInteraction"/>
-    <!--<ProblemForm
+      <ResourceAuthorPicker
+        class="mx-4"
+        :interaction="authorInteraction"
+        :resource-id="id"
+        @change="updateAuthorInteraction"
+      />
+      <!--<ProblemForm
         v-else
         :problem="resource"
         @change="(event) => debouncedUpdateResource(resource.id, event)"
@@ -62,10 +68,7 @@
     <hr class="border-top border-zinc-400 my-4" />
     <div v-if="current_tab == 'ctnt'">
       <div class="text-xs italic">Commentaire</div>
-      <TextInterface
-        :full-text="resource.comment"
-        :editable="isResourceEditable"
-      />
+      <TextInterface :full-text="resource.comment" :editable="isResourceEditable" />
       <hr class="border-top border-zinc-400 my-4" />
       <div class="text-xs italic">Contenu</div>
       <TextInterface
@@ -85,43 +88,47 @@
       />
     </div>
     <div v-else>
-      <ModalSheet :open="openAddThoughtInputUsage" @close="openAddThoughtInputUsage = false">
-        <CreateThoughtInputUsageForm
+      <ModalSheet :open="openAddResourceRelation" @close="openAddResourceRelation = false">
+        <CreateResourceRelationForm
           @refresh="loadBiblio"
-          @close="openAddThoughtInputUsage = false"
+          @close="openAddResourceRelation = false"
           :thought-output="resource"
         />
       </ModalSheet>
-      <div @click="openAddThoughtInputUsage = true" class="text-sm italic underline">
+      <div @click="openAddResourceRelation = true" class="text-sm italic underline">
         Ajouter une référence
       </div>
-      <ThoughtInputsList
-        :thought-inputs="thoughtInputUsages.map((usage: ThoughtInputUsage) => usage.thought_input)"
-        :usage-reasons="thoughtInputUsages.map((usage: ThoughtInputUsage) => usage.usage_reason)"
-      />
+      <ThoughtInputsList :contextual-resources="contextualResources" />
     </div>
     <div class="fixed right-3 bottom-5">
       <RoundLinkButton v-if="isResourceEditable" title="Modifier" @click="setEditingMetaData(true)"
         ><PencilSquareIcon class="m-1"
       /></RoundLinkButton>
-      <RoundLinkButton class="mt-2" color="red" title="Marquer comme lu" v-if="isResourceEditable" @click="openAddInteraction = true"
+      <RoundLinkButton
+        class="mt-2"
+        color="red"
+        title="Marquer comme lu"
+        v-if="isResourceEditable"
+        @click="openAddInteraction = true"
         ><ArrowDownOnSquareIcon class="m-1"
       /></RoundLinkButton>
       <ModalSheet :open="openAddInteraction" @close="openAddInteraction = false">
-        <CreateInteraction
-          @close="openAddInteraction = false"
-          :resource="resource"
-        />
+        <CreateInteraction @close="openAddInteraction = false" :resource="resource" />
       </ModalSheet>
-      <RoundLinkButton class="mt-2" color="green" title="Relier à d'autres ressources" v-if="isResourceEditable" @click="setEditingMetaData(true)"
+      <RoundLinkButton
+        class="mt-2"
+        color="green"
+        title="Relier à d'autres ressources"
+        v-if="isResourceEditable"
+        @click="setEditingMetaData(true)"
         ><ShareIcon class="m-1"
       /></RoundLinkButton>
-      </div>
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import CreateThoughtInputUsageForm from '@/components/CreateThoughtInputUsageForm.vue'
+import CreateResourceRelationForm from '@/components/CreateResourceRelationForm.vue'
 import CreateInteraction from '@/components/CreateInteraction.vue'
 import DateField from '@/components/Ui/DateField.vue'
 import ToggleButtonGroup from '@/components/Ui/ToggleButtonGroup.vue'
@@ -138,21 +145,21 @@ import ModalSheet from '@/components/Ui/ModalSheet.vue'
 import { useResource } from '@/composables/useResource'
 import { useComments } from '@/composables/useComments'
 import { useUser } from '@/composables/useUser'
-import { useThoughtInputUsages } from '@/composables/useThoughtInputUsages'
-import { PencilSquareIcon, ArrowDownOnSquareIcon, ShareIcon  } from '@heroicons/vue/24/outline'
+import { useResourceRelations } from '@/composables/useResourceRelations'
+import { PencilSquareIcon, ArrowDownOnSquareIcon, ShareIcon } from '@heroicons/vue/24/outline'
 import { watch, toRefs, ref, computed, onMounted, type Ref } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import {
   type User,
   type Resource,
   type Interaction,
-  type ThoughtInputUsage,
+  type ResourceRelation,
   type ApiResource,
   type Comment
 } from '@/types/models'
 const props = defineProps<{
-  id: string,
-  secondLevel?: boolean,
+  id: string
+  secondLevel?: boolean
 }>()
 const route = useRoute()
 
@@ -160,9 +167,9 @@ const route = useRoute()
 
 const urlParam = computed(() => {
   if (props.secondLevel) {
-    return "popup_tab"
+    return 'popup_tab'
   } else {
-    return "tab"
+    return 'tab'
   }
 })
 
@@ -172,7 +179,9 @@ const tabChoices = ref([
 ])
 
 const toggleDefault = ref(
-  (route.query[urlParam.value] && typeof route.query[urlParam.value] === 'string') ? route.query[urlParam.value] : 'ctnt'
+  route.query[urlParam.value] && typeof route.query[urlParam.value] === 'string'
+    ? route.query[urlParam.value]
+    : 'ctnt'
 )
 
 const current_tab = ref<string | null>(route.query[urlParam.value])
@@ -187,14 +196,26 @@ watch(
 
 /************** Biblio *****************/
 
-const { getThoughtInputUsagesForResource } = useThoughtInputUsages()
+const { getResourceRelationsForResource } = useResourceRelations()
 
-const thoughtInputUsages = ref([])
-const openAddThoughtInputUsage = ref(false)
+const resourceRelations = ref([])
+const openAddResourceRelation = ref(false)
 
 const loadBiblio = async () => {
-  thoughtInputUsages.value = await getThoughtInputUsagesForResource(toRefs(props).id.value)
+  resourceRelations.value = await getResourceRelationsForResource(toRefs(props).id.value)
 }
+
+const contextualResources = computed(() => {
+  return resourceRelations.value.map((resourceRelation) => {
+    return {
+      resource: resourceRelation.origin_resource,
+      date: resourceRelation.created_at,
+      user_id: resourceRelation.user_id,
+      context_comment: resourceRelation.relation_comment,
+      progress: null
+    }
+  })
+})
 
 onMounted(() => loadBiblio())
 
@@ -251,7 +272,6 @@ const isResourceEditable = computed(() => {
 
 const resourceUser: Ref<User | null> = ref<User | null>(null)
 
-
 /************** interactions section *************/
 
 const authorInteraction = ref<Interaction | null>(null)
@@ -261,7 +281,6 @@ const openAddInteraction = ref<boolean>(false)
 const updateAuthorInteraction = async () => {
   authorInteraction.value = await getAuthorInteractionForResource(props.id)
 }
-
 
 /************** comments section *****************/
 const { getCommentsForThoughtOutput } = useComments()
