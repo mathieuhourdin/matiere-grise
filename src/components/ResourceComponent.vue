@@ -63,7 +63,7 @@
       </div>
     </div>
     <div>
-      <ToggleButtonGroup :choices="tabChoices" :default="toggleDefault" :url-key="urlParam" />
+      <ToggleButtonGroup :choices="tabChoices" :default="toggleDefault" :url-key="urlParam" url />
     </div>
     <hr class="border-top border-zinc-400 my-4" />
     <div v-if="current_tab == 'ctnt'">
@@ -88,14 +88,14 @@
       />
     </div>
     <div v-else>
-      <ModalSheet :open="openAddResourceRelation" @close="openAddResourceRelation = false">
+      <ModalSheet :open="openAddResourceRelationAsTarget" @close="openAddResourceRelationAsTarget = false">
         <CreateResourceRelationForm
           @refresh="loadBiblio"
-          @close="openAddResourceRelation = false"
-          :thought-output="resource"
+          @close="openAddResourceRelationAsTarget = false"
+          :target-resource="resource"
         />
       </ModalSheet>
-      <div @click="openAddResourceRelation = true" class="text-sm italic underline">
+      <div @click="openAddResourceRelationAsTarget = true" class="text-sm italic underline">
         Ajouter une référence
       </div>
       <ThoughtInputsList :contextual-resources="contextualResources" />
@@ -120,9 +120,16 @@
         color="green"
         title="Relier à d'autres ressources"
         v-if="isResourceEditable"
-        @click="setEditingMetaData(true)"
+        @click="openAddResourceRelationAsOrigin = true"
         ><ShareIcon class="m-1"
       /></RoundLinkButton>
+      <ModalSheet :open="openAddResourceRelationAsOrigin" @close="openAddResourceRelationAsOrigin = false">
+        <CreateResourceRelationForm
+          @refresh="loadBiblio"
+          @close="openAddResourceRelationAsOrigin = false"
+          :origin-resource="resource"
+        />
+      </ModalSheet>
     </div>
   </div>
 </template>
@@ -199,7 +206,8 @@ watch(
 const { getResourceRelationsForResource } = useResourceRelations()
 
 const resourceRelations = ref([])
-const openAddResourceRelation = ref(false)
+const openAddResourceRelationAsTarget = ref(false)
+const openAddResourceRelationAsOrigin = ref(false)
 
 const loadBiblio = async () => {
   resourceRelations.value = await getResourceRelationsForResource(toRefs(props).id.value)

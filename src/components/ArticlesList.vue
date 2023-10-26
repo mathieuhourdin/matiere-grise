@@ -2,7 +2,7 @@
   <div>
     <div class="flex flex-wrap my-8">
       <div class="mx-auto flex flex-wrap max-w-full">
-      <ToggleButtonGroup url-key="maturing_state" :choices="[{text: 'Terminés', value: 'fnsh'}, {text: 'Relecture', value: 'rvew'}, {text: 'Idées', value: 'idea'}]" default="fnsh" />
+      <ToggleButtonGroup url-key="maturing_state" :choices="[{text: 'Terminés', value: 'fnsh'}, {text: 'Relecture', value: 'rvew'}, {text: 'Idées', value: 'idea'}]" default="fnsh" url />
         <!--<ActionButton
           class="w-24 mx-auto my-1"
           text="Terminés"

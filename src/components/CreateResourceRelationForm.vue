@@ -1,58 +1,110 @@
 <template>
   <div>
-    <div v-if="user">Nouvelle utilisation par {{ user.first_name }} {{ user.last_name }}</div>
-    <ThoughtInputsList
-      v-if="!selectedOriginResource"
-      :contextual-resources="contextualResources"
-      center
-      @select="(event) => selectThoughtInput(event)"
-    />
+    <div v-if="user" class="mb-4" >Nouvelle relation entre ressources par {{ user.first_name }} {{ user.last_name }}</div>
+    <div v-if="!selectedLinkResource">
+      <ThoughtInputsList
+        v-if="targetResource"
+        :contextual-resources="contextualOriginResources"
+        center
+        @select="(event) => selectResource(event)"
+      />
+      <div v-else>
+        <div>
+          Choisir une ressource cible
+          <ToggleButtonGroup center :choices="tabChoices" default="pblm" @update="updateTab" />
+          <ThoughtInputsList
+            :contextual-resources="contextualTargetResources[localTab] || []"
+            center
+            @select="(event) => selectResource(event)"
+          />
+        </div>
+      </div>
+    </div>
     <div v-else>
       <TextAreaInput label="Pourquoi ajouter cet élément ?" v-model="relation_comment" />
       <div class="flex flex-row-reverse">
         <ActionButton type="valid" @click="localCreateResourceRelation" text="Ajouter" />
-        <ActionButton type="abort" @click="emit('close')" text="Ajouter" />
+        <ActionButton type="abort" @click="emit('close')" text="Annuler" class="mr-1" />
       </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
+import ToggleButtonGroup from '@/components/Ui/ToggleButtonGroup.vue'
 import ActionButton from '@/components/Ui/ActionButton.vue'
 import TextAreaInput from '@/components/Ui/TextAreaInput.vue'
 import ThoughtInputsList from '@/components/ThoughtInputsList.vue'
 import { useUser } from '@/composables/useUser'
 import { useThoughtInputs } from '@/composables/useThoughtInputs'
+import { useResource } from '@/composables/useResource'
 import { useResourceRelations } from '@/composables/useResourceRelations'
+import { useArticle } from '@/composables/useArticle'
+import { useProblem } from '@/composables/useProblem'
 import { ref, computed, onMounted } from 'vue'
 import { type ApiInteraction, type ApiResource } from '@/types/models'
 const { user } = useUser()
 
 const emit = defineEmits(['close', 'refresh'])
 const props = defineProps<{
-  thoughtOutput: any
+  targetResource?: ApiResource
+  originResource?: ApiResource
 }>()
 
+const localTab = ref<string | null>()
+const updateTab = (event) => {
+  console.log('Event : ', event)
+  localTab.value = event
+}
+const tabChoices = ref([
+  { text: 'Externes', value: 'extr' },
+  { text: 'Internes', value: 'artl' },
+  { text: 'Problème', value: 'pblm' }
+])
 const thoughtInputs = ref<ApiInteraction[]>([])
-const selectedOriginResource = ref<ApiResource | null>(null)
+const selectedLinkResource = ref<ApiResource | null>(null)
+const externalResources = ref<ApiResource[]>([])
+const internalArticles = ref<ApiResource[]>([])
+const problems = ref<ApiResource[]>([])
 const relation_comment = ref('')
 
 const { createResourceRelation } = useResourceRelations()
+const { getResources } = useResource()
+const { getArticles } = useArticle()
+const { getProblems } = useProblem()
 
-const contextualResources = computed(() => {
+const contextualOriginResources = computed(() => {
   return thoughtInputs.value.map((thoughtInput) => {
     return {
-      resource: thoughtInput.resource,
+      resource: thoughtInput.resource
     }
   })
 })
 
+const resourceToContextualResource = (resources: ApiResource[]) => {
+  return resources.map((resource) => {
+    return { resource }
+  })
+}
+
+const contextualTargetResources = computed(() => {
+  return {
+    extr: resourceToContextualResource(externalResources.value),
+    artl: resourceToContextualResource(internalArticles.value),
+    pblm: resourceToContextualResource(problems.value)
+  }
+})
+
 const localCreateResourceRelation = async () => {
   console.log('create')
-  if (!selectedOriginResource.value) return
+  if (!selectedLinkResource.value) return
   const thought_input_usage = {
-    target_resource_id: props.thoughtOutput.id,
-    origin_resource_id: selectedOriginResource.value.id,
+    target_resource_id: props.targetResource
+      ? props.targetResource.id
+      : selectedLinkResource.value.id,
+    origin_resource_id: props.originResource
+      ? props.originResource.id
+      : selectedLinkResource.value.id,
     relation_comment: relation_comment.value
   }
   await createResourceRelation(thought_input_usage)
@@ -62,12 +114,17 @@ const localCreateResourceRelation = async () => {
 
 const { getUserThoughtInputs } = useThoughtInputs()
 
-const selectThoughtInput = (contextualResource: ContextualResource) => {
-  selectedOriginResource.value = contextualResource.resource
+const selectResource = (contextualResource: ContextualResource) => {
+  selectedLinkResource.value = contextualResource.resource
 }
 
 onMounted(async () => {
   if (!user.value || !user.value.id) return
-  thoughtInputs.value = await getUserThoughtInputs(user.value.id)
+  if (props.targetResource) thoughtInputs.value = await getUserThoughtInputs(user.value.id)
+  if (props.originResource) {
+    externalResources.value = await getResources()
+    internalArticles.value = await getArticles({author: true})
+    problems.value = await getProblems()
+  }
 })
 </script>
