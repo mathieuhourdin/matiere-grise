@@ -42,6 +42,14 @@
           :model-value="article.resource_type"
         />
       </div>
+      <div class="my-auto ml-auto h-6 m-4 w-1/3">
+        <CheckboxInput
+            class="mt-3"
+          label="Externe"
+          @update:modelValue="(event) => emitChange('is_external', event)"
+          :model-value="article.is_external"
+        />
+      </div>
     </div>
     <div class="flex">
       <TextInput
@@ -67,6 +75,7 @@
 
 <script setup lang="ts">
 import SelectInput from '@/components/Ui/SelectInput.vue'
+import CheckboxInput from '@/components/Ui/CheckboxInput.vue'
 import TextInput from '@/components/Ui/TextInput.vue'
 import NumberInput from '@/components/Ui/NumberInput.vue'
 import TextAreaInput from '@/components/Ui/TextAreaInput.vue'

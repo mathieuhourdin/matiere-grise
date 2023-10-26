@@ -15,7 +15,6 @@ const newResource = (): ApiResource => {
     image_url: '',
     resource_type: '',
     comment: '',
-    category_id: ''
   }
 }
 
