@@ -68,7 +68,19 @@
     <hr class="border-top border-zinc-400 my-4" />
     <div v-if="current_tab == 'ctnt'">
       <div class="text-xs italic">Commentaire</div>
-      <TextInterface :full-text="resource.comment" :editable="isResourceEditable" />
+      <TextInterface
+        :full-text="resource.comment"
+        :editable="isResourceEditable"
+        v-if="resource.publishing_state != 'drft'"
+        @change="(event) => debouncedUpdateResourceComment(event)"
+      />
+      <TextAreaInput
+        v-else
+        class="h-20"
+        label="Commentaire"
+        :modelValue="resource.comment"
+        @update:modelValue="(event) => debouncedUpdateResourceComment(event)"
+      />
       <hr class="border-top border-zinc-400 my-4" />
       <div class="text-xs italic">Contenu</div>
       <TextInterface
@@ -334,6 +346,13 @@ const debouncedUpdateResourceContent = (newResourceContent: string) => {
   debouncedUpdateResource(toRefs(props).id.value, {
     ...resource.value,
     content: newResourceContent
+  })
+}
+const debouncedUpdateResourceComment = (newResourceComment: string) => {
+  if (newResourceComment == '\n') return
+  debouncedUpdateResource(toRefs(props).id.value, {
+    ...resource.value,
+    comment: newResourceComment
   })
 }
 
