@@ -33,7 +33,7 @@ import SelectInput from '@/components/Ui/SelectInput.vue'
 import TextAreaInput from '@/components/Ui/TextAreaInput.vue'
 import ActionButton from '@/components/Ui/ActionButton.vue'
 import { ref, onMounted } from 'vue'
-import { useInteractions } from '@/composables/useInteraction'
+import { useInteraction } from '@/composables/useInteraction'
 import { useUser } from '@/composables/useUser'
 import { type Resource } from '@/types/models'
 
@@ -47,7 +47,7 @@ const interactionTypeOptions = ref([
   { text: 'Envie', value: 'wish' }
 ])
 
-const { newInteraction, createInteractionForResource } = useInteractions()
+const { newInteraction, createInteractionForResource } = useInteraction()
 const { user } = useUser()
 
 const interaction = ref(newInteraction())

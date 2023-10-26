@@ -35,7 +35,7 @@ export interface Resource {
 }
 
 export interface ContextualResource {
-  resource: Resource
+  resource?: Resource
   user_id?: string
   context_comment?: string
   progress?: number

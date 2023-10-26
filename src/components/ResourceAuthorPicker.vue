@@ -32,7 +32,7 @@ import NumberInput from '@/components/Ui/NumberInput.vue'
 import { type User, type Interaction } from '@/types/models'
 import { watch, toRefs, ref, computed, onMounted } from 'vue'
 import { useUser } from '@/composables/useUser'
-import { useInteractions } from '@/composables/useInteraction'
+import { useInteraction } from '@/composables/useInteraction'
 const emit = defineEmits(['update'])
 const props = defineProps<{
   interaction?: Interaction
@@ -57,7 +57,7 @@ const loadUser = async (interaction) =>
   (user.value = await getUserById(interaction.interaction_user_id))
 
 const { createInteractionForResource, newInteraction, createInteraction, updateInteraction } =
-  useInteractions()
+  useInteraction()
 
 const chooseUser = async (newUser) => {
   console.log(`newUser : ${JSON.stringify(newUser)}`)

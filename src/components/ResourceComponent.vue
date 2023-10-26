@@ -87,8 +87,11 @@
         @update:modelValue="(event) => debouncedUpdateResourceContent(event)"
       />
     </div>
-    <div v-else>
-      <ModalSheet :open="openAddResourceRelationAsTarget" @close="openAddResourceRelationAsTarget = false">
+    <div v-else-if="current_tab == 'bbli'">
+      <ModalSheet
+        :open="openAddResourceRelationAsTarget"
+        @close="openAddResourceRelationAsTarget = false"
+      >
         <CreateResourceRelationForm
           @refresh="loadBiblio"
           @close="openAddResourceRelationAsTarget = false"
@@ -99,6 +102,12 @@
         Ajouter une référence
       </div>
       <ThoughtInputsList :contextual-resources="contextualResources" />
+    </div>
+    <div v-else-if="current_tab == 'pblm'">
+      <ThoughtInputsList :contextual-resources="contextualResourcesUsages " />
+    </div>
+    <div v-else-if="current_tab == 'inpt'">
+      <ThoughtInputsList :contextual-resources="contextualResourcesInteractions " />
     </div>
     <div class="fixed right-3 bottom-5">
       <RoundLinkButton v-if="isResourceEditable" title="Modifier" @click="setEditingMetaData(true)"
@@ -123,7 +132,10 @@
         @click="openAddResourceRelationAsOrigin = true"
         ><ShareIcon class="m-1"
       /></RoundLinkButton>
-      <ModalSheet :open="openAddResourceRelationAsOrigin" @close="openAddResourceRelationAsOrigin = false">
+      <ModalSheet
+        :open="openAddResourceRelationAsOrigin"
+        @close="openAddResourceRelationAsOrigin = false"
+      >
         <CreateResourceRelationForm
           @refresh="loadBiblio"
           @close="openAddResourceRelationAsOrigin = false"
@@ -150,6 +162,7 @@ import TextAreaInput from '@/components/Ui/TextAreaInput.vue'
 import ThoughtInputsList from '@/components/ThoughtInputsList.vue'
 import ModalSheet from '@/components/Ui/ModalSheet.vue'
 import { useResource } from '@/composables/useResource'
+import { useInteraction } from '@/composables/useInteraction'
 import { useComments } from '@/composables/useComments'
 import { useUser } from '@/composables/useUser'
 import { useResourceRelations } from '@/composables/useResourceRelations'
@@ -180,10 +193,14 @@ const urlParam = computed(() => {
   }
 })
 
-const tabChoices = ref([
-  { text: 'Contenu', value: 'ctnt' },
-  { text: 'Biblio', value: 'bbli' }
-])
+const tabChoices = computed(() => {
+  return [
+    { text: 'Contenu', value: 'ctnt' },
+    { text: 'Biblio', value: 'bbli', count: resourceRelations.value.length },
+    { text: 'Sujets', value: 'pblm', count: targetResources.value.length },
+    { text: 'Interactions', value: 'inpt', count: interactions.value.length }
+  ]
+})
 
 const toggleDefault = ref(
   route.query[urlParam.value] && typeof route.query[urlParam.value] === 'string'
@@ -203,7 +220,7 @@ watch(
 
 /************** Biblio *****************/
 
-const { getResourceRelationsForResource } = useResourceRelations()
+const { getResourceRelationsForResource, getUsagesForResource } = useResourceRelations()
 
 const resourceRelations = ref([])
 const openAddResourceRelationAsTarget = ref(false)
@@ -226,6 +243,44 @@ const contextualResources = computed(() => {
 })
 
 onMounted(() => loadBiblio())
+
+/************** interactions *****************/
+
+const interactions = ref<Interaction[]>([])
+
+const { getInteractionsForResource } = useInteraction()
+
+onMounted(async () => interactions.value = await getInteractionsForResource(props.id))
+
+const contextualResourcesInteractions = computed(() => {
+  return interactions.value.map((interaction) => {
+    return {
+      resource: null,
+      date: interaction.interaction_date,
+      user_id: interaction.interaction_user_id,
+      context_comment: interaction.interaction_comment,
+      progress: interaction.interaction_progress
+    }
+  })
+})
+
+/************** target resources ***********/
+
+const targetResources = ref<ResourceRelation[]>([])
+
+onMounted(async () => targetResources.value = await getUsagesForResource(props.id))
+
+const contextualResourcesUsages = computed(() => {
+  return targetResources.value.map((targetResource) => {
+    return {
+      resource: targetResource.target_resource,
+      date: targetResource.created_at,
+      user_id: targetResource.user_id,
+      context_comment: targetResource.relation_comment,
+      progress: null
+    }
+  })
+})
 
 /************** resource section ******************/
 const { newResource, getResource, updateResource, getAuthorInteractionForResource } = useResource()

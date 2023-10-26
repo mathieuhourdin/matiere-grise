@@ -69,7 +69,12 @@ async function createInteractionForResource(
   return formatApiResponse(response.data)
 }
 
-export function useInteractions() {
+async function getInteractionsForResource(resourceId: string): Promise<ApiInteraction[]> {
+  const response = await fetchWrapper.get(`/resources/${resourceId}/interactions`)
+  return response.data.map((line: ApiInteraction) => formatApiResponse(line))
+}
+
+export function useInteraction() {
   return {
     getUserInteractions,
     newInteraction,
@@ -77,6 +82,7 @@ export function useInteractions() {
     getInteractions,
     getInteraction,
     updateInteraction,
-    createInteractionForResource
+    createInteractionForResource,
+    getInteractionsForResource
   }
 }

@@ -19,7 +19,7 @@
         </div>
       </div>
     </div>
-    <div class="border shadow-lg rounded p-4 md:w-96">
+    <div v-if="contextualResource.resource" class="border shadow-lg rounded p-4 md:w-96">
       <div class="flex">
         <img
           v-if="contextualResource.resource"
@@ -29,7 +29,8 @@
         <div>
           <div>
             <router-link :to="'/resources/' + contextualResource.resource.id">
-              {{ contextualResource.resource.title }} {{ contextualResource.resource.subtitle }}</router-link
+              {{ contextualResource.resource.title }}
+              {{ contextualResource.resource.subtitle }}</router-link
             >
           </div>
           <div class="flex flex-wrap w-full" style="margin-top: -8px">
@@ -73,9 +74,10 @@ const contextAuthor = ref<User | null>(null)
 onMounted(async () => {
   if (props.contextualResource.user_id)
     contextAuthor.value = await getUserById(props.contextualResource.user_id)
-  resourceAuthorInteraction.value = await getAuthorInteractionForResource(
-    props.contextualResource.resource.id
-  )
+  if (props.contextualResource.resource)
+    resourceAuthorInteraction.value = await getAuthorInteractionForResource(
+      props.contextualResource.resource.id
+    )
   if (resourceAuthorInteraction.value)
     resourceAuthor.value = await getUserById(resourceAuthorInteraction.value.interaction_user_id)
 })
