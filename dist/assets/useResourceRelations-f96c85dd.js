@@ -1,1 +1,0 @@
-import{p as s}from"./index-254d6e81.js";const o=async e=>(await s.get("/resource/"+e+"/thought_input_usages")).data,r=async e=>(await s.post("/thought_input_usages",e)).data;function a(){return{getResourceRelationsForResource:o,createResourceRelation:r}}export{a as u};
