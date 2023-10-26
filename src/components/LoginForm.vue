@@ -18,6 +18,8 @@ import TextInput from '@/components/Ui/TextInput.vue'
 import ActionButton from '@/components/Ui/ActionButton.vue'
 import { ref } from 'vue'
 import { useUser } from '@/composables/useUser'
+import { useRoute } from 'vue-router'
+const route = useRoute()
 
 const { authUser } = useUser()
 const username = ref('')
@@ -26,6 +28,6 @@ const password = ref('')
 const submit = async () => {
   console.log('Submit')
   console.log(username.value)
-  await authUser({ username: username.value, password: password.value })
+  await authUser({ username: username.value, password: password.value }, route.query.redirectPath)
 }
 </script>
