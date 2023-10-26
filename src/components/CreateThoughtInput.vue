@@ -11,7 +11,7 @@
       <SelectInput
         label="Type de ressource"
         class="m-4 h-8 w-full md:w-5/12 md:ml-auto"
-        :choices="resourceTypeOptions "
+        :choices="resourceTypeOptions"
         v-model="thoughtInput.resource.resource_type"
       />
     </div>
@@ -28,16 +28,15 @@
       />
     </div>
     <TextInput label="Commentaire sur l'ouvrage" v-model="thoughtInput.resource.comment" />
-    <TextInput label="Avancement de l'ouvrage" v-model="thoughtInput.interaction_progress" type="number"/>
+    <TextInput
+      label="Avancement de l'ouvrage"
+      v-model="thoughtInput.interaction_progress"
+      type="number"
+    />
     <TextInput label="Date de lecture" v-model="thoughtInput.interaction_date" type="date" />
     <TextInput label="Pourquoi s'y être interessé ?" v-model="thoughtInput.interaction_comment" />
     <div class="flex flex-row-reverse">
-      <ActionButton
-        @click="validate"
-        class="m-4"
-        text="Valider"
-        type="valid"
-      />
+      <ActionButton @click="validate" class="m-4" text="Valider" type="valid" />
       <ActionButton @click="emitClose" class="m-4" text="Annuler" type="abort" />
     </div>
   </div>
@@ -62,12 +61,13 @@ const validate = () => {
 }
 
 const resourceTypeOptions = ref([
-  { text: "Livre", value: "book" },
-  { text: "Article de média", value: "natc" },
-  { text: "Article de recherche", value: "ratc" },
-  { text: "Film", value: "movi" },
-  { text: "Podcast", value: "pcst" }
-]);
+  { text: 'Livre', value: 'book' },
+  { text: 'Fiche de lecture', value: 'shet' },
+  { text: 'Article de média', value: 'natc' },
+  { text: 'Article de recherche', value: 'ratc' },
+  { text: 'Film', value: 'movi' },
+  { text: 'Podcast', value: 'pcst' }
+])
 
 const emitClose = () => emit('close')
 </script>

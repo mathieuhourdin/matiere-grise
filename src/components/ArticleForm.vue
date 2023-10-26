@@ -29,9 +29,17 @@
       <div class="ml-auto h-6 m-4 w-1/3">
         <SelectInput
           label="Stade d'écriture"
-          :choices="maturingStateOptions "
+          :choices="maturingStateOptions"
           :model-value="article.maturing_state"
           @update:modelValue="(event) => emitChange('maturing_state', event)"
+        />
+      </div>
+      <div class="ml-auto h-6 m-4 w-1/3">
+        <SelectInput
+          label="Type de ressource"
+          :choices="resourceTypeOptions"
+          @update:modelValue="(event) => emitChange('resource_type', event)"
+          :model-value="article.resource_type"
         />
       </div>
     </div>
@@ -72,12 +80,21 @@ const props = defineProps<{
 }>()
 
 const maturingStateOptions = ref([
-  { text: "Terminé", value: "fnsh"},
-  { text: "Relecture", value: "rvew"},
-  { text: "Idée", value: "idea"},
+  { text: 'Terminé', value: 'fnsh' },
+  { text: 'Relecture', value: 'rvew' },
+  { text: 'Idée', value: 'idea' }
 ])
 
-const { categories } = useCategories();
+const resourceTypeOptions = ref([
+  { text: 'Livre', value: 'book' },
+  { text: 'Fiche de lecture', value: 'shet' },
+  { text: 'Article de média', value: 'natc' },
+  { text: 'Article de recherche', value: 'ratc' },
+  { text: 'Film', value: 'movi' },
+  { text: 'Podcast', value: 'pcst' }
+])
+
+const { categories } = useCategories()
 const categoryOptions = computed(() => {
   return categories.value.map((category) => ({ text: category.display_name, value: category.id }))
 })

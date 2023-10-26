@@ -9,17 +9,21 @@
         @update:modelValue="(event) => chooseUser(event)"
       />
       <TextInput
+        v-if="interaction"
         class="my-auto"
         label="Date d'écriture"
         :model-value="interaction.interaction_date.split('T')[0]"
-        @update:modelValue="(event) => updateFields({ ...interaction, interaction_date: event})"
+        @update:modelValue="(event) => updateFields({ ...interaction, interaction_date: event })"
         type="date"
       />
       <NumberInput
+        v-if="interaction"
         class="my-auto"
         label="Progression"
         :modelValue="interaction.interaction_progress"
-        @update:modelValue="(event) => updateFields({ ...interaction, interaction_progress: event})"
+        @update:modelValue="
+          (event) => updateFields({ ...interaction, interaction_progress: event })
+        "
       />
     </div>
   </div>
@@ -79,7 +83,7 @@ const chooseUser = async (newUser) => {
 }
 
 const updateFields = async (newValue) => {
-  await updateInteraction(props.interaction.id, newValue);
+  await updateInteraction(props.interaction.id, newValue)
   emit('update')
 }
 

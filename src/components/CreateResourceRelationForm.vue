@@ -1,6 +1,8 @@
 <template>
   <div>
-    <div v-if="user" class="mb-4" >Nouvelle relation entre ressources par {{ user.first_name }} {{ user.last_name }}</div>
+    <div v-if="user" class="mb-4">
+      Nouvelle relation entre ressources par {{ user.first_name }} {{ user.last_name }}
+    </div>
     <div v-if="!selectedLinkResource">
       <ThoughtInputsList
         v-if="targetResource"
@@ -21,7 +23,13 @@
       </div>
     </div>
     <div v-else>
-      <TextAreaInput label="Pourquoi ajouter cet élément ?" v-model="relation_comment" />
+      <SelectInput
+        class="m-4"
+        label="Type de lien"
+        :choices="relationTypeOptions"
+        v-model="relation_type"
+      />
+      <TextAreaInput class="m-4" label="Pourquoi ajouter cet élément ?" v-model="relation_comment" />
       <div class="flex flex-row-reverse">
         <ActionButton type="valid" @click="localCreateResourceRelation" text="Ajouter" />
         <ActionButton type="abort" @click="emit('close')" text="Annuler" class="mr-1" />
@@ -32,6 +40,7 @@
 
 <script setup lang="ts">
 import ToggleButtonGroup from '@/components/Ui/ToggleButtonGroup.vue'
+import SelectInput from '@/components/Ui/SelectInput.vue'
 import ActionButton from '@/components/Ui/ActionButton.vue'
 import TextAreaInput from '@/components/Ui/TextAreaInput.vue'
 import ThoughtInputsList from '@/components/ThoughtInputsList.vue'
@@ -61,12 +70,19 @@ const tabChoices = ref([
   { text: 'Internes', value: 'artl' },
   { text: 'Problème', value: 'pblm' }
 ])
+const relationTypeOptions = ref([
+  { text: 'Biblio', value: 'bibl' },
+  { text: 'Résumé', value: 'sumr' },
+  { text: 'Sujet principal', value: 'main' },
+  { text: 'Evocation', value: 'mino' }
+])
 const thoughtInputs = ref<ApiInteraction[]>([])
 const selectedLinkResource = ref<ApiResource | null>(null)
 const externalResources = ref<ApiResource[]>([])
 const internalArticles = ref<ApiResource[]>([])
 const problems = ref<ApiResource[]>([])
 const relation_comment = ref('')
+const relation_type = ref('')
 
 const { createResourceRelation } = useResourceRelations()
 const { getResources } = useResource()
@@ -105,7 +121,8 @@ const localCreateResourceRelation = async () => {
     origin_resource_id: props.originResource
       ? props.originResource.id
       : selectedLinkResource.value.id,
-    relation_comment: relation_comment.value
+    relation_comment: relation_comment.value,
+    relation_type: relation_type.value
   }
   await createResourceRelation(thought_input_usage)
   emit('refresh')
@@ -123,7 +140,7 @@ onMounted(async () => {
   if (props.targetResource) thoughtInputs.value = await getUserThoughtInputs(user.value.id)
   if (props.originResource) {
     externalResources.value = await getResources()
-    internalArticles.value = await getArticles({author: true})
+    internalArticles.value = await getArticles({ author: true })
     problems.value = await getProblems()
   }
 })

@@ -104,10 +104,10 @@
       <ThoughtInputsList :contextual-resources="contextualResources" />
     </div>
     <div v-else-if="current_tab == 'pblm'">
-      <ThoughtInputsList :contextual-resources="contextualResourcesUsages " />
+      <ThoughtInputsList :contextual-resources="contextualResourcesUsages" />
     </div>
     <div v-else-if="current_tab == 'inpt'">
-      <ThoughtInputsList :contextual-resources="contextualResourcesInteractions " />
+      <ThoughtInputsList :contextual-resources="contextualResourcesInteractions" />
     </div>
     <div class="fixed right-3 bottom-5">
       <RoundLinkButton v-if="isResourceEditable" title="Modifier" @click="setEditingMetaData(true)"
@@ -122,7 +122,11 @@
         ><ArrowDownOnSquareIcon class="m-1"
       /></RoundLinkButton>
       <ModalSheet :open="openAddInteraction" @close="openAddInteraction = false">
-        <CreateInteraction @close="openAddInteraction = false" :resource="resource" />
+        <CreateInteraction
+          @refresh="loadInteractions"
+          @close="openAddInteraction = false"
+          :resource="resource"
+        />
       </ModalSheet>
       <RoundLinkButton
         class="mt-2"
@@ -137,7 +141,7 @@
         @close="openAddResourceRelationAsOrigin = false"
       >
         <CreateResourceRelationForm
-          @refresh="loadBiblio"
+          @refresh="loadUsages"
           @close="openAddResourceRelationAsOrigin = false"
           :origin-resource="resource"
         />
@@ -250,7 +254,11 @@ const interactions = ref<Interaction[]>([])
 
 const { getInteractionsForResource } = useInteraction()
 
-onMounted(async () => interactions.value = await getInteractionsForResource(props.id))
+const loadInteractions = async () => {
+  interactions.value = await getInteractionsForResource(props.id)
+}
+
+onMounted(async () => await loadInteractions())
 
 const contextualResourcesInteractions = computed(() => {
   return interactions.value.map((interaction) => {
@@ -268,7 +276,11 @@ const contextualResourcesInteractions = computed(() => {
 
 const targetResources = ref<ResourceRelation[]>([])
 
-onMounted(async () => targetResources.value = await getUsagesForResource(props.id))
+onMounted(async () => await loadUsages())
+
+const loadUsages = async () => {
+  targetResources.value = await getUsagesForResource(props.id)
+}
 
 const contextualResourcesUsages = computed(() => {
   return targetResources.value.map((targetResource) => {
