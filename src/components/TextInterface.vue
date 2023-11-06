@@ -26,7 +26,7 @@
               <div class="rounded-full ml-4 mr-2 mt-2 h-1 w-1 bg-black" />
             </div>
           </div>
-          <div class="flex flex-wrap">
+          <div class="flex flex-wrap flex-1" >
             <div v-for="(word, windex) in line.words" :key="windex" class="flex flex-wrap">
               <div
                 v-for="(letter, tindex) in word.text"
@@ -47,6 +47,7 @@
                 </div>
               </div>
             </div>
+            <div class="flex-1" @click="selectCursorPosition(line.words.slice(-1)[0].text.slice(-1)[0])" />
           </div>
           <div v-if="comments.length > 0" class="absolute h-full" style="right: -2%; width: 27%">
             <CommentCard
