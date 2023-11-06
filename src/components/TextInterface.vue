@@ -238,7 +238,7 @@ const debouncedEditCommentTimeout = ref<number | null>(null)
 
 const loadComments = (extComments: Comment[]) => {
   console.log('Comments loading : ', extComments)
-  comments.value = extComments
+  comments.value = extComments.filter((comment) => comment.start_index !== null)
 }
 
 const addComment = async () => {
