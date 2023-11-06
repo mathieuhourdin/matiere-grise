@@ -25,11 +25,12 @@
           class="m-2 w-1/3"
         />
         <a
-          v-if="resource.resource_type === 'atcl'"
+          v-if="resource.external_content_url"
           class="ml-auto underline"
           :href="resource.external_content_url"
+          target="_blank"
         >
-          Ajouter un commentaire
+          Lien ressource externe
         </a>
       </div>
     </div>
