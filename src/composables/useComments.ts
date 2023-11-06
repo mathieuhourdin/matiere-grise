@@ -4,14 +4,16 @@ import { fetchWrapper } from '@/helpers'
 import { useSnackbar } from '@/composables/useSnackbar'
 const { launchSnackbar } = useSnackbar()
 
-const createComment = async (articleId: string, startIndex: number): Promise<Comment> => {
+const createComment = async (articleId: string, startIndex: number|null, content?: string, editing?: boolean): Promise<Comment> => {
   const { user } = useUser()
   const payload = {
     start_index: startIndex,
-    end_index: startIndex
+    end_index: startIndex,
+    content: content,
+    editing: editing
   }
   try {
-    const response = await fetchWrapper.post('/thought_outputs/' + articleId + '/comments', payload)
+    const response = await fetchWrapper.post('/resources/' + articleId + '/comments', payload)
     const comment = formatComment(response.data)
     if (user.value && comment.author_id == user.value.id) {
       comment.author = user.value
@@ -37,7 +39,7 @@ const getCommentsForThoughtOutput = async (
   const userParams = withUsers ? '?author=true' : ''
   try {
     const response = await fetchWrapper.get(
-      '/thought_outputs/' + articleId + '/comments' + userParams
+      '/resources/' + articleId + '/comments' + userParams
     )
     return response.data.map((comment: any) => formatComment(comment))
   } catch (error) {

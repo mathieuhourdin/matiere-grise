@@ -85,6 +85,7 @@
       <hr class="border-top border-zinc-400 my-4" />
       <div class="text-xs italic">Contenu</div>
       <TextInterface
+          class="min-h-fit"
         v-if="resource.publishing_state != 'drft'"
         :ext-comments="comments"
         :resource-id="resource.id"
@@ -99,6 +100,7 @@
         :modelValue="resource.content"
         @update:modelValue="(event) => debouncedUpdateResourceContent(event)"
       />
+      <CommentsThread :resource-id="id" />
     </div>
     <div v-else-if="current_tab == 'bbli'">
       <ModalSheet
@@ -165,6 +167,7 @@
 
 <script setup lang="ts">
 import CreateResourceRelationForm from '@/components/CreateResourceRelationForm.vue'
+import CommentsThread from '@/components/CommentsThread.vue'
 import CreateInteraction from '@/components/CreateInteraction.vue'
 import DateField from '@/components/Ui/DateField.vue'
 import ToggleButtonGroup from '@/components/Ui/ToggleButtonGroup.vue'
