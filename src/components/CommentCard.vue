@@ -1,8 +1,13 @@
 <template>
   <div class="bg-slate-100 border p-1 m-1 rounded shadow-xl">
     <div class="flex">
-      <div v-if="author" class="text-xs mt-0.5 font-bold">
-        {{ author.first_name }} {{ author.last_name }}
+      <div v-if="author" class="text-xs mt-0.5 mb-1 font-bold flex">
+        <img
+          v-if="author.profile_picture_url"
+          class="h-5 w-5 rounded-full mr-1"
+          :src="author.profile_picture_url"
+        />
+        <div class="my-auto">{{ author.first_name }} {{ author.last_name }}</div>
       </div>
       <div class="text-2xs italic ml-auto mr-1 my-auto">{{ formattedDate }}</div>
     </div>
