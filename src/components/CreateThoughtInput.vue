@@ -49,14 +49,15 @@ import ActionButton from '@/components/Ui/ActionButton.vue'
 import { ref } from 'vue'
 import { useThoughtInputs } from '@/composables/useThoughtInputs'
 
-const emit = defineEmits(['close'])
+const emit = defineEmits(['close', 'refresh'])
 
 const { newThoughtInput, createThoughtInput } = useThoughtInputs()
 
 const thoughtInput = ref(newThoughtInput())
 
-const validate = () => {
-  createThoughtInput(thoughtInput.value)
+const validate = async () => {
+  await createThoughtInput(thoughtInput.value)
+  emit('refresh')
   emitClose()
 }
 

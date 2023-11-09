@@ -5,7 +5,7 @@
       Ajouter un nouvel apport
     </div>
     <ModalSheet :open="openNewThoughtInput" @close="openNewThoughtInput = false">
-      <CreateThoughtInput @close="openNewThoughtInput = false" />
+      <CreateThoughtInput @refresh="loadThoughtInputs" @close="openNewThoughtInput = false" />
     </ModalSheet>
     <ThoughtInputsList class="mt-10" :contextual-resources="contextualResources" />
   </div>
@@ -39,7 +39,9 @@ const contextualResources = computed(() => {
   })
 })
 
+const loadThoughtInputs = async () => (thoughtInputs.value = await getThoughtInputs())
+
 onMounted(async () => {
-  thoughtInputs.value = await getThoughtInputs()
+  await loadThoughtInputs()
 })
 </script>
