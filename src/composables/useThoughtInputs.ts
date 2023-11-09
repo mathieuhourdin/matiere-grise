@@ -1,5 +1,7 @@
 import { fetchWrapper } from '@/helpers'
 import { type Interaction, type Resource, type ApiInteraction } from '@/types/models'
+import { useSnackbar } from '@/composables/useSnackbar'
+const { launchSnackbar } = useSnackbar()
 
 function newThoughtInput(): Interaction {
   const resource: Resource = {
@@ -51,6 +53,7 @@ async function createThoughtInput(thoughtInput: Interaction): Promise<ApiInterac
   const interaction_date = date_interaction_date.toISOString().split('.')[0]
   thoughtInput.interaction_progress = Number(thoughtInput.interaction_progress)
   const response = await fetchWrapper.post('/thought_inputs', { ...thoughtInput, interaction_date })
+  launchSnackbar(`Creation de l'input réussie`, 'success')
   return formatApiResponse(response.data)
 }
 
