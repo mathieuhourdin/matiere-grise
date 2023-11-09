@@ -19,7 +19,7 @@ function formatApiResponse(apiInteraction: any): ApiInteraction {
 }
 
 async function getInteractions(): Promise<ApiInteraction[]> {
-  const response = await fetchWrapper.get('/thought_inputs')
+  const response = await fetchWrapper.get('/thought_inputs?limit=60')
   return response.data.map((thoughtInput: any) => formatApiResponse(thoughtInput))
 }
 

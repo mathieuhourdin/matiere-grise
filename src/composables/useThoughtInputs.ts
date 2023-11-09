@@ -31,7 +31,7 @@ function formatApiResponse(apiThoughtInput: any): ApiInteraction {
 }
 
 async function getThoughtInputs(): Promise<ApiInteraction[]> {
-  const response = await fetchWrapper.get('/thought_inputs')
+  const response = await fetchWrapper.get('/thought_inputs?limit=60')
   return response.data.map((thoughtInput: any) => formatApiResponse(thoughtInput))
 }
 
@@ -41,7 +41,7 @@ async function getThoughtInput(id: string): Promise<ApiInteraction> {
 }
 
 async function getUserThoughtInputs(userId: string): Promise<ApiInteraction[]> {
-  const response = await fetchWrapper.get('/users/' + userId + '/thought_inputs')
+  const response = await fetchWrapper.get('/users/' + userId + '/thought_inputs?limit=60')
   return response.data.map((thoughtInput: any) => formatApiResponse(thoughtInput))
 }
 
