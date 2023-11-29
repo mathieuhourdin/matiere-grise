@@ -19,37 +19,37 @@
         </div>
       </div>
     </div>
-    <div v-if="contextualResource.resource" class="border shadow-lg rounded p-4 md:w-96">
-      <div class="flex">
-        <img
-          v-if="contextualResource.resource"
-          class="w-8 h-fit mr-4"
-          :src="contextualResource.resource.image_url"
-        />
-        <div>
+    <router-link :to="'/resources/' + contextualResource.resource.id">
+      <div v-if="contextualResource.resource" class="border shadow-lg rounded p-4 md:w-96">
+        <div class="flex">
+          <img
+            v-if="contextualResource.resource"
+            class="w-8 h-fit mr-4"
+            :src="contextualResource.resource.image_url"
+          />
           <div>
-            <router-link :to="'/resources/' + contextualResource.resource.id">
+            <div>
               {{ contextualResource.resource.title }}
-              {{ contextualResource.resource.subtitle }}</router-link
-            >
+              {{ contextualResource.resource.subtitle }}
+            </div>
+            <div class="flex flex-wrap w-full" style="margin-top: -8px">
+              <router-link
+                v-if="resourceAuthor"
+                :to="'/users/' + resourceAuthor.id"
+                class="text-2xs underline"
+                >{{ resourceAuthor.first_name }} {{ resourceAuthor.last_name }}</router-link
+              >
+            </div>
+            <div class="text-2xs">{{ formatText(contextualResource.resource.comment) }}</div>
           </div>
-          <div class="flex flex-wrap w-full" style="margin-top: -8px">
-            <router-link
-              v-if="resourceAuthor"
-              :to="'/users/' + resourceAuthor.id"
-              class="text-2xs underline"
-              >{{ resourceAuthor.first_name }} {{ resourceAuthor.last_name }}</router-link
-            >
+        </div>
+        <div class="flex flex-wrap">
+          <div v-if="contextualResource.date" class="text-2xs italic">
+            {{ formatDate(contextualResource.resourcedate) }}
           </div>
-          <div class="text-2xs">{{ formatText(contextualResource.resource.comment) }}</div>
         </div>
       </div>
-      <div class="flex flex-wrap">
-        <div v-if="contextualResource.date" class="text-2xs italic">
-          {{ formatDate(contextualResource.resourcedate) }}
-        </div>
-      </div>
-    </div>
+    </router-link>
   </div>
 </template>
 

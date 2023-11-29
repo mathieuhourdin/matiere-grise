@@ -6,7 +6,6 @@
     <ThoughtInputCard
       class="md:w-96"
       :contextual-resource="thoughtInput"
-      @click="modalOpen = true"
     />
   </div>
 </template>
