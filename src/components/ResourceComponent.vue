@@ -364,7 +364,8 @@ const debouncedUpdateResourceComment = (newResourceComment: string) => {
 const { user, getUserById } = useUser()
 const isResourceEditable = computed(() => {
   if (resource.value.is_external) return true
-  if (!user.value || !resourceUser.value) return false
+  if (!user.value) return false
+  if (!resourceUser.value) return true
   return resourceUser.value.id == user.value.id
 })
 
