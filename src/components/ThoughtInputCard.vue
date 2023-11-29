@@ -19,7 +19,7 @@
         </div>
       </div>
     </div>
-    <router-link :to="'/resources/' + contextualResource.resource.id">
+    <router-link :to="'/resources/' + contextualResource.resource.id + '?tab=ctnt'">
       <div v-if="contextualResource.resource" class="border shadow-lg rounded p-4 md:w-96">
         <div class="flex">
           <img
