@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { RouterLink, RouterView } from 'vue-router'
-import AppHeader from './components/AppHeader.vue'
-import SidebarMenu from '@/components/SidebarMenu.vue'
+import AppHeader from './components/App/AppHeader.vue'
+import SidebarMenu from '@/components/App/SidebarMenu.vue'
 import UiSnackbar from '@/components/Ui/UiSnackbar.vue'
 import { onMounted } from 'vue'
 import { useCategories } from'@/composables/useCategories'

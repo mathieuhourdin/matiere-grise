@@ -12,9 +12,9 @@
 
 <script setup lang="ts">
 import { type ContextualResource } from '@/types/models'
-import SeeThoughtInput from '@/components/SeeThoughtInput.vue'
+import SeeThoughtInput from '@/components/ThoughtInput/SeeThoughtInput.vue'
 import ModalSheet from '@/components/Ui/ModalSheet.vue'
-import ThoughtInputCard from '@/components/ThoughtInputCard.vue'
+import ThoughtInputCard from '@/components/ThoughtInput/ThoughtInputCard.vue'
 import { ref } from 'vue'
 
 const props = defineProps<{

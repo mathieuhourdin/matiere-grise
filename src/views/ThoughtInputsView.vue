@@ -13,7 +13,7 @@
 
 <script setup lang="ts">
 import ModalSheet from '@/components/Ui/ModalSheet.vue'
-import CreateThoughtInput from '@/components/CreateThoughtInput.vue'
+import CreateThoughtInput from '@/components/ThoughtInput/CreateThoughtInput.vue'
 import ThoughtInputsList from '@/components/ThoughtInputsList.vue'
 import { useThoughtInputs } from '@/composables/useThoughtInputs'
 import { useUser } from '@/composables/useUser'

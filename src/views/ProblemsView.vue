@@ -14,7 +14,7 @@
   </div>
 </template>
 <script setup lang="ts">
-import CategoryProblemsCarousel from '@/components/CategoryProblemsCarousel.vue'
+import CategoryProblemsCarousel from '@/components/Problem/CategoryProblemsCarousel.vue'
 import { useProblem } from '@/composables/useProblem'
 import { computed, onMounted, ref } from 'vue'
 import { useCategories } from '@/composables/useCategories'

@@ -11,12 +11,12 @@
   </div>
 </template>
 
-<script setup lang="ts">
+<script setup lang="ts">e
 import { type Category, type Problem } from '@/types/models'
 import { useProblem } from '@/composables/useProblem'
 import { useRouter } from 'vue-router'
 const { newProblem, createProblem } = useProblem()
-import ProblemCard from '@/components/ProblemCard.vue'
+import ProblemCard from '@/components/Problem/ProblemCard.vue'
 
 const props = defineProps<{
   problemsList: Problem[]

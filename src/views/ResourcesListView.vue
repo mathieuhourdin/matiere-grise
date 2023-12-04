@@ -17,7 +17,7 @@
 </template>
 
 <script setup lang="ts">
-import ArticleCard from '@/components/ArticleCard.vue'
+import ArticleCard from '@/components/Article/ArticleCard.vue'
 import { useResource } from '@/composables/useResource'
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'

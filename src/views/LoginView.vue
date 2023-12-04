@@ -10,8 +10,8 @@
 </template>
 
 <script setup lang="ts">
-import LoginForm from '@/components/LoginForm.vue'
-import SignInForm from '@/components/SignInForm.vue'
+import LoginForm from '@/components/App/LoginForm.vue'
+import SignInForm from '@/components/App/SignInForm.vue'
 import { ref } from 'vue'
 
 const signin = ref(false)

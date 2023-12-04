@@ -13,7 +13,7 @@
     <CommentCard
       class="w-full"
       v-model="newCommentContent"
-      editing="true"
+      :editing="true"
       @validate="validateNewComment"
       :author="user"
       :created-at="null"
@@ -22,7 +22,7 @@
 </template>
 
 <script setup lang="ts">
-import CommentCard from '@/components/CommentCard.vue'
+import CommentCard from '@/components/Comment/CommentCard.vue'
 import { useComments } from '@/composables/useComments'
 import { useUser } from '@/composables/useUser'
 import { ref, onMounted, computed } from 'vue'

@@ -11,7 +11,7 @@
 </template>
 
 <script setup lang="ts">
-import ArticlesList from '../components/ArticlesList.vue'
+import ArticlesList from '@/components/Article/ArticlesList.vue'
 
 const props = defineProps<{
   maturingState?: string

@@ -8,7 +8,7 @@
 </template>
 
 <script setup lang="ts">
-import UserManagement from '@/components/UserManagement.vue'
+import UserManagement from '@/components/App/UserManagement.vue'
 import BaseLink from '@/components/Ui/BaseLink.vue'
 import { Bars3Icon } from '@heroicons/vue/24/outline'
 import { useMenu } from '@/composables/useMenu'

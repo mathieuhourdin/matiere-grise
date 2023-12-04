@@ -12,7 +12,7 @@
 </template>
 
 <script setup lang="ts">
-import MenuItem from '@/components/MenuItem.vue'
+import MenuItem from '@/components/App/MenuItem.vue'
 import { useUser } from '@/composables/useUser'
 
 const { user } = useUser()

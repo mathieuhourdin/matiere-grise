@@ -60,7 +60,7 @@
 <script setup lang="ts">
 import { ref, watch, onMounted } from 'vue'
 import ToggleButtonGroup from '@/components/Ui/ToggleButtonGroup.vue'
-import ArticleCard from '@/components/ArticleCard.vue'
+import ArticleCard from '@/components/Article/ArticleCard.vue'
 import RoundLinkButton from '@/components/Ui/RoundLinkButton.vue'
 import ActionButton from '@/components/Ui/ActionButton.vue'
 import { useArticle } from '@/composables/useArticle'

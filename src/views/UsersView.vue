@@ -7,7 +7,7 @@
 </template>
 
 <script setup lang="ts">
-import UserCard from '@/components/UserCard.vue'
+import UserCard from '@/components/User/UserCard.vue'
 import { useUser } from '@/composables/useUser'
 import { type User } from '@/types/models'
 import { ref, onMounted } from 'vue'

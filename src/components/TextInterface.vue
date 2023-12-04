@@ -72,7 +72,7 @@
 </template>
 
 <script setup lang="ts">
-import CommentCard from '@/components/CommentCard.vue'
+import CommentCard from '@/components/Comment/CommentCard.vue'
 import { ref, computed, onMounted, watch, toRefs } from 'vue'
 import { useComments } from '@/composables/useComments'
 import { useUser } from '@/composables/useUser'

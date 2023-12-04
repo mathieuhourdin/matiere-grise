@@ -5,7 +5,7 @@
 </template>
 
 <script setup lang="ts">
-import SeeThoughtInput from '@/components/SeeThoughtInput.vue'
+import SeeThoughtInput from '@/components/ThoughtInput/SeeThoughtInput.vue'
 import { ref, onMounted } from 'vue'
 import { useThoughtInputs } from '@/composables/useThoughtInputs'
 import { type ApiInteraction } from '@/types/models'

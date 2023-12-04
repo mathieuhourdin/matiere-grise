@@ -19,9 +19,9 @@
   </div>
 </template>
 <script setup lang="ts">
-import UserInfos from '@/components/UserInfos.vue'
+import UserInfos from '@/components/User/UserInfos.vue'
 import ModalSheet from '@/components/Ui/ModalSheet.vue'
-import CreateThoughtInput from '@/components/CreateThoughtInput.vue'
+import CreateThoughtInput from '@/components/ThoughtInput/CreateThoughtInput.vue'
 import ThoughtInputsList from '@/components/ThoughtInputsList.vue'
 import { ref, computed, onMounted } from 'vue'
 import { useUser } from '@/composables/useUser'

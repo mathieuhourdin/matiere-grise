@@ -3,7 +3,7 @@
 </template>
 
 <script setup lang="ts">
-import ResourceComponent from '@/components/ResourceComponent.vue'
+import ResourceComponent from '@/components/Resource/ResourceComponent.vue'
 const props = defineProps<{
   id: string
 }>()
