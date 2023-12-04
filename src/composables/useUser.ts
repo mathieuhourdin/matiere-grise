@@ -70,6 +70,24 @@ async function authUser(login: any, redirectPath: string = '/') {
   }
 }
 
+async function createNewDraftUser() {
+  try {
+    const draftAuthor = {
+      first_name: '',
+      last_name: '',
+      email: '',
+      handle: '',
+      profile_picture_url: '',
+      is_platform_user: false,
+      biography: ''
+    }
+    const response = await fetchWrapper.post('/users', draftAuthor)
+    return response.data
+  } catch (error) {
+    launchSnackbar('Error creating author', 'error')
+  }
+}
+
 async function createNewUser(userPayload: User) {
   if (!userPayload.handle.startsWith('@')) userPayload.handle = '@' + userPayload.handle
   try {
@@ -93,6 +111,7 @@ export function useUser() {
     getUserById,
     getUsers,
     updateUser,
-    debouncedUpdateUser
+    debouncedUpdateUser,
+    createNewDraftUser
   }
 }
