@@ -22,7 +22,7 @@
 import UserInfos from '@/components/User/UserInfos.vue'
 import ModalSheet from '@/components/Ui/ModalSheet.vue'
 import CreateThoughtInput from '@/components/ThoughtInput/CreateThoughtInput.vue'
-import ThoughtInputsList from '@/components/ThoughtInputsList.vue'
+import ThoughtInputsList from '@/components/ThoughtInput/ThoughtInputsList.vue'
 import { ref, computed, onMounted } from 'vue'
 import { useUser } from '@/composables/useUser'
 import { useThoughtInputs } from '@/composables/useThoughtInputs'

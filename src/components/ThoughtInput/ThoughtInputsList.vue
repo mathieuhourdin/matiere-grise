@@ -13,7 +13,7 @@
 </template>
 
 <script setup lang="ts">
-import ThoughtInputCardWithPopup from '@/components/ThoughtInputCardWithPopup.vue'
+import ThoughtInputCardWithPopup from '@/components/ThoughtInput/ThoughtInputCardWithPopup.vue'
 import { type ContextualResource } from '@/types/models'
 const emit = defineEmits(['select'])
 const props = withDefaults(
