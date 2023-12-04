@@ -11,7 +11,7 @@
   </div>
 </template>
 
-<script setup lang="ts">e
+<script setup lang="ts">
 import { type Category, type Problem } from '@/types/models'
 import { useProblem } from '@/composables/useProblem'
 import { useRouter } from 'vue-router'
