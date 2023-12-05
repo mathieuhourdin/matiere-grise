@@ -17,7 +17,7 @@ onMounted(async () => await loadCategories())
   <AppHeader />
   <div class="flex">
     <SidebarMenu v-if="menuOpen" style="min-height: 800px" class="md:w-250px w-full absolute md:static" />
-    <RouterView :style="{width: menuOpen ? '1450px' : '100%'}"/>
+    <RouterView :style="{width: menuOpen ? '1450px' : '100%'}" :key="$route.fullPath"/>
   </div>
   <UiSnackbar v-if="snackbar" :message="snackbar.message" :type="snackbar.type" />
 </template>
