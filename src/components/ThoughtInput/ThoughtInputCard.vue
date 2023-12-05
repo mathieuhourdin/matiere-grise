@@ -19,7 +19,8 @@
         </div>
       </div>
     </div>
-    <router-link
+    <component
+      :is="isDisabled ? 'span' : 'vue-router'"
       v-if="contextualResource.resource"
       :to="'/resources/' + contextualResource.resource.id + '?tab=ctnt'"
     >
@@ -52,7 +53,7 @@
           </div>
         </div>
       </div>
-    </router-link>
+    </component>
   </div>
 </template>
 
@@ -63,9 +64,10 @@ import { useUser } from '@/composables/useUser'
 import { useResource } from '@/composables/useResource'
 import { ref, onMounted } from 'vue'
 
-const props = defineProps<{
-  contextualResource: ContextualResource
-}>()
+const props = withDefaults(defineProps<{
+  contextualResource: ContextualResource,
+  isDisabled: boolean
+}>(), { isDisabled: false })
 
 const { getUserById } = useUser()
 const { getAuthorInteractionForResource } = useResource()

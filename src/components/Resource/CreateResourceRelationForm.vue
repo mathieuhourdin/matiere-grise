@@ -8,6 +8,7 @@
         v-if="targetResource"
         :contextual-resources="contextualOriginResources"
         center
+        links-disabled
         @select="(event) => selectResource(event)"
       />
       <div v-else>
@@ -18,6 +19,7 @@
             :contextual-resources="contextualTargetResources[localTab] || []"
             center
             @select="(event) => selectResource(event)"
+            links-disabled
           />
         </div>
       </div>

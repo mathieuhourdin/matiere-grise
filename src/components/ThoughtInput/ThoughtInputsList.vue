@@ -8,6 +8,7 @@
       :class="{ 'md:ml-0': index % 2 == 0 && !center, 'md:mr-0': !center }"
       :thought-input="contextualResource"
       @click="emitSelect(contextualResource)"
+      :is-disabled="linksDisabled"
     />
   </div>
 </template>
@@ -20,16 +21,16 @@ const props = withDefaults(
   defineProps<{
     contextualResources: ContextualResource[]
     center?: boolean
+    linksDisabled?: boolean
   }>(),
   {
-    center: false
+    center: false,
+    linksDisabled: false
   }
 )
 
 const sortedThoughtInputs = (inputs: ContextualResource[]) => {
-  return inputs.sort((a: ContextualResource, b: ContextualResource) =>
-    Number(b.date > a.date)
-  )
+  return inputs.sort((a: ContextualResource, b: ContextualResource) => Number(b.date > a.date))
 }
 
 const emitSelect = (thoughtInput: ContextualResource) => {

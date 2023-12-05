@@ -6,6 +6,7 @@
     <ThoughtInputCard
       class="md:w-96"
       :contextual-resource="thoughtInput"
+      :is-disabled="isDisabled"
     />
   </div>
 </template>
@@ -17,10 +18,14 @@ import ModalSheet from '@/components/Ui/ModalSheet.vue'
 import ThoughtInputCard from '@/components/ThoughtInput/ThoughtInputCard.vue'
 import { ref } from 'vue'
 
-const props = defineProps<{
-  thoughtInput: ContextualResource
-  usageReason?: string
-}>()
+const props = withDefaults(
+  defineProps<{
+    thoughtInput: ContextualResource
+    usageReason?: string
+    isDisabled: boolean
+  }>(),
+  { isDisabled: false }
+)
 
 const modalOpen = ref(false)
 </script>
