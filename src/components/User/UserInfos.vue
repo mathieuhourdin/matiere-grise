@@ -5,6 +5,7 @@
       <div class="text-2xl bold">{{ user.first_name }} {{ user.last_name }}</div>
       <div>{{ user.handle }}</div>
       <div>{{ user.email }}</div>
+      <div class="mt-4">{{ user.biography }}</div>
       <RoundLinkButton class="right-4 absolute" v-if="isUserEditable" @click="editUser = true"
         ><PencilSquareIcon class="m-1"
       /></RoundLinkButton>
