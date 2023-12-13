@@ -1,5 +1,9 @@
 <template>
+  <div v-if="!mounted">
+    <span>{{ fullText }}</span>
+  </div>
   <div
+    v-else
     class="relative p-4"
     tabindex="0"
     @keydown="handleWrite"
@@ -117,7 +121,9 @@ const currentCursorPosition = ref<Char | null>(null)
 
 const text = ref<Char[]>([]) // main data, list of single cars
 
-const lines = computed((): Line[] => {
+const lines = ref<Line[]>([])
+
+const initLines = () => {
   let lines: Line[] = [{ id: 0, words: [{ id: 0, text: [] }], comments: [] }]
   let linesIndex = 0
   let wordsIndex = 0
@@ -146,7 +152,7 @@ const lines = computed((): Line[] => {
     }
   }
   return lines
-})
+}
 
 const moveCommentsAfterTextChange = (offset: number) => {
   if (offset == 1) {
@@ -324,6 +330,7 @@ const mounted = ref(false)
 onMounted(() => {
   textArrayFromString(props.fullText)
   loadComments(props.extComments)
+  lines.value = initLines()
   mounted.value = true
 })
 
@@ -338,5 +345,6 @@ watch(
 
 watch(toRefs(props).fullText, (newText) => {
   textArrayFromString(newText)
+  lines.value = initLines()
 })
 </script>

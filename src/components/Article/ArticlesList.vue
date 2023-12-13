@@ -2,29 +2,16 @@
   <div>
     <div class="flex flex-wrap my-8">
       <div class="mx-auto flex flex-wrap max-w-full">
-      <ToggleButtonGroup url-key="maturing_state" :choices="[{text: 'Terminés', value: 'fnsh'}, {text: 'Relecture', value: 'rvew'}, {text: 'Idées', value: 'idea'}]" default="fnsh" url />
-        <!--<ActionButton
-          class="w-24 mx-auto my-1"
-          text="Terminés"
-          @click="updateTab('fnsh')"
-          :type="isSelected('fnsh')"
-          >Terminés</ActionButton
-        >
-        <ActionButton
-          class="w-24 mx-auto my-1"
-          text="Relecture"
-          @click="updateTab('rvew')"
-          :type="isSelected('rvew')"
-          >Review</ActionButton
-        >
-        <ActionButton
-          class="w-24 mx-auto my-1"
-          text="Idées"
-          @click="updateTab('idea')"
-          :type="isSelected('idea')"
-        >
-          Idées
-        </ActionButton>-->
+        <ToggleButtonGroup
+          url-key="maturing_state"
+          :choices="[
+            { text: 'Terminés', value: 'fnsh' },
+            { text: 'Relecture', value: 'rvew' },
+            { text: 'Idées', value: 'idea' }
+          ]"
+          default="fnsh"
+          url
+        />
       </div>
       <ActionButton
         v-if="draftArticles.length > 0"
@@ -97,7 +84,7 @@ const maturingStateTexts = (maturingState: string | null) => {
 const router = useRouter()
 const updateTab = (tabValue: string) => {
   tab.value = tabValue
-  router.push({ path: '/', query: { maturing_state: tabValue } })
+  router.push({ path: '/productions', query: { maturing_state: tabValue } })
 }
 
 const { getArticles, newArticle, createArticle } = useArticle()
