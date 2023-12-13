@@ -86,7 +86,7 @@
       <div class="text-xs italic">Contenu</div>
       <TextInterface
           class="min-h-fit"
-        v-if="resource.publishing_state != 'drft'"
+        v-if="resourceIsLoaded && resource.publishing_state != 'drft'"
         :ext-comments="comments"
         :resource-id="resource.id"
         :full-text="resource.content"
@@ -311,6 +311,7 @@ const contextualResourcesUsages = computed(() => {
 })
 
 /************** resource section ******************/
+const resourceIsLoaded = ref<boolean>(false)
 const { newResource, getResource, updateResource, getAuthorInteractionForResource } = useResource()
 const debouncedUpdate = ref<number | null>(null)
 const resource: Ref<ApiResource> = ref<ApiResource>(newResource())
@@ -387,6 +388,7 @@ const comments = ref<Comment[]>([])
 
 onMounted(async () => {
   resource.value = await getResource(props.id)
+  resourceIsLoaded.value = true
   comments.value = await getCommentsForThoughtOutput(props.id)
   authorInteraction.value = await getAuthorInteractionForResource(props.id)
 
