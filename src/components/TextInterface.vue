@@ -10,6 +10,11 @@
     @keyup="handleRelease"
     @click="menuOpen = false"
   >
+    <ClipboardIcon
+      @click="copyText"
+      class="absolute h-6 right-2"
+      :class="{ 'text-slate-400': textCopied }"
+    />
     <div class="bg-white border-4" v-if="menuOpen" :style="menuStyle">
       <div
         @click="addComment"
@@ -77,9 +82,11 @@
 
 <script setup lang="ts">
 import CommentCard from '@/components/Comment/CommentCard.vue'
+import { ClipboardIcon } from '@heroicons/vue/24/outline'
 import { ref, computed, onMounted, watch, toRefs } from 'vue'
 import { useComments } from '@/composables/useComments'
 import { useUser } from '@/composables/useUser'
+import { useSnackbar } from '@/composables/useSnackbar'
 import { type Comment } from '@/types/models'
 
 const emit = defineEmits(['change', 'changeComments'])
@@ -236,6 +243,20 @@ const pasteClipboard = async () => {
 
 const handleRelease = (event: any) => {
   if (event.key == 'Control') isControlOn.value = false
+}
+
+const textCopied = ref<boolean>(false)
+
+const { launchSnackbar } = useSnackbar()
+const copyText = async () => {
+  try {
+    await navigator.clipboard.writeText(props.fullText)
+    textCopied.value = true
+    launchSnackbar('Text copied to clipboard', 'success')
+    setTimeout(() => (textCopied.value = false), 2000)
+  } catch (err) {
+    console.log(`Error with copy : ${err}`)
+  }
 }
 
 /***************** Comments **********************/
