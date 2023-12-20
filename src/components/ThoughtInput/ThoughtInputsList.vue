@@ -1,6 +1,6 @@
 <template>
   <div class="relative max-w-full">
-    <div v-if="!center" class="absolute md:border h-full start-1/2" />
+    <div v-if="!center" class="absolute md:border h-full start-1/2 -z-10" />
     <ThoughtInputCardWithPopup
       v-for="(contextualResource, index) in sortedThoughtInputs(contextualResources)"
       :key="contextualResource.id"

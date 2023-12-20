@@ -1,6 +1,6 @@
 <template>
   <div class="w-full md:w-96">
-    <div v-if="contextualResource.context_comment" class="text-xs italic mb-2">
+    <div v-if="contextualResource.context_comment" class="text-xs italic mb-2 bg-white">
       <div>
         {{ contextualResource.context_comment }}
       </div>
@@ -24,7 +24,7 @@
       v-if="contextualResource.resource"
       :to="'/resources/' + contextualResource.resource.id + '?tab=ctnt'"
     >
-      <div v-if="contextualResource.resource" class="border shadow-lg rounded p-4 md:w-96">
+      <div v-if="contextualResource.resource" class="border shadow-lg rounded p-4 md:w-96 bg-white">
         <div class="flex">
           <img
             v-if="contextualResource.resource"
@@ -64,10 +64,13 @@ import { useUser } from '@/composables/useUser'
 import { useResource } from '@/composables/useResource'
 import { ref, onMounted } from 'vue'
 
-const props = withDefaults(defineProps<{
-  contextualResource: ContextualResource,
-  isDisabled: boolean
-}>(), { isDisabled: false })
+const props = withDefaults(
+  defineProps<{
+    contextualResource: ContextualResource
+    isDisabled: boolean
+  }>(),
+  { isDisabled: false }
+)
 
 const { getUserById } = useUser()
 const { getAuthorInteractionForResource } = useResource()
