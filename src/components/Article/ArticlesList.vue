@@ -55,10 +55,6 @@ import { useRouter, useRoute } from 'vue-router'
 import { useUser } from '@/composables/useUser'
 import { type Article } from '@/types/models'
 
-const props = defineProps<{
-  maturingState?: string
-}>()
-
 const articles = ref([])
 const draftArticles = ref([])
 const tab = ref<string | null>(null)

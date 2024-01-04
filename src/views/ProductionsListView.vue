@@ -5,7 +5,7 @@
         Bienvenue, sur la plateforme de Mathieu Hourdin qui va parler de plein de choses différentes,
         notamment de comment sauver le monde, et s'amuser dans la vie, rien que ça.
       </p>-->
-      <ArticlesList :maturing-state="maturingState" style="min-height: 40rem" />
+      <ArticlesList state="maturingState" style="min-height: 40rem" />
     </div>
   </main>
 </template>
@@ -14,6 +14,5 @@
 import ArticlesList from '@/components/Article/ArticlesList.vue'
 
 const props = defineProps<{
-  maturingState?: string
 }>()
 </script>

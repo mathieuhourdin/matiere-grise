@@ -7,7 +7,7 @@ const router = createRouter({
     {
       path: '/productions',
       name: 'home',
-      props: true,
+      meta: { requiresRender: false },
       component: () => import('@/views/ProductionsListView.vue')
     },
     {
