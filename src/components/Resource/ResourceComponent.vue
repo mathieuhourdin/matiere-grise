@@ -271,7 +271,6 @@ const contextualResources = computed(() => {
   })
 })
 
-onMounted(() => loadBiblio())
 
 /************** interactions *****************/
 
@@ -283,7 +282,6 @@ const loadInteractions = async () => {
   interactions.value = await getInteractionsForResource(props.id)
 }
 
-onMounted(async () => await loadInteractions())
 
 const contextualResourcesInteractions = computed(() => {
   return interactions.value.map((interaction) => {
@@ -301,7 +299,6 @@ const contextualResourcesInteractions = computed(() => {
 
 const targetResources = ref<ResourceRelation[]>([])
 
-onMounted(async () => await loadUsages())
 
 const loadUsages = async () => {
   targetResources.value = await getUsagesForResource(props.id)
@@ -399,6 +396,9 @@ onMounted(async () => {
   resourceIsLoaded.value = false
   resource.value = await getResource(props.id)
   resourceIsLoaded.value = true
+  await loadBiblio()
+  await loadInteractions()
+  await loadUsages()
   comments.value = await getCommentsForThoughtOutput(props.id)
   authorInteraction.value = await getAuthorInteractionForResource(props.id)
 
