@@ -1,166 +1,175 @@
 <template>
-  <div v-if="!!resource" class="mx-auto">
-    <div v-if="!editingMetaData">
-      <div class="my-8">
-        <img
-          :src="resource.image_url"
-          class="border border-slate-300 dark:border-zinc-700 rounded-xl ml-auto mr-auto"
-          style="max-height: 20rem"
-        />
-      </div>
-      <h1 class="text-3xl my-3 font-mplus md:text-center text-left">
-        {{ resource.title }}
-      </h1>
-      <div class="md:text-center text-left">{{ resource.subtitle }}</div>
-      <div class="md:text-center text-left">
-        <router-link v-if="resourceUser" :to="'/users/' + resourceUser.id" class="text-sm underline"
-          >{{ resourceUser.first_name }} {{ resourceUser.last_name }}</router-link
-        >
-        <DateField v-if="authorInteraction" :date="authorInteraction.interaction_date" />
-      </div>
-      <div class="md:flex my-8">
-        <ProgressBar
-          v-if="authorInteraction"
-          :progress-value="authorInteraction.interaction_progress"
-          class="m-2 w-1/3"
-        />
-        <a
-          v-if="resource.external_content_url"
-          class="ml-auto underline"
-          :href="resource.external_content_url"
-          target="_blank"
-        >
-          Lien ressource externe
-        </a>
-      </div>
-    </div>
+  <div class="mx-auto">
+    <div v-if="!resourceIsLoaded" class="text-center text-2xl pt-10">Loading...</div>
     <div v-else>
-      <ArticleForm
-        :article="resource"
-        @change="(event) => debouncedUpdateResource(resource.id, event)"
-      />
-      <ResourceAuthorPicker
-        class="mx-4"
-        :interaction="authorInteraction"
-        :resource-id="id"
-        @change="updateAuthorInteraction"
-      />
-      <!--<ProblemForm
+      <div v-if="!editingMetaData">
+        <div class="my-8">
+          <img
+            :src="resource.image_url"
+            class="border border-slate-300 dark:border-zinc-700 rounded-xl ml-auto mr-auto"
+            style="max-height: 20rem"
+          />
+        </div>
+        <h1 class="text-3xl my-3 font-mplus md:text-center text-left">
+          {{ resource.title }}
+        </h1>
+        <div class="md:text-center text-left">{{ resource.subtitle }}</div>
+        <div class="md:text-center text-left">
+          <router-link
+            v-if="resourceUser"
+            :to="'/users/' + resourceUser.id"
+            class="text-sm underline"
+            >{{ resourceUser.first_name }} {{ resourceUser.last_name }}</router-link
+          >
+          <DateField v-if="authorInteraction" :date="authorInteraction.interaction_date" />
+        </div>
+        <div class="md:flex my-8">
+          <ProgressBar
+            v-if="authorInteraction"
+            :progress-value="authorInteraction.interaction_progress"
+            class="m-2 w-1/3"
+          />
+          <a
+            v-if="resource.external_content_url"
+            class="ml-auto underline"
+            :href="resource.external_content_url"
+            target="_blank"
+          >
+            Lien ressource externe
+          </a>
+        </div>
+      </div>
+      <div v-else>
+        <ArticleForm
+          :article="resource"
+          @change="(event) => debouncedUpdateResource(resource.id, event)"
+        />
+        <ResourceAuthorPicker
+          class="mx-4"
+          :interaction="authorInteraction"
+          :resource-id="id"
+          @change="updateAuthorInteraction"
+        />
+        <!--<ProblemForm
         v-else
         :problem="resource"
         @change="(event) => debouncedUpdateResource(resource.id, event)"
       />-->
-      <div class="flex flex-row-reverse">
-        <ActionButton class="mx-4" @click="setEditingMetaData(false)" type="valid" text="Preview"
-          >Ok</ActionButton
-        >
-        <ActionButton
-          v-if="resource.publishing_state == 'drft'"
-          @click="publishResource"
-          type="valid"
-          text="Publier"
-        />
-        <div v-else class="p-2 border rounded bg-neutral-100">Publié</div>
+        <div class="flex flex-row-reverse">
+          <ActionButton class="mx-4" @click="setEditingMetaData(false)" type="valid" text="Preview"
+            >Ok</ActionButton
+          >
+          <ActionButton
+            v-if="resource.publishing_state == 'drft'"
+            @click="publishResource"
+            type="valid"
+            text="Publier"
+          />
+          <div v-else class="p-2 border rounded bg-neutral-100">Publié</div>
+        </div>
       </div>
-    </div>
-    <div>
-      <ToggleButtonGroup :choices="tabChoices" :default="toggleDefault" :url-key="urlParam" url />
-    </div>
-    <hr class="border-top border-zinc-400 my-4" />
-    <div v-if="current_tab == 'ctnt'">
-      <div class="text-xs italic">Commentaire</div>
-      <TextInterface
-        :full-text="resource.comment"
-        :editable="isResourceEditable"
-        v-if="resource.publishing_state != 'drft'"
-        @change="(event) => debouncedUpdateResourceComment(event)"
-      />
-      <TextAreaInput
-        v-else
-        class="h-20"
-        label="Commentaire"
-        :modelValue="resource.comment"
-        @update:modelValue="(event) => debouncedUpdateResourceComment(event)"
-      />
+      <div>
+        <ToggleButtonGroup :choices="tabChoices" :default="toggleDefault" :url-key="urlParam" url />
+      </div>
       <hr class="border-top border-zinc-400 my-4" />
-      <div class="text-xs italic">Contenu</div>
-      <TextInterface
+      <div v-if="current_tab == 'ctnt'">
+        <div class="text-xs italic">Commentaire</div>
+        <TextInterface
+          :full-text="resource.comment"
+          :editable="isResourceEditable"
+          v-if="resource.publishing_state != 'drft'"
+          @change="(event) => debouncedUpdateResourceComment(event)"
+        />
+        <TextAreaInput
+          v-else
+          class="h-20"
+          label="Commentaire"
+          :modelValue="resource.comment"
+          @update:modelValue="(event) => debouncedUpdateResourceComment(event)"
+        />
+        <hr class="border-top border-zinc-400 my-4" />
+        <div class="text-xs italic">Contenu</div>
+        <TextInterface
           class="min-h-fit"
-        v-if="resourceIsLoaded && resource.publishing_state != 'drft'"
-        :ext-comments="comments"
-        :resource-id="resource.id"
-        :full-text="resource.content"
-        :editable="isResourceEditable"
-        @change="(event) => debouncedUpdateResourceContent(event)"
-      />
-      <TextAreaInput
-        v-else
-        class="h-96"
-        label="Contenu"
-        :modelValue="resource.content"
-        @update:modelValue="(event) => debouncedUpdateResourceContent(event)"
-      />
-      <CommentsThread :resource-id="id" />
-    </div>
-    <div v-else-if="current_tab == 'bbli'">
-      <ModalSheet
-        :open="openAddResourceRelationAsTarget"
-        @close="openAddResourceRelationAsTarget = false"
-      >
-        <CreateResourceRelationForm
-          @refresh="loadBiblio"
-          @close="openAddResourceRelationAsTarget = false"
-          :target-resource="resource"
+          v-if="resourceIsLoaded && resource.publishing_state != 'drft'"
+          :ext-comments="comments"
+          :resource-id="resource.id"
+          :full-text="resource.content"
+          :editable="isResourceEditable"
+          @change="(event) => debouncedUpdateResourceContent(event)"
         />
-      </ModalSheet>
-      <div @click="openAddResourceRelationAsTarget = true" class="text-sm italic underline">
-        Ajouter une référence
+        <TextAreaInput
+          v-else
+          class="h-96"
+          label="Contenu"
+          :modelValue="resource.content"
+          @update:modelValue="(event) => debouncedUpdateResourceContent(event)"
+        />
+        <CommentsThread :resource-id="id" />
       </div>
-      <ThoughtInputsList :contextual-resources="contextualResources" />
-    </div>
-    <div v-else-if="current_tab == 'pblm'">
-      <ThoughtInputsList :contextual-resources="contextualResourcesUsages" />
-    </div>
-    <div v-else-if="current_tab == 'inpt'">
-      <ThoughtInputsList :contextual-resources="contextualResourcesInteractions" />
-    </div>
-    <div class="fixed right-3 bottom-5">
-      <RoundLinkButton v-if="isResourceEditable" title="Modifier" @click="setEditingMetaData(true)"
-        ><PencilSquareIcon class="m-1"
-      /></RoundLinkButton>
-      <RoundLinkButton
-        class="mt-2"
-        color="red"
-        title="Marquer comme lu"
-        v-if="isResourceEditable"
-        @click="openAddInteraction = true"
-        ><ArrowDownOnSquareIcon class="m-1"
-      /></RoundLinkButton>
-      <ModalSheet :open="openAddInteraction" @close="openAddInteraction = false">
-        <CreateInteraction
-          @refresh="loadInteractions"
-          @close="openAddInteraction = false"
-          :resource="resource"
-        />
-      </ModalSheet>
-      <RoundLinkButton
-        class="mt-2"
-        color="green"
-        title="Relier à d'autres ressources"
-        v-if="isResourceEditable"
-        @click="openAddResourceRelationAsOrigin = true"
-        ><ShareIcon class="m-1"
-      /></RoundLinkButton>
-      <ModalSheet
-        :open="openAddResourceRelationAsOrigin"
-        @close="openAddResourceRelationAsOrigin = false"
-      >
-        <CreateResourceRelationForm
-          @refresh="loadUsages"
+      <div v-else-if="current_tab == 'bbli'">
+        <ModalSheet
+          :open="openAddResourceRelationAsTarget"
+          @close="openAddResourceRelationAsTarget = false"
+        >
+          <CreateResourceRelationForm
+            @refresh="loadBiblio"
+            @close="openAddResourceRelationAsTarget = false"
+            :target-resource="resource"
+          />
+        </ModalSheet>
+        <div @click="openAddResourceRelationAsTarget = true" class="text-sm italic underline">
+          Ajouter une référence
+        </div>
+        <ThoughtInputsList :contextual-resources="contextualResources" />
+      </div>
+      <div v-else-if="current_tab == 'pblm'">
+        <ThoughtInputsList :contextual-resources="contextualResourcesUsages" />
+      </div>
+      <div v-else-if="current_tab == 'inpt'">
+        <ThoughtInputsList :contextual-resources="contextualResourcesInteractions" />
+      </div>
+      <div class="fixed right-3 bottom-5">
+        <RoundLinkButton
+          v-if="isResourceEditable"
+          title="Modifier"
+          @click="setEditingMetaData(true)"
+          ><PencilSquareIcon class="m-1"
+        /></RoundLinkButton>
+        <RoundLinkButton
+          class="mt-2"
+          color="red"
+          title="Marquer comme lu"
+          v-if="isResourceEditable"
+          @click="openAddInteraction = true"
+          ><ArrowDownOnSquareIcon class="m-1"
+        /></RoundLinkButton>
+        <ModalSheet :open="openAddInteraction" @close="openAddInteraction = false">
+          <CreateInteraction
+            @refresh="loadInteractions"
+            @close="openAddInteraction = false"
+            :resource="resource"
+          />
+        </ModalSheet>
+        <RoundLinkButton
+          class="mt-2"
+          color="green"
+          title="Relier à d'autres ressources"
+          v-if="isResourceEditable"
+          @click="openAddResourceRelationAsOrigin = true"
+          ><ShareIcon class="m-1"
+        /></RoundLinkButton>
+        <ModalSheet
+          :open="openAddResourceRelationAsOrigin"
           @close="openAddResourceRelationAsOrigin = false"
-          :origin-resource="resource"
-        />
-      </ModalSheet>
+        >
+          <CreateResourceRelationForm
+            @refresh="loadUsages"
+            @close="openAddResourceRelationAsOrigin = false"
+            :origin-resource="resource"
+          />
+        </ModalSheet>
+      </div>
     </div>
   </div>
 </template>
@@ -387,6 +396,7 @@ const { getCommentsForThoughtOutput } = useComments()
 const comments = ref<Comment[]>([])
 
 onMounted(async () => {
+  resourceIsLoaded.value = false
   resource.value = await getResource(props.id)
   resourceIsLoaded.value = true
   comments.value = await getCommentsForThoughtOutput(props.id)
