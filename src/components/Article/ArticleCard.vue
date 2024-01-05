@@ -8,9 +8,9 @@
         position="center"
       />
       <div class="flex">
-        <ProgressBar v-if="progress" :progress-value="progress" class="m-2 w-1/3 mr-auto" />
-        <router-link v-if="author" class="text-xs italic my-auto mr-2" :to="'/users/' + author.id"
-          >{{ author.first_name }} {{ author.last_name }}</router-link
+        <ProgressBar v-if="resourceInteraction" :progress-value="resourceInteraction.interaction_progress" class="m-2 w-1/3 mr-auto" />
+        <router-link v-if="resourceAuthor" class="text-xs italic my-auto mr-2" :to="'/users/' + resourceAuthor.id"
+          >{{ resourceAuthor.first_name }} {{ resourceAuthor.last_name }}</router-link
         >
       </div>
       <div class="mt-3 text-xl font-bold">{{ title }}</div>
@@ -21,7 +21,9 @@
 
 <script setup lang="ts">
 import ProgressBar from '@/components/ProgressBar.vue'
-import { computed } from 'vue'
+import { useResource } from '@/composables/useResource'
+import { useUser } from '@/composables/useUser'
+import { computed, ref, onMounted } from 'vue'
 import { type User } from '@/types/models'
 const props = defineProps<{
   uuid?: string
@@ -31,6 +33,16 @@ const props = defineProps<{
   progress?: number
   author?: User
 }>()
+const { getUserById } = useUser()
+const {  getAuthorInteractionForResource } = useResource()
+const resourceInteraction = ref<Interaction>(null)
+const resourceAuthor = ref<User>(null)
+
+onMounted(async () => {
+  resourceInteraction.value = await getAuthorInteractionForResource(props.uuid)
+  resourceAuthor.value = await getUserById(resourceInteraction.value.interaction_user_id)
+})
+
 const articleLink = computed(() => {
   if (!props.uuid) return ''
   return '/thought_outputs/' + props.uuid
