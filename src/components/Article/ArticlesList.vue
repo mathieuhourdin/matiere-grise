@@ -5,11 +5,12 @@
         <ToggleButtonGroup
           url-key="maturing_state"
           :choices="[
+            { text: 'Tous', value: 'alla' },
             { text: 'Terminés', value: 'fnsh' },
             { text: 'Relecture', value: 'rvew' },
             { text: 'Idées', value: 'idea' }
           ]"
-          default="fnsh"
+          default="alla"
           url
         />
       </div>
@@ -88,6 +89,7 @@ const { getArticles, newArticle, createArticle } = useArticle()
 const filterArticles = (filter: string | null, articles: Article[]) => {
   if (!filter) return []
   if (filter == 'drft') return draftArticles.value
+  if (filter == 'alla') return articles
   return articles.filter((article) => article.maturing_state == filter)
 }
 
