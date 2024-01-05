@@ -9,11 +9,10 @@
           { text: 'Productions', value: 'prdc' }
         ]"
         default="bibl"
+        class="my-6"
         url
       />
       <div v-if="tab === 'bibl'">
-        <div class="text-center m-4 italic text-sm">Derniers apports extérieurs</div>
-
         <div
           v-if="user && pageUserId == user.id"
           class="italic underline text-xs"
