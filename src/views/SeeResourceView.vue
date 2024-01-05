@@ -1,5 +1,5 @@
 <template>
-  <div><ResourceComponent class="px-8" :id="id" /></div>
+  <div><ResourceComponent class="md:px-8 px-4" :id="id" /></div>
 </template>
 
 <script setup lang="ts">

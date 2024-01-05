@@ -1,5 +1,5 @@
 <template>
-  <div class="mx-auto">
+  <div>
     <div v-if="!resourceIsLoaded" class="text-center text-2xl pt-10">Loading...</div>
     <div v-else>
       <div v-if="!editingMetaData">

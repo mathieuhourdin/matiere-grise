@@ -1,81 +1,83 @@
 <template>
-  <div v-if="!mounted">
-    <span>{{ fullText }}</span>
-  </div>
-  <div
-    v-else
-    class="relative p-4"
-    tabindex="0"
-    @keydown="handleWrite"
-    @keyup="handleRelease"
-    @click="menuOpen = false"
-  >
+  <div>
     <ClipboardIcon
       @click="copyText"
       class="absolute h-6 right-2"
       :class="{ 'text-slate-400': textCopied }"
     />
-    <div class="bg-white border-4" v-if="menuOpen" :style="menuStyle">
-      <div
-        @click="addComment"
-        class="text-sm border-b-2 flex items-center p-2"
-        style="height: 50px"
-      >
-        Ajouter un commentaire
-      </div>
-      <div class="text-sm align-middle flex items-center p-2" style="height: 50px">
-        Corriger une faute
-      </div>
+    <div v-if="!mounted">
+      <span>{{ fullText }}</span>
     </div>
-    <div class="flex mx-auto max-w-full">
-      <div class="w-full">
-        <div v-for="(line, lindex) in lines" :key="lindex" class="flex">
-          <div v-if="line.lineStyle == '*'" class="flex">
-            <div class="w-6">
-              <div class="rounded-full ml-4 mr-2 mt-2 h-1 w-1 bg-black" />
-            </div>
-          </div>
-          <div class="flex flex-wrap flex-1">
-            <div v-for="(word, windex) in line.words" :key="windex" class="flex flex-wrap">
-              <div
-                v-for="(letter, tindex) in word.text"
-                :key="tindex"
-                class="border-blue-400"
-                :class="{
-                  'border-r-2': letter.id == currentCursorPosition?.id,
-                  'bg-yellow-400': letter.comment
-                }"
-                @click="selectCursorPosition(letter)"
-                @contextmenu="(event) => rightClick(event, letter.id)"
-              >
-                <div v-if="letter.char == ' '" style="width: 5px" />
-                <div v-else-if="letter.char == '\n'" style="height: 25px" />
-                <div v-else-if="(letter.char == '#' || letter.char == '*') && windex == 0"></div>
-                <div v-else :class="{ 'font-bold': line.lineStyle == '#' }">
-                  <div>{{ letter.char }}</div>
-                </div>
-              </div>
-            </div>
-            <div
-              class="flex-1"
-              @click="selectCursorPosition(line.words.slice(-1)[0].text.slice(-1)[0])"
-            />
-          </div>
-          <div v-if="comments.length > 0" class="absolute h-full" style="right: -2%; width: 27%">
-            <CommentCard
-              v-for="(comment, cindex) in line.comments"
-              :key="cindex"
-              class="w-full"
-              v-model="comment.content"
-              :editing="comment.editing"
-              @validate="comment.editing = false"
-              :author="comment.author"
-              :created-at="comment.created_at"
-            />
-          </div>
+    <div
+      v-else
+      class="relative md:p-4"
+      tabindex="0"
+      @keydown="handleWrite"
+      @keyup="handleRelease"
+      @click="menuOpen = false"
+    >
+      <div class="bg-white border-4" v-if="menuOpen" :style="menuStyle">
+        <div
+          @click="addComment"
+          class="text-sm border-b-2 flex items-center p-2"
+          style="height: 50px"
+        >
+          Ajouter un commentaire
+        </div>
+        <div class="text-sm align-middle flex items-center p-2" style="height: 50px">
+          Corriger une faute
         </div>
       </div>
-      <div v-if="comments.length > 0" style="width: 33%" />
+      <div class="flex mx-auto max-w-full">
+        <div class="w-full">
+          <div v-for="(line, lindex) in lines" :key="lindex" class="flex">
+            <div v-if="line.lineStyle == '*'" class="flex">
+              <div class="w-6">
+                <div class="rounded-full ml-4 mr-2 mt-2 h-1 w-1 bg-black" />
+              </div>
+            </div>
+            <div class="flex flex-wrap flex-1">
+              <div v-for="(word, windex) in line.words" :key="windex" class="flex flex-wrap">
+                <div
+                  v-for="(letter, tindex) in word.text"
+                  :key="tindex"
+                  class="border-blue-400"
+                  :class="{
+                    'border-r-2': letter.id == currentCursorPosition?.id,
+                    'bg-yellow-400': letter.comment
+                  }"
+                  @click="selectCursorPosition(letter)"
+                  @contextmenu="(event) => rightClick(event, letter.id)"
+                >
+                  <div v-if="letter.char == ' '" style="width: 5px" />
+                  <div v-else-if="letter.char == '\n'" style="height: 25px" />
+                  <div v-else-if="(letter.char == '#' || letter.char == '*') && windex == 0"></div>
+                  <div v-else :class="{ 'font-bold': line.lineStyle == '#' }">
+                    <div>{{ letter.char }}</div>
+                  </div>
+                </div>
+              </div>
+              <div
+                class="flex-1"
+                @click="selectCursorPosition(line.words.slice(-1)[0].text.slice(-1)[0])"
+              />
+            </div>
+            <div v-if="comments.length > 0" class="absolute h-full" style="right: -2%; width: 27%">
+              <CommentCard
+                v-for="(comment, cindex) in line.comments"
+                :key="cindex"
+                class="w-full"
+                v-model="comment.content"
+                :editing="comment.editing"
+                @validate="comment.editing = false"
+                :author="comment.author"
+                :created-at="comment.created_at"
+              />
+            </div>
+          </div>
+        </div>
+        <div v-if="comments.length > 0" style="width: 33%" />
+      </div>
     </div>
   </div>
 </template>
