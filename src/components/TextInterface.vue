@@ -130,7 +130,8 @@ const text = ref<Char[]>([]) // main data, list of single cars
 
 const lines = ref<Line[]>([])
 
-const initLines = () => {
+const initLines = async () => {
+  await new Promise((resolve) => setTimeout(resolve, 2000))
   let lines: Line[] = [{ id: 0, words: [{ id: 0, text: [] }], comments: [] }]
   let linesIndex = 0
   let wordsIndex = 0
@@ -348,10 +349,10 @@ const formatText = (textArray: Char[]) => {
 
 const mounted = ref(false)
 
-onMounted(() => {
-  textArrayFromString(props.fullText)
-  loadComments(props.extComments)
-  lines.value = initLines()
+onMounted(async () => {
+  await textArrayFromString(props.fullText)
+  await loadComments(props.extComments)
+  lines.value = await initLines()
   mounted.value = true
 })
 

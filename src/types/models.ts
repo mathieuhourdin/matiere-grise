@@ -32,6 +32,7 @@ export interface Resource {
   category_id?: string
   created_at?: Date
   updated_at?: Date
+  is_local_draft?: boolean
 }
 
 export interface ContextualResource {

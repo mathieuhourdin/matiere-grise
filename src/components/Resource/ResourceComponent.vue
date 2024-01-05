@@ -91,7 +91,7 @@
         <div class="text-xs italic">Contenu</div>
         <TextInterface
           class="min-h-fit"
-          v-if="resourceIsLoaded && resource.publishing_state != 'drft'"
+          v-if="resourceIsLoaded && !resource.is_local_draft && resource.publishing_state != 'drft'"
           :ext-comments="comments"
           :resource-id="resource.id"
           :full-text="resource.content"

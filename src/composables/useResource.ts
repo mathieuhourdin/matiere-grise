@@ -15,12 +15,14 @@ const newResource = (): ApiResource => {
     image_url: '',
     resource_type: '',
     comment: '',
+    is_local_draft: true
   }
 }
 
 const getResource = async (id: string): Promise<ApiResource> => {
   try {
     const response = await fetchWrapper.get('/resources/' + id)
+    response.data.is_local_draft = false
     return response.data
   } catch (error) {
     launchSnackbar(`Error getting resource : ${error}`, 'error')
