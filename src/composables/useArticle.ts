@@ -38,6 +38,7 @@ export function useArticle() {
     }
   }
 
+  //TODO replace by create resource
   const createArticle = async (article: Resource) => {
     try {
       article.interaction_progress = Number(article.interaction_progress)
@@ -48,6 +49,7 @@ export function useArticle() {
     }
   }
 
+  //TODO replace by update resource
   const updateArticle = async (id: string, article: Resource) => {
     try {
       article.interaction_progress = Number(article.interaction_progress)

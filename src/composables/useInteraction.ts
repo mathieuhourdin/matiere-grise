@@ -25,6 +25,11 @@ async function getInteractions(): Promise<ApiInteraction[]> {
   return response.data.map((thoughtInput: any) => formatApiResponse(thoughtInput))
 }
 
+async function getUserThoughtOutputs(id: string): Promise<ApiInteraction[]> {
+  const response = await fetchWrapper.get('/users/' + id + '/thought_outputs?limit=60')
+  return response.data.map((thoughtOutput: any) => formatApiResponse(thoughtOutput))
+}
+
 async function getInteraction(id: string): Promise<ApiInteraction> {
   const response = await fetchWrapper.get('/thought_inputs/' + id)
   return formatApiResponse(response.data)
@@ -87,6 +92,7 @@ export function useInteraction() {
     getInteraction,
     updateInteraction,
     createInteractionForResource,
-    getInteractionsForResource
+    getInteractionsForResource,
+    getUserThoughtOutputs
   }
 }
