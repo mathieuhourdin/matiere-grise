@@ -38,6 +38,12 @@ const router = createRouter({
       component: () => import('@/views/SeeResourceView.vue')
     },
     {
+      path: '/resources-test/:id',
+      name: 'seeResourceTest',
+      props: true,
+      component: () => import('@/views/TestResourceView.vue')
+    },
+    {
       path: '/thought_inputs/:id',
       name: 'seeThoughtInput',
       props: true,

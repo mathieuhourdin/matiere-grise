@@ -13,7 +13,9 @@
           >{{ author.first_name }} {{ author.last_name }}</router-link
         >
       </div>
-      <div class="mt-3 text-xl font-bold">{{ title }}</div>
+      <router-link :to="'/resources-test/' + uuid">
+        <div class="mt-3 text-xl font-bold">{{ title }}</div>
+      </router-link>
       <div class="opacity-70">{{ subtitle }}</div>
     </router-link>
   </div>
