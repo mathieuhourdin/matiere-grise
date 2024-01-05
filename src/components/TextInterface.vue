@@ -133,7 +133,7 @@ const text = ref<Char[]>([]) // main data, list of single cars
 const lines = ref<Line[]>([])
 
 const initLines = async () => {
-  await new Promise((resolve) => setTimeout(100, resolve))
+  await new Promise((resolve) => setTimeout(resolve, 10))
   let lines: Line[] = [{ id: 0, words: [{ id: 0, text: [] }], comments: [] }]
   let linesIndex = 0
   let wordsIndex = 0
