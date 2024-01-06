@@ -10,6 +10,7 @@
     </div>
     <div
       v-else
+      id="main-interface"
       class="relative md:p-4"
       tabindex="0"
       @keydown="handleWrite"
@@ -133,7 +134,6 @@ const text = ref<Char[]>([]) // main data, list of single cars
 const lines = ref<Line[]>([])
 
 const initLines = async () => {
-  await new Promise((resolve) => setTimeout(resolve, 10))
   let lines: Line[] = [{ id: 0, words: [{ id: 0, text: [] }], comments: [] }]
   let linesIndex = 0
   let wordsIndex = 0
@@ -183,7 +183,9 @@ const moveCommentsAfterTextChange = (offset: number) => {
 }
 
 const insertChar = (key: any) => {
+  console.log('insertChar : ', key)
   if (!currentCursorPosition.value) return
+  console.log('insertChar with cursor set : ', key)
   text.value
     .filter((letter) => {
       return currentCursorPosition.value && letter.id >= currentCursorPosition.value.id + 1
@@ -354,21 +356,21 @@ const mounted = ref(false)
 onMounted(async () => {
   await textArrayFromString(props.fullText)
   await loadComments(props.extComments)
+  await new Promise((resolve) => setTimeout(resolve, 10))
   lines.value = await initLines()
   mounted.value = true
 })
 
 watch(
   text,
-  (newText) => {
+  async (newText) => {
     console.log('Watch triggered : ', newText)
-    if (mounted.value) emit('change', formatText(newText))
+    if (mounted.value) {
+      emit('change', formatText(newText))
+      lines.value = await initLines()
+    }
   },
   { deep: true }
 )
 
-watch(toRefs(props).fullText, (newText) => {
-  textArrayFromString(newText)
-  lines.value = initLines()
-})
 </script>
