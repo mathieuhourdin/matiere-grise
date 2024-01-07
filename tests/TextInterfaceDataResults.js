@@ -2,7 +2,18 @@ export const text = [
   { id: 0, char: 'l', comment: undefined },
   { id: 1, char: 'o', comment: undefined },
   { id: 2, char: 'r', comment: undefined },
-  { id: 3, char: 'e', comment: undefined },
+  {
+    id: 3,
+    char: 'e',
+    comment: {
+      id: 'cd69c7ae-941b-492b-97e9-209c7d3dbb4b',
+      start_index: 3,
+      end_index: 4,
+      editing: false,
+      content: 'perfect',
+      created_at: 'today'
+    }
+  },
   { id: 4, char: 'm', comment: undefined },
   { id: 5, char: ' ', comment: undefined },
   { id: 6, char: 'i', comment: undefined },
@@ -28,7 +39,18 @@ export const lines = [
           { id: 0, char: 'l', comment: undefined },
           { id: 1, char: 'o', comment: undefined },
           { id: 2, char: 'r', comment: undefined },
-          { id: 3, char: 'e', comment: undefined },
+          {
+            id: 3,
+            char: 'e',
+            comment: {
+              id: 'cd69c7ae-941b-492b-97e9-209c7d3dbb4b',
+              start_index: 3,
+              end_index: 4,
+              editing: false,
+              content: 'perfect',
+              created_at: 'today'
+            }
+          },
           { id: 4, char: 'm', comment: undefined },
           { id: 5, char: ' ', comment: undefined }
         ]
@@ -77,7 +99,18 @@ export const linesInsertY = [
           { id: 1, char: 'o', comment: undefined },
           { id: 2, char: 'r', comment: undefined },
           { id: 3, char: 'y', comment: undefined },
-          { id: 4, char: 'e', comment: undefined },
+          {
+            id: 4,
+            char: 'e',
+            comment: {
+              id: 'cd69c7ae-941b-492b-97e9-209c7d3dbb4b',
+              start_index: 4,
+              end_index: 5,
+              editing: false,
+              content: 'perfect',
+              created_at: 'today'
+            }
+          },
           { id: 5, char: 'm', comment: undefined },
           { id: 6, char: ' ', comment: undefined }
         ]

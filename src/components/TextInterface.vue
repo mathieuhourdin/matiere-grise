@@ -271,7 +271,7 @@ const { createComment, batchUpdateComments } = useComments()
 const comments = ref<Comment[]>([])
 const debouncedEditCommentTimeout = ref<number | null>(null)
 
-const loadComments = (extComments: Comment[]) => {
+const loadComments = async (extComments: Comment[]) => {
   comments.value = extComments.filter((comment) => {
     return comment.start_index != null
   })
@@ -289,7 +289,7 @@ const addComment = async () => {
 
 watch(
   comments,
-  (comments) => {
+  async (comments, oldComments) => {
     console.log('Watch comments triggered : ', comments)
     if (mounted.value) {
       console.log('Comments : ', comments)
@@ -298,12 +298,20 @@ watch(
         clearTimeout(debouncedEditCommentTimeout.value)
       debouncedEditCommentTimeout.value = setTimeout(() => batchUpdateComments(comments), 1000)
     }
+    console.log(`Old comments lenght : ${oldComments.length} new length: ${comments.length}`)
+    console.log("OldComments : ", oldComments)
+    console.log("NewComments : ", comments)
+    if (oldComments.length === 0 && comments.length > 0) {
+      console.log("Finally loading comments")
+      lines.value = await initLines()
+    }
+
   },
   { deep: true }
 )
 
-watch(toRefs(props).extComments, (extComments) => {
-  loadComments(extComments)
+watch(toRefs(props).extComments, async (extComments) => {
+  await loadComments(extComments)
 })
 
 /*****************  Manage dropdown menu ******************/
@@ -354,8 +362,8 @@ const formatText = (textArray: Char[]) => {
 const mounted = ref(false)
 
 onMounted(async () => {
-  await textArrayFromString(props.fullText)
   await loadComments(props.extComments)
+  await textArrayFromString(props.fullText)
   await new Promise((resolve) => setTimeout(resolve, 10))
   lines.value = await initLines()
   mounted.value = true

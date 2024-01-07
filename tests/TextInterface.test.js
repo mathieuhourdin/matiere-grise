@@ -7,7 +7,17 @@ describe('TextInterface', () => {
   beforeEach(() => {
     wrapper = mount(TextInterface, {
       props: {
-        fullText: 'lorem ipsum\nagain'
+        fullText: 'lorem ipsum\nagain',
+        extComments: [
+          {
+            id: 'cd69c7ae-941b-492b-97e9-209c7d3dbb4b',
+            start_index: 3,
+            end_index: 4,
+            editing: false,
+            content: 'perfect',
+            created_at: 'today'
+          }
+        ]
       }
     })
   })
