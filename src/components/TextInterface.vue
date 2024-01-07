@@ -63,7 +63,11 @@
                 @click="selectCursorPosition(line.words.slice(-1)[0].text.slice(-1)[0])"
               />
             </div>
-            <div v-if="comments.length > 0" class="absolute h-full" style="right: -2%; width: 27%">
+            <div
+              v-if="comments.length > 0 && !isMobile"
+              class="absolute h-full"
+              style="right: -2%; width: 27%"
+            >
               <CommentCard
                 v-for="(comment, cindex) in line.comments"
                 :key="cindex"
@@ -77,7 +81,7 @@
             </div>
           </div>
         </div>
-        <div v-if="comments.length > 0" style="width: 33%" />
+        <div v-if="comments.length > 0 && !isMobile" style="width: 33%" />
       </div>
     </div>
   </div>
@@ -89,6 +93,7 @@ import { ClipboardIcon } from '@heroicons/vue/24/outline'
 import { ref, computed, onMounted, watch, toRefs } from 'vue'
 import { useComments } from '@/composables/useComments'
 import { useUser } from '@/composables/useUser'
+import { useMenu } from '@/composables/useMenu'
 import { useSnackbar } from '@/composables/useSnackbar'
 import { type Comment } from '@/types/models'
 
@@ -267,6 +272,7 @@ const copyText = async () => {
 /***************** Comments **********************/
 
 const { createComment, batchUpdateComments } = useComments()
+const { isMobile } = useMenu()
 
 const comments = ref<Comment[]>([])
 const debouncedEditCommentTimeout = ref<number | null>(null)
@@ -299,13 +305,12 @@ watch(
       debouncedEditCommentTimeout.value = setTimeout(() => batchUpdateComments(comments), 1000)
     }
     console.log(`Old comments lenght : ${oldComments.length} new length: ${comments.length}`)
-    console.log("OldComments : ", oldComments)
-    console.log("NewComments : ", comments)
+    console.log('OldComments : ', oldComments)
+    console.log('NewComments : ', comments)
     if (oldComments.length === 0 && comments.length > 0) {
-      console.log("Finally loading comments")
+      console.log('Finally loading comments')
       lines.value = await initLines()
     }
-
   },
   { deep: true }
 )
@@ -380,5 +385,4 @@ watch(
   },
   { deep: true }
 )
-
 </script>
