@@ -1,12 +1,16 @@
 <template>
   <div>
     <div class="flex">
-    <div>{{ getCategoryName(category.display_name) }}</div>
-    <div @click="createNewDraftProblemAndRedirect" class="ml-auto text-sm mr-2 underline">Ajouter</div>
+      <div>{{ getCategoryName(category.display_name) }}</div>
+      <div @click="createNewDraftProblemAndRedirect" class="ml-auto text-sm mr-2 underline">
+        Ajouter
+      </div>
     </div>
     <hr class="border-top border-slate-800 border-dashed my-1" />
     <div class="flex overflow-scroll">
-      <div class="mb-4" v-for="(problem, i) in problemsList" :key="i"><ProblemCard :problem="problem" /></div>
+      <div class="mb-4" v-for="(problem, i) in problemsList" :key="i">
+        <ProblemCard :problem="problem" />
+      </div>
     </div>
   </div>
 </template>
@@ -28,7 +32,10 @@ const createNewDraftProblemAndRedirect = async () => {
   const problem = newProblem()
   problem.resource.category_id = props.category.id
   const createdProblem = await createProblem(problem)
-  router.push({ path: '/thought_outputs/' + createdProblem.resource.id, query: { editing: 'true' } })
+  router.push({
+    path: '/thought_outputs/' + createdProblem.resource.id,
+    query: { editing: 'true' }
+  })
 }
 
 const getCategoryName = (categoryName: string) => {
