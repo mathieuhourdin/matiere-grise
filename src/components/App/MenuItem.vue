@@ -1,9 +1,9 @@
 <template>
   <div class="h-12 border-b border-slate-400 flex">
-    <div class="ml-4 my-auto">
+    <div class="mx-4 w-max">
       <router-link @click="clickLink" :to="to">
-        <div>{{ title }}</div>
-        <div v-if="subtitle" class="text-2xs text-gray-600">{{ subtitle }}</div>
+        <div class="mt-1">{{ title }}</div>
+        <div v-if="subtitle" class="text-xs text-gray-600 inline-block mb-1">{{ subtitle }}</div>
       </router-link>
     </div>
   </div>
