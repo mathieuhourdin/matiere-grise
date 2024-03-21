@@ -7,7 +7,7 @@
       </div>
     </div>
     <hr class="border-top border-slate-800 border-dashed my-1" />
-    <div v-if="isMobile" class="flex overflow-scroll">
+    <div v-if="!isMobile" class="flex overflow-x-scroll">
       <div class="mb-4" v-for="(problem, i) in problemsList" :key="i">
         <ProblemCard :problem="problem" />
       </div>
