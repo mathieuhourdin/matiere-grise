@@ -7,10 +7,13 @@
       </div>
     </div>
     <hr class="border-top border-slate-800 border-dashed my-1" />
-    <div class="flex overflow-scroll">
+    <div v-if="isMobile" class="flex overflow-scroll">
       <div class="mb-4" v-for="(problem, i) in problemsList" :key="i">
         <ProblemCard :problem="problem" />
       </div>
+    </div>
+    <div v-else>
+      <ProblemCard :problem="problemsList[sliderIndex]" />
     </div>
   </div>
 </template>
@@ -19,8 +22,10 @@
 import { type Category, type Problem } from '@/types/models'
 import { useProblem } from '@/composables/useProblem'
 import { useRouter } from 'vue-router'
+import { useMenu } from '@/composables/useMenu'
 const { newProblem, createProblem } = useProblem()
 import ProblemCard from '@/components/Problem/ProblemCard.vue'
+import { ref } from 'vue'
 
 const props = defineProps<{
   problemsList: Problem[]
@@ -28,6 +33,8 @@ const props = defineProps<{
 }>()
 
 const router = useRouter()
+const { isMobile } = useMenu()
+const sliderIndex = ref(0)
 const createNewDraftProblemAndRedirect = async () => {
   const problem = newProblem()
   problem.resource.category_id = props.category.id

@@ -1,8 +1,7 @@
 <template>
   <div class="border shadow-xl rounded m-2 p-4 h-72 w-60">
     <router-link :to="'/thought_outputs/' + problem.id">
-      <div class="max-h-full">
-        <img class="h-28 mx-auto mb-4" :src="problem.image_url" />
+        <img class="h-2/5 mx-auto mb-4" :src="problem.image_url" />
         <div class="h-full">
           <div class="mb-2">{{ problem.title }}</div>
           <div v-if="problemAuthor" class="text-2xs italic" style="margin-top: -8px">
@@ -13,7 +12,6 @@
             <div class="text-2xs italic mt-auto">{{ formatDate(problem.created_at) }}</div>
             <div class="ml-auto text-2xs underline">{{ thoughtInputs.length }} inputs</div>
           </div>
-        </div>
       </div>
     </router-link>
   </div>

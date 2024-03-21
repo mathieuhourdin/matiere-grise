@@ -22,7 +22,7 @@ computed
 <template>
   <AppHeader />
   <div class="flex" style="width: 100%">
-    <SidebarMenu v-if="menuOpen" style="min-height: 800px" class="md:w-250px" />
+    <SidebarMenu v-if="menuOpen" style="min-height: 800px" class="absolute md:static w-full md:w-250px" />
     <RouterView class="flex-grow overflow-hidden" :key="routerViewKey"/>
   </div>
   <UiSnackbar v-if="snackbar" :message="snackbar.message" :type="snackbar.type" />
