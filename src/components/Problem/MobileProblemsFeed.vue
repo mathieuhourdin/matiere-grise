@@ -1,6 +1,6 @@
 <template>
   <div>
-    <ProblemCard v-for="(problem, i) in problemsList" class="border-b-1 h-screen border-black" :problem="problem" />
+    <ProblemCard v-for="(problem, i) in problemsList" class="border-b-1 border-black" :problem="problem" />
   </div>
 </template>
 

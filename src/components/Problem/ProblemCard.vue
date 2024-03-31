@@ -1,11 +1,11 @@
 <template>
   <div class="border p-4">
-        <div v-if="problemAuthor" class="text-2xs italic mb-2">
-          {{ problemAuthor.first_name }} {{ problemAuthor.last_name }}
-        </div>
+    <div v-if="problemAuthor" class="text-2xs italic mb-2">
+      {{ problemAuthor.first_name }} {{ problemAuthor.last_name }}
+    </div>
     <div @click="page = 1" class="h-3/5 mb-2 bg-gray-700">
-      <img v-if="page == 0" class="h-full mx-auto" :src="problem.image_url" />
-      <div v-else class="max-h-full overflow-scroll  bg-white p-1 rounded border">
+      <img v-if="page == 0" class="max-h-full mx-auto" :src="problem.image_url" />
+      <div v-else class="max-h-40 overflow-scroll bg-white p-1 rounded border">
         <div class="bg-white">{{ problem.content }}</div>
       </div>
     </div>
