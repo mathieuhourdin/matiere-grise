@@ -1,7 +1,7 @@
 <template>
-  <div class="border shadow-xl rounded m-2 p-4 h-72 w-60">
+  <div class="border shadow-xl rounded p-4">
     <router-link :to="'/thought_outputs/' + problem.id">
-        <img class="h-2/5 mx-auto mb-4" :src="problem.image_url" />
+        <img class="h-3/5 mx-auto mb-4" :src="problem.image_url" />
         <div class="">
           <div class="mb-2">{{ problem.title }}</div>
           <div v-if="problemAuthor" class="text-2xs italic" style="margin-top: -8px">
