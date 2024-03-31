@@ -1,7 +1,7 @@
 <template>
   <div>
     <div v-if="problems" class="md:m-4">
-      <div v-if="!isMobile">
+      <div v-if="isMobile">
         <CategoryProblemsCarousel
           class="mt-4"
           v-for="category in displayedCategoriesWithProblems.sort(

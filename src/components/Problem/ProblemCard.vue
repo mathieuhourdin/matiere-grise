@@ -1,17 +1,22 @@
 <template>
-  <div class="border shadow-xl rounded p-4">
+  <div class="border p-4">
+        <div v-if="problemAuthor" class="text-2xs italic mb-2">
+          {{ problemAuthor.first_name }} {{ problemAuthor.last_name }}
+        </div>
+    <div @click="page = 1" class="h-3/5 mb-2 bg-gray-700">
+      <img v-if="page == 0" class="h-full mx-auto" :src="problem.image_url" />
+      <div v-else class="max-h-full overflow-scroll  bg-white p-1 rounded border">
+        <div class="bg-white">{{ problem.content }}</div>
+      </div>
+    </div>
     <router-link :to="'/thought_outputs/' + problem.id">
-        <img class="h-3/5 mx-auto mb-4" :src="problem.image_url" />
-        <div class="">
-          <div class="mb-2">{{ problem.title }}</div>
-          <div v-if="problemAuthor" class="text-2xs italic" style="margin-top: -8px">
-            {{ problemAuthor.first_name }} {{ problemAuthor.last_name }}
-          </div>
-          <div class="text-2xs mb-auto">{{ formatText(problem.subtitle) }}</div>
-          <div class="flex mt-2">
-            <div class="text-2xs italic mt-auto">{{ formatDate(problem.created_at) }}</div>
-            <div class="ml-auto text-2xs underline">{{ thoughtInputs.length }} inputs</div>
-          </div>
+      <div class="">
+        <div class="mb-2">{{ problem.title }}</div>
+        <div class="text-2xs mb-auto">{{ formatText(problem.subtitle) }}</div>
+        <div class="flex mt-2">
+          <div class="text-2xs italic mt-auto">{{ formatDate(problem.created_at) }}</div>
+          <div class="ml-auto text-2xs underline">{{ thoughtInputs.length }} inputs</div>
+        </div>
       </div>
     </router-link>
   </div>
@@ -38,6 +43,8 @@ const formatDate = (date?: Date) => {
     year: '2-digit'
   })
 }
+
+const page = ref<number>(0)
 
 const problemAuthorInteraction = ref<Interaction | null>(null)
 const problemAuthor = ref<User | null>(null)

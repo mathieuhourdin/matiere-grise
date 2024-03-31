@@ -9,7 +9,7 @@
     <hr class="border-top border-slate-800 border-dashed my-1" />
     <div class="flex overflow-scroll">
       <div class="mb-4" v-for="(problem, i) in problemsList" :key="i">
-        <ProblemCard class="w-80 h-96 mx-3" :problem="problem" />
+        <ProblemCard class="w-80 h-96 mx-3 shadow-xl rounded " :problem="problem" />
       </div>
     </div>
   </div>
