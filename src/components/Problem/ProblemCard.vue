@@ -6,16 +6,22 @@
         {{ problemAuthor.first_name }} {{ problemAuthor.last_name }}
       </div>
     </div>
-    <div @click="page += 1" class="h-3/5 mb-2 bg-gray-700">
+    <div
+      @click="page = (page + 1) % (problemContentSentencesList.length + 1)"
+      class="relative h-3/5 mb-2 bg-gray-700"
+    >
       <img
         v-if="page == 0"
         class="object-contain w-full h-full mt-auto mx-auto"
         :src="problem.image_url"
       />
-      <div v-else class="h-full overflow-scroll bg-blue-100 p-1 pt-5 border">
+      <div v-else class="h-full overflow-scroll bg-blue-100 p-1 pt-8 border">
         <div class="bg-blue-100 text-center my-auto">
           {{ problemContentSentencesList[page - 1] }}
         </div>
+      </div>
+      <div class="absolute right-2 top-2 bg-gray-400 rounded-xl p-1 text-xs opacity-70">
+        {{ pageRatio }}
       </div>
     </div>
     <router-link :to="'/thought_outputs/' + problem.id">
@@ -64,6 +70,8 @@ const problemContentPerPage = (text: string, page: number) => {
     ? text.slice(page * 300, (page + 1) * 300) + '...'
     : text.slice(page * 300, (page + 1) * 300)
 }
+
+const pageRatio = computed(() => `${page.value}/${problemContentSentencesList.value.length}`)
 
 const problemContentSentencesList = computed(() => {
   const splittedContent = props.problem.content.replaceAll('?', '?.').split('.')
