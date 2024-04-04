@@ -4,15 +4,16 @@
       Login
     </router-link>
     <div v-else class="flex max-h-full">
-      <router-link :to="'/users/' + user.id" class="text-xs md:text-base my-auto text-right"
-        >{{ user.first_name }} {{ user.last_name }}</router-link
-      >
+      <router-link :to="'/users/' + user.id" class="flex text-xs md:text-base my-auto text-right"
+        ><UserAvatar :user="user"
+      /></router-link>
       <ArrowRightOnRectangleIcon class="h-6 m-1" @click="logOut" />
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
+import UserAvatar from '@/components/User/UserAvatar.vue'
 import { useUser } from '@/composables/useUser'
 import { ArrowRightOnRectangleIcon } from '@heroicons/vue/24/outline'
 import { onMounted } from 'vue'
