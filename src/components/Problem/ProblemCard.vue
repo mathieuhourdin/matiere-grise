@@ -80,11 +80,11 @@ const problemContentSentencesList = computed(() => {
   while (i < splittedContent.length - 1) {
     let size = 0
     let text = []
-    if (splittedContent[i].length >= 300) {
+    if (splittedContent[i].length >= 270) {
       result.push(splittedContent[i].replaceAll('?.', '?'))
       i++
     } else {
-      while (i < splittedContent.length && size + splittedContent[i].length < 300) {
+      while (i < splittedContent.length && size + splittedContent[i].length < 270) {
         text.push(splittedContent[i])
         size += splittedContent[i].length
         i++
