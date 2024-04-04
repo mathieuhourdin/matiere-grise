@@ -1,7 +1,10 @@
 <template>
-  <div class="border p-4">
-    <div v-if="problemAuthor" class="text-2xs italic mb-2">
-      {{ problemAuthor.first_name }} {{ problemAuthor.last_name }}
+  <div class="border p-1">
+    <div v-if="problemAuthor" class="flex mb-1">
+      <UserAvatar :user="problemAuthor" />
+      <div class="text-2xs italic my-auto ml-2">
+        {{ problemAuthor.first_name }} {{ problemAuthor.last_name }}
+      </div>
     </div>
     <div @click="page = 1" class="h-3/5 mb-2 bg-gray-700">
       <img
@@ -27,6 +30,7 @@
 </template>
 
 <script setup lang="ts">
+import UserAvatar from '@/components/User/UserAvatar.vue'
 import { type ApiResource, type Interaction, type User } from '@/types/models'
 import { useResourceRelations } from '@/composables/useResourceRelations'
 import { onMounted, ref } from 'vue'
