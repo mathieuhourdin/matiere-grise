@@ -6,14 +6,16 @@
         {{ problemAuthor.first_name }} {{ problemAuthor.last_name }}
       </div>
     </div>
-    <div @click="page = 1" class="h-3/5 mb-2 bg-gray-700">
+    <div @click="page += 1" class="h-3/5 mb-2 bg-gray-700">
       <img
         v-if="page == 0"
         class="object-contain w-full h-full mt-auto mx-auto"
         :src="problem.image_url"
       />
-      <div v-else class="max-h-40 overflow-scroll bg-white p-1 rounded border">
-        <div class="bg-white">{{ problem.content }}</div>
+      <div v-else class="h-full overflow-scroll bg-blue-100 p-1 pt-5 border">
+        <div class="bg-blue-100 text-center my-auto">
+          {{ problemContentSentencesList[page - 1] }}
+        </div>
       </div>
     </div>
     <router-link :to="'/thought_outputs/' + problem.id">
@@ -33,7 +35,7 @@
 import UserAvatar from '@/components/User/UserAvatar.vue'
 import { type ApiResource, type Interaction, type User } from '@/types/models'
 import { useResourceRelations } from '@/composables/useResourceRelations'
-import { onMounted, ref } from 'vue'
+import { onMounted, computed, ref } from 'vue'
 import { useResource } from '@/composables/useResource'
 import { useUser } from '@/composables/useUser'
 
@@ -56,6 +58,34 @@ const page = ref<number>(0)
 
 const problemAuthorInteraction = ref<Interaction | null>(null)
 const problemAuthor = ref<User | null>(null)
+
+const problemContentPerPage = (text: string, page: number) => {
+  return text.length > 300 + page * 300
+    ? text.slice(page * 300, (page + 1) * 300) + '...'
+    : text.slice(page * 300, (page + 1) * 300)
+}
+
+const problemContentSentencesList = computed(() => {
+  const splittedContent = props.problem.content.replaceAll('?', '?.').split('.')
+  let i = 0
+  const result = []
+  while (i < splittedContent.length - 1) {
+    let size = 0
+    let text = []
+    if (splittedContent[i].length >= 300) {
+      result.push(splittedContent[i].replaceAll('?.', '?'))
+      i++
+    } else {
+      while (i < splittedContent.length && size + splittedContent[i].length < 300) {
+        text.push(splittedContent[i])
+        size += splittedContent[i].length
+        i++
+      }
+      result.push(text.join('. ').replaceAll('?.', '?'))
+    }
+  }
+  return result
+})
 
 const formatText = (text: string) => {
   return text.length > 200 ? text.slice(0, 150) + '...' : text
