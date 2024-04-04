@@ -6,7 +6,7 @@
         <div v-if="problemAuthor" class="text-xs italic my-auto ml-2">
           {{ problemAuthor.first_name }} {{ problemAuthor.last_name }}
         </div>
-        <div v-else>Connectez vous pour voir l'auteur</div>
+        <div v-else class="text-xs italic my-auto ml-2">Connectez vous pour voir l'auteur</div>
       </div>
       <div v-else class="animate-pulse w-2/3 bg-gradient-to-r from-slate-600 h-8 mb-1.5"></div>
     </div>
