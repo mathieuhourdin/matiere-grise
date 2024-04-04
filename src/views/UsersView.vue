@@ -1,8 +1,8 @@
 <template>
   <div class="m-4">
     <div class="underline italic" @click="createDrafAuthorAndRedirect">Créer un auteur</div>
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 p-16">
-    <UserCard v-for="(user, i) in users" :key="i" :user="user" />
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 md:p-16">
+      <UserCard v-for="(user, i) in users" :key="i" :user="user" />
     </div>
   </div>
 </template>
@@ -21,7 +21,7 @@ const { getUsers, createNewDraftUser } = useUser()
 const users = ref<User[]>([])
 
 const createDrafAuthorAndRedirect = async () => {
-  const createdDraftAuthor = await createNewDraftUser();
+  const createdDraftAuthor = await createNewDraftUser()
   router.push({ path: '/users/' + createdDraftAuthor.id, query: { editingUser: 'true' } })
 }
 
