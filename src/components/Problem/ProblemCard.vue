@@ -1,5 +1,5 @@
 <template>
-  <div ref="parentCard" class="border p-1.5">
+  <div class="border p-1.5">
     <div>
       <div v-if="isFetchedAuthor" class="flex mb-1.5">
         <UserAvatar :user="problemAuthor" />
@@ -12,7 +12,8 @@
     </div>
     <div
       @click="page = (page + 1) % (problemContentSentencesList.length + 1)"
-      class="relative h-3/5 mb-2 bg-gray-700"
+      class="relative md:h-3/5 mb-2 bg-gray-700"
+      ref="parentCard"
     >
       <img
         v-if="page == 0"
@@ -116,9 +117,9 @@ const { getUserById } = useUser()
 const isFetchedAuthor = ref(false)
 const loadUser = async () => {
   try {
-  problemAuthorInteraction.value = await getAuthorInteractionForResource(props.problem.id)
-  if (!problemAuthorInteraction.value) return
-  problemAuthor.value = await getUserById(problemAuthorInteraction.value.interaction_user_id)
+    problemAuthorInteraction.value = await getAuthorInteractionForResource(props.problem.id)
+    if (!problemAuthorInteraction.value) return
+    problemAuthor.value = await getUserById(problemAuthorInteraction.value.interaction_user_id)
   } catch (error) {
     console.log(error)
   }
