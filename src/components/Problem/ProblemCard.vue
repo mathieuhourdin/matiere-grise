@@ -1,8 +1,8 @@
 <template>
-  <div class="border p-1">
-    <div v-if="problemAuthor" class="flex mb-1">
+  <div class="border p-1.5">
+    <div v-if="problemAuthor" class="flex mb-1.5">
       <UserAvatar :user="problemAuthor" />
-      <div class="text-2xs italic my-auto ml-2">
+      <div class="text-xs italic my-auto ml-2">
         {{ problemAuthor.first_name }} {{ problemAuthor.last_name }}
       </div>
     </div>
