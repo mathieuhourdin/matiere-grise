@@ -1,10 +1,13 @@
 <template>
   <div class="border p-1.5">
-    <div v-if="problemAuthor" class="flex mb-1.5">
-      <UserAvatar :user="problemAuthor" />
-      <div class="text-xs italic my-auto ml-2">
-        {{ problemAuthor.first_name }} {{ problemAuthor.last_name }}
+    <div>
+      <div v-if="problemAuthor" class="flex mb-1.5">
+        <UserAvatar :user="problemAuthor" />
+        <div class="text-xs italic my-auto ml-2">
+          {{ problemAuthor.first_name }} {{ problemAuthor.last_name }}
+        </div>
       </div>
+      <div v-else class="animate-pulse w-2/3 bg-gradient-to-r from-slate-600 h-8 mb-1.5"></div>
     </div>
     <div
       @click="page = (page + 1) % (problemContentSentencesList.length + 1)"
