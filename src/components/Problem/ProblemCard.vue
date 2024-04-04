@@ -1,5 +1,5 @@
 <template>
-  <div class="border p-1.5">
+  <div ref="parentCard" class="border p-1.5">
     <div>
       <div v-if="problemAuthor" class="flex mb-1.5">
         <UserAvatar :user="problemAuthor" />
@@ -118,8 +118,12 @@ const loadUser = async () => {
   problemAuthor.value = await getUserById(problemAuthorInteraction.value.interaction_user_id)
 }
 
+const parentCard = ref(null)
+
 onMounted(async () => {
   await loadThoughtInputs()
   await loadUser()
+  const initialHeight = parentCard.value.offsetHeight
+  parentCard.value.style.height = `${initialHeight}px`
 })
 </script>
