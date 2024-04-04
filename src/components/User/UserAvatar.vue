@@ -1,7 +1,7 @@
 <template>
   <div class="w-8">
     <img
-      :src="user.profile_picture_url ? user.profile_picture_url : image_src"
+      :src="!isSpy && user && user.profile_picture_url ? user.profile_picture_url : 'src/assets/spy-icon.svg'"
       class="border-2 border-slate-300 dark:border-zinc-700 rounded-full max-w-full aspect-[2/2] object-cover object-center w-full"
     />
   </div>
@@ -9,8 +9,10 @@
 
 <script setup lang="ts">
 import { type User } from '@/types/models'
+import SpyAvatar from '@/assets/spy-icon.svg'
 
 const props = defineProps<{
-  user: User
+  user?: User
+  isSpy: boolean
 }>()
 </script>

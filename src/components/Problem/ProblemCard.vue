@@ -1,11 +1,12 @@
 <template>
   <div ref="parentCard" class="border p-1.5">
     <div>
-      <div v-if="problemAuthor" class="flex mb-1.5">
+      <div v-if="isFetchedAuthor" class="flex mb-1.5">
         <UserAvatar :user="problemAuthor" />
-        <div class="text-xs italic my-auto ml-2">
+        <div v-if="problemAuthor" class="text-xs italic my-auto ml-2">
           {{ problemAuthor.first_name }} {{ problemAuthor.last_name }}
         </div>
+        <div v-else>Connectez vous pour voir l'auteur</div>
       </div>
       <div v-else class="animate-pulse w-2/3 bg-gradient-to-r from-slate-600 h-8 mb-1.5"></div>
     </div>
@@ -112,10 +113,16 @@ const loadThoughtInputs = async () => {
 
 const { getUserById } = useUser()
 
+const isFetchedAuthor = ref(false)
 const loadUser = async () => {
+  try {
   problemAuthorInteraction.value = await getAuthorInteractionForResource(props.problem.id)
   if (!problemAuthorInteraction.value) return
   problemAuthor.value = await getUserById(problemAuthorInteraction.value.interaction_user_id)
+  } catch (error) {
+    console.log(error)
+  }
+  isFetchedAuthor.value = true
 }
 
 const parentCard = ref(null)
