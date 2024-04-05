@@ -1,6 +1,5 @@
 <template>
-  <div>
-    <router-link v-if="!user" to="/login" @click="routeToLogin" class="text-xs md:text-base">
+    <router-link v-if="!user" to="/login" @click="routeToLogin" class="text-xs my-auto md:text-base">
       Login
     </router-link>
     <div v-else class="flex max-h-full">
@@ -9,7 +8,6 @@
       /></router-link>
       <ArrowRightOnRectangleIcon class="h-6 m-1" @click="logOut" />
     </div>
-  </div>
 </template>
 
 <script setup lang="ts">
