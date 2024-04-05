@@ -1,12 +1,19 @@
 <template>
   <div class="border p-1.5">
     <div>
-      <div v-if="isFetchedAuthor" class="flex mb-1.5">
+      <div v-if="isFetchedAuthor" class="flex mb-1.5 h-8">
         <UserAvatar :user="problemAuthor" />
-        <div v-if="problemAuthor" class="text-xs italic my-auto ml-2">
-          {{ problemAuthor.first_name }} {{ problemAuthor.last_name }}
+        <div class="h-full flex flex-col w-full">
+          <div class="flex w-auto shrink overflow-auto">
+            <div v-if="problemAuthor" class="text-xs font-semibold ml-2">
+              {{ problemAuthor.first_name }} {{ problemAuthor.last_name }}
+            </div>
+            <div v-else class="text-xs italic ml-2">Connectez vous pour voir l'auteur</div>
+            <div class="mx-1 my-auto rounded-full bg-gray-800 w-1 h-1"></div>
+            <div class="text-2xs my-auto">{{ formatDate(problem.created_at) }}</div>
+          </div>
+          <div class="text-2xs italic ml-2 grow shrink-0 overflow-auto">Problématique</div>
         </div>
-        <div v-else class="text-xs italic my-auto ml-2">Connectez vous pour voir l'auteur</div>
       </div>
       <div v-else class="animate-pulse w-2/3 bg-gradient-to-r from-slate-600 h-8 mb-1.5"></div>
     </div>
@@ -34,7 +41,6 @@
         <div class="mb-2">{{ problem.title }}</div>
         <div class="text-2xs mb-auto">{{ formatText(problem.subtitle) }}</div>
         <div class="flex mt-2">
-          <div class="text-2xs italic mt-auto">{{ formatDate(problem.created_at) }}</div>
           <div class="ml-auto text-2xs underline">{{ thoughtInputs.length }} inputs</div>
         </div>
       </div>
@@ -57,8 +63,6 @@ const props = defineProps<{
 const formatDate = (date?: Date) => {
   if (!date) return ''
   return date.toLocaleString('fr-FR', {
-    hour: 'numeric',
-    weekday: 'short',
     day: 'numeric',
     month: 'short',
     year: '2-digit'
