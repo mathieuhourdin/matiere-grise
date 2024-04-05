@@ -20,8 +20,8 @@ computed
 </script>
 
 <template>
-  <div class="md:fixed z-10 w-full">
-    <AppHeader class="w-full opacity-100" />
+  <div class="md:fixed w-full">
+    <AppHeader class="w-full z-10 opacity-100" />
     <SidebarMenu
       v-if="menuOpen"
       style="min-height: 800px"
