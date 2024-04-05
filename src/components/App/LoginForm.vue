@@ -1,5 +1,5 @@
 <template>
-  <div class="md:w-1/3 border shadow rounded">
+  <div class="border shadow rounded">
     <div class="flex">
       <div class="m-2">Connectez-vous</div>
       <slot />
