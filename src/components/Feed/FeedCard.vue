@@ -12,7 +12,7 @@
       <div v-else class="animate-pulse w-2/3 bg-gradient-to-r from-slate-600 h-8 mb-1.5"></div>
     </div>
     <div
-      @click="page = (page + 1) % (problemContentSentencesList.length + 1)"
+      @click="nextPage"
       class="overflow-auto relative w-full md:h-3/5 min-h-60 mb-2 bg-gray-700"
       ref="parentCard"
     >
@@ -21,9 +21,17 @@
         class="overflow-auto object-contain w-full h-full mt-auto mx-auto"
         :src="interaction.resource.image_url"
       />
+      <div
+        v-else-if="page > 0 && page <= contextSentencesList.length"
+        class="overflow-auto h-full overflow-scroll bg-red-100 p-1 pt-8 border"
+      >
+        <div class="bg-red-100 text-center text-sm my-auto">
+          {{ contextSentencesList[page - 1] }}
+        </div>
+      </div>
       <div v-else class="overflow-auto h-full overflow-scroll bg-blue-100 p-1 pt-8 border">
         <div class="bg-blue-100 text-center text-sm my-auto">
-          {{ problemContentSentencesList[page - 1] }}
+          {{ resourceContentSentencesList[page - 1] }}
         </div>
       </div>
       <div class="absolute right-2 top-2 bg-gray-400 rounded-xl p-1 text-xs opacity-70">
@@ -49,6 +57,7 @@ import { useResourceRelations } from '@/composables/useResourceRelations'
 import { onMounted, computed, ref } from 'vue'
 import { useResource } from '@/composables/useResource'
 import { useUser } from '@/composables/useUser'
+import { textManagement } from '@/helpers'
 
 const props = defineProps<{
   interaction: ApiResource
@@ -93,29 +102,21 @@ const problemContentPerPage = (text: string, page: number) => {
     : text.slice(page * 300, (page + 1) * 300)
 }
 
-const pageRatio = computed(() => `${page.value}/${problemContentSentencesList.value.length}`)
+const nextPage = () => {
+  page.value = (page.value + 1) % pagesCount.value
+}
+const pageRatio = computed(() => `${page.value + 1}/${pagesCount.value}`)
 
-const problemContentSentencesList = computed(() => {
-  if (!props.interaction.resource.content) return []
-  const splittedContent = props.interaction.resource.content.replaceAll('?', '?.').split('.')
-  let i = 0
-  const result = []
-  while (i < splittedContent.length - 1) {
-    let size = 0
-    let text = []
-    if (splittedContent[i].length >= 270) {
-      result.push(splittedContent[i].replaceAll('?.', '?'))
-      i++
-    } else {
-      while (i < splittedContent.length && size + splittedContent[i].length < 270) {
-        text.push(splittedContent[i])
-        size += splittedContent[i].length
-        i++
-      }
-      result.push(text.join('. ').replaceAll('?.', '?'))
-    }
-  }
-  return result
+const pagesCount = computed(() => {
+  return contextSentencesList.value.length + resourceContentSentencesList.value.length + 1
+})
+
+const resourceContentSentencesList = computed(() => {
+  return textManagement.splitTextForPanel(props.interaction.resource.content)
+})
+
+const contextSentencesList = computed(() => {
+  return textManagement.splitTextForPanel(props.interaction.context_comment)
 })
 
 const formatText = (text: string) => {
