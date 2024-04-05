@@ -31,7 +31,7 @@
       </div>
       <div v-else class="overflow-auto h-full overflow-scroll bg-blue-100 p-1 pt-8 border">
         <div class="bg-blue-100 text-center text-sm my-auto">
-          {{ resourceContentSentencesList[page - 1] }}
+          {{ resourceContentSentencesList[page - contextSentencesList.length - 1] }}
         </div>
       </div>
       <div class="absolute right-2 top-2 bg-gray-400 rounded-xl p-1 text-xs opacity-70">
