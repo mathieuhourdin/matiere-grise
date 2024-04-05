@@ -23,7 +23,8 @@ const contextualResources = computed(() => {
       date: interaction.interaction_date,
       user_id: interaction.interaction_user_id,
       context_comment: interaction.interaction_comment,
-      progress: interaction.interaction_progress
+      progress: interaction.interaction_progress,
+      ...interaction
     }
   }).sort((a, b) => 0.5 - Math.random())
 })

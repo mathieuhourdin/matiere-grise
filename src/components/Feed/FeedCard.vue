@@ -9,10 +9,14 @@
               {{ interationAuthor.first_name }} {{ interationAuthor.last_name }}
             </div>
             <div v-else class="text-xs italic ml-2">Connectez vous pour voir l'auteur</div>
-            <div class="mx-1 my-auto rounded-full bg-gray-800 w-1 h-1"></div>
+            <div class="mx-2 my-auto rounded-full bg-gray-800 w-1 h-1"></div>
             <div class="text-2xs my-auto">{{ formatDate(interaction.date) }}</div>
           </div>
-          <div class="text-2xs italic ml-2 grow shrink-0 overflow-auto">Problématique</div>
+          <div class="flex ml-2 grow shrink-0 overflow-auto">
+            <div class="text-2xs my-auto italic">{{ getInteractionTypeName(interaction.interaction_type) }}</div>
+            <div class="mx-2 my-auto rounded-full bg-gray-800 w-1 h-1"></div>
+            <div class="text-2xs my-auto italic">{{ getResourceTypeNameFromCode(interaction.resource.resource_type) }}</div>
+          </div>
         </div>
       </div>
       <div v-else class="animate-pulse w-2/3 bg-gradient-to-r from-slate-600 h-8 mb-1.5"></div>
@@ -67,6 +71,22 @@ const formatDate = (date?: Date) => {
     month: 'short',
     year: '2-digit'
   })
+}
+
+const getInteractionTypeName = (typeCode: string) => {
+  return typeCode === 'outp' ? 'Production personnelle' : 'Bibliographie'
+}
+
+const getResourceTypeNameFromCode = (typeCode: string) => {
+  switch (typeCode) {
+    case 'pblm':
+      return 'Problématique'
+    case 'book':
+      return 'Livre'
+    case 'atcl':
+      return 'Article'
+  }
+  return typeCode
 }
 
 const page = ref<number>(0)
