@@ -5,17 +5,23 @@
         <UserAvatar :user="interationAuthor" />
         <div class="h-full flex flex-col w-full">
           <div class="flex w-auto shrink overflow-auto">
-            <div v-if="interationAuthor" class="text-xs font-semibold ml-2">
+            <div v-if="interationAuthor" class="sm:text-xs text-sm font-semibold ml-2">
               {{ interationAuthor.first_name }} {{ interationAuthor.last_name }}
             </div>
-            <div v-else class="text-xs italic ml-2">Connectez vous pour voir l'auteur</div>
+            <div v-else class="sm:text-xs text-sm italic ml-2">
+              Connectez vous pour voir l'auteur
+            </div>
             <div class="mx-1 my-auto rounded-full bg-gray-800 w-1 h-1"></div>
             <div class="text-2xs my-auto">{{ formatDate(interaction.date) }}</div>
           </div>
           <div class="flex ml-2 grow shrink-0 overflow-auto">
-            <div class="text-2xs my-auto italic">{{ getInteractionTypeName(interaction.interaction_type) }}</div>
+            <div class="text-2xs my-auto italic">
+              {{ getInteractionTypeName(interaction.interaction_type) }}
+            </div>
             <div class="mx-1 my-auto rounded-full bg-gray-800 w-1 h-1"></div>
-            <div class="text-2xs my-auto italic">{{ getResourceTypeNameFromCode(interaction.resource.resource_type) }}</div>
+            <div class="text-2xs my-auto italic">
+              {{ getResourceTypeNameFromCode(interaction.resource.resource_type) }}
+            </div>
           </div>
         </div>
       </div>
@@ -32,7 +38,7 @@
         :src="interaction.resource.image_url"
       />
       <div v-else class="overflow-auto h-full overflow-scroll bg-blue-100 p-1 pt-8 border">
-        <div class="bg-blue-100 text-center text-xs my-auto">
+        <div class="bg-blue-100 text-center text-sm my-auto">
           {{ problemContentSentencesList[page - 1] }}
         </div>
       </div>
@@ -42,7 +48,7 @@
     </div>
     <router-link class="" :to="'/thought_outputs/' + interaction.resource.id">
       <div class="">
-        <div class="mb-2 text-xs">{{ interaction.resource.title }}</div>
+        <div class="mb-2 font-bold text-sm">{{ interaction.resource.title }}</div>
         <div class="text-2xs mb-auto">{{ formatText(interaction.resource.subtitle) }}</div>
         <div class="flex mt-2">
           <div class="ml-auto text-2xs underline">{{ thoughtInputs.length }} inputs</div>
