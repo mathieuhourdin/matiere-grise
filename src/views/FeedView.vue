@@ -1,5 +1,5 @@
 <template>
-  <div class="mt-1 md:mt-14 mx-auto md:w-96">
+  <div class="mt-1 md:w-96">
     <FeedList :interactions-list="contextualResources" />
   </div>
 </template>

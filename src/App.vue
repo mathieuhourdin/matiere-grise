@@ -20,16 +20,13 @@ computed
 </script>
 
 <template>
-  <div class="md:fixed w-full">
-    <AppHeader class="w-full z-10 opacity-100" />
-    <SidebarMenu
-      v-if="menuOpen"
-      style="min-height: 800px"
-      class="h-screen absolute w-full md:static md:w-250px"
-    />
-  </div>
-  <div class="flex" style="width: 100%">
-    <RouterView class="overflow-hidden" :key="routerViewKey" />
+  <div class="flex flex-col h-screen">
+    <AppHeader class="overflow-auto" />
+    <div class="overflow-hidden flex justify-between h-full" style="width: 100%">
+      <SidebarMenu v-if="menuOpen" class="absolute md:relative h-full w-full md:static md:basis-1/5" />
+      <RouterView class="h-full overflow-scroll" :key="routerViewKey" />
+      <div class="md:basis-1/5" />
+    </div>
   </div>
   <UiSnackbar v-if="snackbar" :message="snackbar.message" :type="snackbar.type" />
 </template>
