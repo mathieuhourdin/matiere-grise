@@ -21,6 +21,12 @@ const router = createRouter({
       component: () => import('@/views/PlatformPresentationView.vue')
     },
     {
+      path: '/resources/:id/feed',
+      name: 'resourceFeed',
+      props: true,
+      component: () => import('@/views/ResourceFeedView.vue')
+    },
+    {
       path: '/resources',
       name: 'resourcesList',
       component: () => import('@/views/ResourcesListView.vue')

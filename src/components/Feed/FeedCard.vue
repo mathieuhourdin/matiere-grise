@@ -1,6 +1,6 @@
 <template>
   <div class="flex flex-col border p-1.5 overflow-auto">
-    <div>
+    <div class="flex">
       <UserMini
         v-if="isFetchedAuthor"
         class="flex mb-1.5 h-8"
@@ -10,6 +10,9 @@
         :secondBottomText="getResourceTypeNameFromCode(interaction.resource.resource_type)"
       />
       <div v-else class="animate-pulse w-2/3 bg-gradient-to-r from-slate-600 h-8 mb-1.5"></div>
+      <router-link :to="'/resources/' + interaction.resource.id + '/feed'" class="ml-auto"
+        ><ArrowRightCircleIcon class="w-8"
+      /></router-link>
     </div>
     <div
       @click="nextPage"
@@ -52,6 +55,7 @@
 
 <script setup lang="ts">
 import UserMini from '@/components/User/UserMini.vue'
+import { ArrowRightCircleIcon } from '@heroicons/vue/24/outline'
 import { type ApiResource, type Interaction, type User } from '@/types/models'
 import { useResourceRelations } from '@/composables/useResourceRelations'
 import { onMounted, computed, ref } from 'vue'
