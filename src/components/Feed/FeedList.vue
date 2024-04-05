@@ -1,8 +1,8 @@
 <template>
-  <div>
+  <div class="flex flex-col">
     <FeedCard
       v-for="(interaction, i) in interactionsList"
-      class="max-h-screen border-b-1 border-black"
+      class="md:mb-2 flex-grow md:rounded max-h-screen border-b-1 border-black"
       :interaction="interaction"
     />
   </div>

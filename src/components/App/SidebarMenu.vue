@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-slate-200 z-10">
+  <div class="bg-slate-200 z-10 border-r border-slate-400">
     <div>
       <MenuItem v-if="user" :to="'/users/' + user.id" title="Mon profil" subtitle="Informations personnelles"/>
       <MenuItem to="/feed" title="Fil d'actu" subtitle="Les travaux de vos amis"/>

@@ -4,7 +4,7 @@ import AppHeader from './components/App/AppHeader.vue'
 import SidebarMenu from '@/components/App/SidebarMenu.vue'
 import UiSnackbar from '@/components/Ui/UiSnackbar.vue'
 import { onMounted } from 'vue'
-import { useCategories } from'@/composables/useCategories'
+import { useCategories } from '@/composables/useCategories'
 import { useMenu } from '@/composables/useMenu'
 import { useSnackbar } from '@/composables/useSnackbar.ts'
 import { computed } from 'vue'
@@ -20,10 +20,16 @@ computed
 </script>
 
 <template>
-  <AppHeader />
+  <div class="md:fixed z-10 w-full">
+    <AppHeader class="w-full opacity-100" />
+    <SidebarMenu
+      v-if="menuOpen"
+      style="min-height: 800px"
+      class="h-screen absolute w-full md:static md:w-250px"
+    />
+  </div>
   <div class="flex" style="width: 100%">
-    <SidebarMenu v-if="menuOpen" style="min-height: 800px" class="absolute md:static w-full md:w-250px" />
-    <RouterView class="flex-grow overflow-hidden" :key="routerViewKey"/>
+    <RouterView class="overflow-hidden" :key="routerViewKey" />
   </div>
   <UiSnackbar v-if="snackbar" :message="snackbar.message" :type="snackbar.type" />
 </template>

@@ -5,6 +5,7 @@ module.exports = {
     extend: {
       width: {
         '250px': '250px',
+        '600px': '600px',
         '80pt': '80%'
       },
       aspectRatio: {
