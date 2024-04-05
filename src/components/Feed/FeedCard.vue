@@ -1,30 +1,14 @@
 <template>
   <div class="flex flex-col border p-1.5 overflow-auto">
     <div>
-      <div v-if="isFetchedAuthor" class="flex mb-1.5 h-8">
-        <UserAvatar :user="interationAuthor" />
-        <div class="h-full flex flex-col w-full">
-          <div class="flex w-auto shrink overflow-auto">
-            <div v-if="interationAuthor" class="sm:text-xs text-sm font-semibold ml-2">
-              {{ interationAuthor.first_name }} {{ interationAuthor.last_name }}
-            </div>
-            <div v-else class="sm:text-xs text-sm italic ml-2">
-              Connectez vous pour voir l'auteur
-            </div>
-            <div class="mx-1 my-auto rounded-full bg-gray-800 w-1 h-1"></div>
-            <div class="text-2xs my-auto">{{ formatDate(interaction.date) }}</div>
-          </div>
-          <div class="flex ml-2 grow shrink-0 overflow-auto">
-            <div class="text-2xs my-auto italic">
-              {{ getInteractionTypeName(interaction.interaction_type) }}
-            </div>
-            <div class="mx-1 my-auto rounded-full bg-gray-800 w-1 h-1"></div>
-            <div class="text-2xs my-auto italic">
-              {{ getResourceTypeNameFromCode(interaction.resource.resource_type) }}
-            </div>
-          </div>
-        </div>
-      </div>
+      <UserMini
+        v-if="isFetchedAuthor"
+        class="flex mb-1.5 h-8"
+        :user="interactionAuthor"
+        :secondText="formatDate(interaction.date)"
+        :firstBottomText="getInteractionTypeName(interaction.interaction_type)"
+        :secondBottomText="getResourceTypeNameFromCode(interaction.resource.resource_type)"
+      />
       <div v-else class="animate-pulse w-2/3 bg-gradient-to-r from-slate-600 h-8 mb-1.5"></div>
     </div>
     <div
@@ -59,7 +43,7 @@
 </template>
 
 <script setup lang="ts">
-import UserAvatar from '@/components/User/UserAvatar.vue'
+import UserMini from '@/components/User/UserMini.vue'
 import { type ApiResource, type Interaction, type User } from '@/types/models'
 import { useResourceRelations } from '@/composables/useResourceRelations'
 import { onMounted, computed, ref } from 'vue'
@@ -99,8 +83,8 @@ const getResourceTypeNameFromCode = (typeCode: string) => {
 
 const page = ref<number>(0)
 
-const interationAuthorInteraction = ref<Interaction | null>(null)
-const interationAuthor = ref<User | null>(null)
+const interactionAuthorInteraction = ref<Interaction | null>(null)
+const interactionAuthor = ref<User | null>(null)
 
 const problemContentPerPage = (text: string, page: number) => {
   if (!text) return ''
@@ -151,7 +135,7 @@ const { getUserById } = useUser()
 const isFetchedAuthor = ref(false)
 const loadUser = async () => {
   try {
-    interationAuthor.value = await getUserById(props.interaction.user_id)
+    interactionAuthor.value = await getUserById(props.interaction.user_id)
   } catch (error) {
     console.log(error)
   }
