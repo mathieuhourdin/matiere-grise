@@ -33,6 +33,14 @@ async function getReadAndWriteInteractions(): Promise<ApiInteraction[]> {
     .concat(write.data.map((thoughtOutput: any) => formatApiResponse(thoughtOutput)))
 }
 
+async function getUserReadAndWriteInteractions(id: string): Promise<ApiInteraction[]> {
+  const read = await fetchWrapper.get('/users/' + id + '/thought_inputs?limit=60')
+  const write = await fetchWrapper.get('/users/' + id + '/thought_outputs?limit=60')
+  return read.data
+    .map((thoughtInput: any) => formatApiResponse(thoughtInput))
+    .concat(write.data.map((thoughtOutput: any) => formatApiResponse(thoughtOutput)))
+}
+
 async function getUserThoughtOutputs(id: string): Promise<ApiInteraction[]> {
   const response = await fetchWrapper.get('/users/' + id + '/thought_outputs?limit=60')
   return response.data.map((thoughtOutput: any) => formatApiResponse(thoughtOutput))
@@ -102,6 +110,7 @@ export function useInteraction() {
     createInteractionForResource,
     getInteractionsForResource,
     getUserThoughtOutputs,
-    getReadAndWriteInteractions
+    getReadAndWriteInteractions,
+    getUserReadAndWriteInteractions,
   }
 }

@@ -2,50 +2,22 @@
   <div>
     <div class="m-8">
       <UserInfos class="mx-auto border my-8" v-if="pageUser" :user="pageUser" />
-      <ToggleButtonGroup
-        url-key="interaction_type"
-        :choices="[
-          { text: 'Biblio', value: 'bibl' },
-          { text: 'Productions', value: 'prdc' }
-        ]"
-        default="bibl"
-        class="my-6"
-        url
-      />
-      <div v-if="tab === 'bibl'">
-        <div
-          v-if="user && pageUserId == user.id"
-          class="italic underline text-xs"
-          @click="openNewThoughtInput = true"
-        >
-          Ajouter un nouvel apport
-        </div>
-        <ModalSheet :open="openNewThoughtInput">
-          <CreateThoughtInput @close="openNewThoughtInput = false" />
-        </ModalSheet>
-        <ThoughtInputsList class="mx-auto" :contextual-resources="contextualResources" />
+      <div
+        v-if="user && pageUserId == user.id"
+        class="italic underline text-xs mb-4"
+        @click="openNewThoughtInput = true"
+      >
+        Ajouter un nouvel apport
       </div>
-      <div v-if="tab === 'prdc'">
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div
-            v-for="(article, i) in thoughtOutputs.map((thoughtOutput) => thoughtOutput.resource)"
-            :key="i"
-          >
-            <ArticleCard
-              :title="article.title"
-              :subtitle="article.subtitle"
-              :image-url="article.image_url"
-              :progress="article.interaction_progress"
-              :uuid="article.id"
-              :author="article.author"
-            />
-          </div>
-        </div>
-      </div>
+      <ModalSheet :open="openNewThoughtInput">
+        <CreateThoughtInput @close="openNewThoughtInput = false" />
+      </ModalSheet>
+      <FeedList :interactions-list="contextualInteractions" />
     </div>
   </div>
 </template>
 <script setup lang="ts">
+import FeedList from '@/components/Feed/FeedList.vue'
 import UserInfos from '@/components/User/UserInfos.vue'
 import ArticleCard from '@/components/Article/ArticleCard.vue'
 import ToggleButtonGroup from '@/components/Ui/ToggleButtonGroup.vue'
@@ -69,37 +41,25 @@ const { getUserById, user } = useUser()
 
 const pageUser = ref(null)
 
-const tab = ref<string>('bibl')
-const route = useRoute()
-watch(
-  () => route.query.interaction_type,
-  (newValue) => {
-    console.log('new route query', newValue)
-    if (typeof newValue === 'string') tab.value = newValue
-  }
-)
-
-const { getUserThoughtOutputs } = useInteraction()
-const thoughtOutputs = ref<ApiInteraction[]>([])
-
-const { getUserThoughtInputs } = useThoughtInputs()
-const thoughtInputs = ref<ApiInteraction[]>([])
-
-const contextualResources = computed(() => {
-  return thoughtInputs.value.map((thoughtInput) => {
-    return {
-      resource: thoughtInput.resource,
-      date: thoughtInput.interaction_date,
-      user_id: thoughtInput.interaction_user_id,
-      context_comment: thoughtInput.interaction_comment,
-      progress: thoughtInput.interaction_progress
-    }
-  })
+const { getUserReadAndWriteInteractions } = useInteraction()
+const interactions = ref<ApiInteraction[]>([])
+const contextualInteractions = computed(() => {
+  return interactions.value
+    .map((interaction) => {
+      return {
+        resource: interaction.resource,
+        date: interaction.interaction_date,
+        user_id: interaction.interaction_user_id,
+        context_comment: interaction.interaction_comment,
+        progress: interaction.interaction_progress,
+        ...interaction
+      }
+    })
+    .sort((a, b) => 0.5 - Math.random())
 })
 
 onMounted(async () => {
   pageUser.value = await getUserById(props.pageUserId)
-  thoughtInputs.value = await getUserThoughtInputs(props.pageUserId)
-  thoughtOutputs.value = await getUserThoughtOutputs(props.pageUserId)
+  interactions.value = await getUserReadAndWriteInteractions(props.pageUserId)
 })
 </script>
