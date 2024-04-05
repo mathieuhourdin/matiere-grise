@@ -13,6 +13,6 @@ import spyAvatar from '@/assets/spy-icon.svg'
 
 const props = defineProps<{
   user?: User
-  isSpy: boolean
+  isSpy?: boolean
 }>()
 </script>

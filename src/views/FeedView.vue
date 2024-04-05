@@ -1,0 +1,36 @@
+<template>
+  <div class="mt-4 md:mx-40">
+    <FeedList :interactions-list="contextualResources" />
+  </div>
+</template>
+<script setup lang="ts">
+import FeedList from '@/components/Feed/FeedList.vue'
+import { useProblem } from '@/composables/useProblem'
+import { useMenu } from '@/composables/useMenu'
+import { computed, onMounted, ref } from 'vue'
+import { useCategories } from '@/composables/useCategories'
+import { type Resource, type Category } from '@/types/models'
+import { useInteraction } from '@/composables/useInteraction'
+
+/// ThoughtInputs ///
+
+const { getReadAndWriteInteractions } = useInteraction()
+const interactions = ref<ApiInteraction[]>([])
+const contextualResources = computed(() => {
+  return interactions.value.map((interaction) => {
+    return {
+      resource: interaction.resource,
+      date: interaction.interaction_date,
+      user_id: interaction.interaction_user_id,
+      context_comment: interaction.interaction_comment,
+      progress: interaction.interaction_progress
+    }
+  }).sort((a, b) => 0.5 - Math.random())
+})
+const loadInteractions = async () =>
+  (interactions.value = await getReadAndWriteInteractions())
+
+onMounted(async () => {
+  await loadInteractions()
+})
+</script>

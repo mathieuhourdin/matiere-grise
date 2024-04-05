@@ -1,16 +1,16 @@
 <template>
-  <div class="border p-1.5">
+  <div class="flex flex-col border p-1.5 overflow-auto">
     <div>
       <div v-if="isFetchedAuthor" class="flex mb-1.5 h-8">
-        <UserAvatar :user="problemAuthor" />
+        <UserAvatar :user="interationAuthor" />
         <div class="h-full flex flex-col w-full">
           <div class="flex w-auto shrink overflow-auto">
-            <div v-if="problemAuthor" class="text-xs font-semibold ml-2">
-              {{ problemAuthor.first_name }} {{ problemAuthor.last_name }}
+            <div v-if="interationAuthor" class="text-xs font-semibold ml-2">
+              {{ interationAuthor.first_name }} {{ interationAuthor.last_name }}
             </div>
             <div v-else class="text-xs italic ml-2">Connectez vous pour voir l'auteur</div>
             <div class="mx-1 my-auto rounded-full bg-gray-800 w-1 h-1"></div>
-            <div class="text-2xs my-auto">{{ formatDate(problem.created_at) }}</div>
+            <div class="text-2xs my-auto">{{ formatDate(interaction.date) }}</div>
           </div>
           <div class="text-2xs italic ml-2 grow shrink-0 overflow-auto">Problématique</div>
         </div>
@@ -19,15 +19,15 @@
     </div>
     <div
       @click="page = (page + 1) % (problemContentSentencesList.length + 1)"
-      class="relative md:h-3/5 mb-2 bg-gray-700"
+      class="overflow-auto relative md:h-3/5 min-h-60 mb-2 bg-gray-700"
       ref="parentCard"
     >
       <img
         v-if="page == 0"
-        class="object-contain w-full h-full mt-auto mx-auto"
-        :src="problem.image_url"
+        class="overflow-auto object-contain w-full h-full mt-auto mx-auto"
+        :src="interaction.resource.image_url"
       />
-      <div v-else class="h-full overflow-scroll bg-blue-100 p-1 pt-8 border">
+      <div v-else class="overflow-auto h-full overflow-scroll bg-blue-100 p-1 pt-8 border">
         <div class="bg-blue-100 text-center my-auto">
           {{ problemContentSentencesList[page - 1] }}
         </div>
@@ -36,10 +36,10 @@
         {{ pageRatio }}
       </div>
     </div>
-    <router-link :to="'/thought_outputs/' + problem.id">
+    <router-link class="overflow-auto" :to="'/thought_outputs/' + interaction.resource.id">
       <div class="">
-        <div class="mb-2">{{ problem.title }}</div>
-        <div class="text-2xs mb-auto">{{ formatText(problem.subtitle) }}</div>
+        <div class="mb-2">{{ interaction.resource.title }}</div>
+        <div class="text-2xs mb-auto">{{ formatText(interaction.resource.subtitle) }}</div>
         <div class="flex mt-2">
           <div class="ml-auto text-2xs underline">{{ thoughtInputs.length }} inputs</div>
         </div>
@@ -57,7 +57,7 @@ import { useResource } from '@/composables/useResource'
 import { useUser } from '@/composables/useUser'
 
 const props = defineProps<{
-  problem: ApiResource
+  interaction: ApiResource
 }>()
 
 const formatDate = (date?: Date) => {
@@ -71,8 +71,8 @@ const formatDate = (date?: Date) => {
 
 const page = ref<number>(0)
 
-const problemAuthorInteraction = ref<Interaction | null>(null)
-const problemAuthor = ref<User | null>(null)
+const interationAuthorInteraction = ref<Interaction | null>(null)
+const interationAuthor = ref<User | null>(null)
 
 const problemContentPerPage = (text: string, page: number) => {
   if (!text) return ''
@@ -84,8 +84,8 @@ const problemContentPerPage = (text: string, page: number) => {
 const pageRatio = computed(() => `${page.value}/${problemContentSentencesList.value.length}`)
 
 const problemContentSentencesList = computed(() => {
-  if (!props.problem.content) return []
-  const splittedContent = props.problem.content.replaceAll('?', '?.').split('.')
+  if (!props.interaction.resource.content) return []
+  const splittedContent = props.interaction.resource.content.replaceAll('?', '?.').split('.')
   let i = 0
   const result = []
   while (i < splittedContent.length - 1) {
@@ -111,12 +111,11 @@ const formatText = (text: string) => {
   return text.length > 200 ? text.slice(0, 150) + '...' : text
 }
 
-const { getAuthorInteractionForResource } = useResource()
 const thoughtInputs = ref<Interaction[]>([])
 const { getResourceRelationsForResource } = useResourceRelations()
 const loadThoughtInputs = async () => {
-  if (!props.problem.id) return
-  thoughtInputs.value = await getResourceRelationsForResource(props.problem.id)
+  if (!props.interaction.id) return
+  thoughtInputs.value = await getResourceRelationsForResource(props.interaction.resource.id)
 }
 
 const { getUserById } = useUser()
@@ -124,9 +123,7 @@ const { getUserById } = useUser()
 const isFetchedAuthor = ref(false)
 const loadUser = async () => {
   try {
-    problemAuthorInteraction.value = await getAuthorInteractionForResource(props.problem.id)
-    if (!problemAuthorInteraction.value) return
-    problemAuthor.value = await getUserById(problemAuthorInteraction.value.interaction_user_id)
+    interationAuthor.value = await getUserById(props.interaction.user_id)
   } catch (error) {
     console.log(error)
   }

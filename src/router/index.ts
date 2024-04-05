@@ -5,6 +5,11 @@ const router = createRouter({
   routes: [
     { path: '/', redirect: '/problems' },
     {
+      path: '/feed',
+      name: 'feed',
+      component: () => import('@/views/FeedView.vue')
+    },
+    {
       path: '/productions',
       name: 'home',
       meta: { requiresRender: false },
