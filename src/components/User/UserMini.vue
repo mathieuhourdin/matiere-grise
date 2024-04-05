@@ -1,8 +1,8 @@
 <template>
-  <div class="flex mb-1.5 h-8">
-    <UserAvatar :user="user" />
+  <router-link class="flex mb-1.5 h-8" :to="user ? '/users/' + user.id : '/'">
+    <UserAvatar class="my-auto" :user="user" />
     <div class="h-full flex flex-col w-full">
-      <div class="flex w-auto shrink overflow-auto">
+      <div class="flex w-auto my-auto shrink overflow-auto">
         <div v-if="user" class="sm:text-xs text-sm font-semibold ml-2">
           {{ user.first_name }} {{ user.last_name }}
         </div>
@@ -20,7 +20,7 @@
         </div>
       </div>
     </div>
-  </div>
+  </router-link>
 </template>
 
 <script setup lang="ts">
