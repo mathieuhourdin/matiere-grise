@@ -1,9 +1,7 @@
 <template>
-  <div>
-    <div class="m-8">
+    <div class="mt-1 md:w-96">
       <FeedList :interactions-list="contextualResources" />
     </div>
-  </div>
 </template>
 <script setup lang="ts">
 import FeedList from '@/components/Feed/FeedList.vue'
@@ -24,9 +22,12 @@ const relations = ref<ApiInteraction[]>([])
 const contextualResources = computed(() => {
   return relations.value
     .map((targetResource) => {
-      console.log("Resource : ", targetResource)
+      console.log('Resource : ', targetResource)
       return {
-        resource: targetResource.origin_resource,
+        resource:
+          targetResource.origin_resource_id === props.id
+            ? targetResource.target_resource
+            : targetResource.origin_resource,
         date: targetResource.created_at,
         user_id: targetResource.user_id,
         context_comment: targetResource.relation_comment,
