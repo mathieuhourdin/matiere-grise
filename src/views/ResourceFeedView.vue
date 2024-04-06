@@ -1,21 +1,24 @@
 <template>
-    <div class="mt-1 md:w-96">
-      <FeedList :interactions-list="contextualResources" />
-    </div>
+  <div class="mt-1 md:w-96">
+    <FeedList :interactions-list="contextualResources" />
+  </div>
 </template>
 <script setup lang="ts">
 import FeedList from '@/components/Feed/FeedList.vue'
-import { ref, computed, onMounted, watch } from 'vue'
+import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
 import { useResourceRelations } from '@/composables/useResourceRelations'
-import { type ApiRelations, type ContextualResource } from '@/types/models'
+import { useResource } from '@/composables/useResource'
+import { useMenu } from '@/composables/useMenu'
+import { type ApiRelations, type Resource, type ContextualResource } from '@/types/models'
 
 const props = defineProps<{
   id: string
 }>()
 
-const openNewThoughtInput = ref(false)
+const { getResource } = useResource()
+const { headerValue } = useMenu()
 
-const pageUser = ref(null)
+const resource = ref<Resource>(null)
 
 const { getAllRelationsForResource } = useResourceRelations()
 const relations = ref<ApiInteraction[]>([])
@@ -40,5 +43,11 @@ const contextualResources = computed(() => {
 
 onMounted(async () => {
   relations.value = await getAllRelationsForResource(props.id)
+  resource.value = await getResource(props.id)
+  headerValue.value = { text: resource.value.title, link: `/thought_outputs/${resource.value.id}` }
+})
+
+onUnmounted(() => {
+  headerValue.value = null
 })
 </script>

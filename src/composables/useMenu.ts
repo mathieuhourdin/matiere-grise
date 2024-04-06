@@ -2,6 +2,8 @@ import { ref, computed } from 'vue'
 
 const menuOpen = ref(screen.width > 760)
 
+const headerValue = ref(null)
+
 const setMenuOpen = (isMenuOpen: boolean) => {
   menuOpen.value = isMenuOpen
 }
@@ -11,7 +13,7 @@ const toggleMenuOpen = () => {
 }
 
 const isMobile = computed(() => {
-    return screen.width <= 760
+  return screen.width <= 760
 })
 
 export function useMenu() {
@@ -19,6 +21,7 @@ export function useMenu() {
     menuOpen,
     setMenuOpen,
     toggleMenuOpen,
-    isMobile
+    isMobile,
+    headerValue
   }
 }

@@ -1,11 +1,18 @@
 <template>
   <div class="w-full flex h-12 bg-slate-300 rounded-t border-b border-b-slate-400 shadow">
-    <Bars3Icon @click="toggleMenuOpen" class="p-1 md:p-2" />
-    <BaseLink class="md:ml-4 my-auto mr-auto text-xs md:text-base">🫀 Matiere Grise</BaseLink>
-    <router-link class="my-auto mr-1 md:mr-4 text-xs md:text-base" to="/platform-presentation"
-      >A Propos</router-link
-    >
-    <UserManagement class="mr-1 md:mr-4 my-auto" />
+    <div class="basis-1/4 flex">
+      <Bars3Icon @click="toggleMenuOpen" class="p-1 md:p-2" />
+      <BaseLink class="md:ml-4 my-auto mr-auto text-xs md:text-base">🫀 Matiere Grise</BaseLink>
+    </div>
+    <div class="my-auto grow text-center">
+      <router-link v-if="headerValue" :to="headerValue.link" class="font-bold">{{ headerValue.text }}</router-link>
+    </div>
+    <div class="basis-1/4 flex flex-row-reverse">
+      <UserManagement class="mr-1 md:mr-4 my-auto" />
+      <router-link class="my-auto mr-1 md:mr-4 text-xs md:text-base" to="/platform-presentation"
+        >A Propos</router-link
+      >
+    </div>
   </div>
 </template>
 
@@ -14,5 +21,5 @@ import UserManagement from '@/components/App/UserManagement.vue'
 import BaseLink from '@/components/Ui/BaseLink.vue'
 import { Bars3Icon } from '@heroicons/vue/24/outline'
 import { useMenu } from '@/composables/useMenu'
-const { toggleMenuOpen } = useMenu()
+const { toggleMenuOpen, headerValue } = useMenu()
 </script>
