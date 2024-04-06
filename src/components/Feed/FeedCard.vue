@@ -28,12 +28,12 @@
         v-else-if="page > 0 && page <= contextSentencesList.length"
         class="overflow-auto h-full overflow-scroll bg-red-100 p-1 pt-8 border"
       >
-        <div class="bg-red-100 text-center text-sm my-auto">
+        <div class="bg-red-100 text-center font-medium text-base my-auto">
           {{ contextSentencesList[page - 1] }}
         </div>
       </div>
       <div v-else class="overflow-auto h-full overflow-scroll bg-blue-100 p-1 pt-8 border">
-        <div class="bg-blue-100 text-center text-sm my-auto">
+        <div class="bg-blue-100 text-center font-medium text-base my-auto">
           {{ resourceContentSentencesList[page - contextSentencesList.length - 1] }}
         </div>
       </div>
@@ -43,8 +43,8 @@
     </div>
     <router-link class="" :to="'/thought_outputs/' + interaction.resource.id">
       <div class="">
-        <div class="mb-2 font-bold text-sm">{{ interaction.resource.title }}</div>
-        <div class="text-2xs mb-auto">{{ formatText(interaction.resource.subtitle) }}</div>
+        <div class="mb-2 font-bold text-base md:text-sm">{{ interaction.resource.title }}</div>
+        <div class="text-xs mb-auto">{{ formatText(interaction.resource.subtitle) }}</div>
         <div class="flex mt-2">
           <div class="ml-auto text-2xs underline">{{ thoughtInputs.length }} inputs</div>
         </div>
