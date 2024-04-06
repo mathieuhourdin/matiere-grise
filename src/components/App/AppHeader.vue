@@ -1,13 +1,13 @@
 <template>
   <div class="w-full flex h-12 bg-slate-300 rounded-t border-b border-b-slate-400 shadow">
-    <div class="basis-1/4 flex">
+    <div class="basis-1/2 md:basis-1/3 flex">
       <Bars3Icon @click="toggleMenuOpen" class="p-1 md:p-2" />
       <BaseLink class="md:ml-4 my-auto mr-auto text-xs md:text-base">🫀 Matiere Grise</BaseLink>
     </div>
     <div class="my-auto grow text-center">
-      <router-link v-if="headerValue" :to="headerValue.link" class="font-bold">{{ headerValue.text }}</router-link>
+      <router-link v-if="headerValue" :to="headerValue.link" class="text-2xs md:text-base md:font-bold">{{ headerValue.text }}</router-link>
     </div>
-    <div class="basis-1/4 flex flex-row-reverse">
+    <div class="md:basis-1/3 basis-1/2 flex flex-row-reverse">
       <UserManagement class="mr-1 md:mr-4 my-auto" />
       <router-link class="my-auto mr-1 md:mr-4 text-xs md:text-base" to="/platform-presentation"
         >A Propos</router-link
