@@ -36,6 +36,6 @@ const { getResources, createResource, newResource } = useResource()
 const createDraftResourceAndRedirect = async () => {
   const resource = newResource()
   const createdResource = await createResource(resource)
-  router.push({ path: '/thought_outputs/' + createdResource.id, query: { editing: 'true' } })
+  router.push({ path: '/resources/' + createdResource.id, query: { editing: 'true' } })
 }
 </script>

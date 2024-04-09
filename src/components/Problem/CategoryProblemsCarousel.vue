@@ -33,7 +33,7 @@ const createNewDraftProblemAndRedirect = async () => {
   problem.resource.category_id = props.category.id
   const createdProblem = await createProblem(problem)
   router.push({
-    path: '/thought_outputs/' + createdProblem.resource.id,
+    path: '/resources/' + createdProblem.resource.id,
     query: { editing: 'true' }
   })
 }

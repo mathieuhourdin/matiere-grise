@@ -41,7 +41,7 @@
         {{ pageRatio }}
       </div>
     </div>
-    <router-link class="" :to="'/thought_outputs/' + interaction.resource.id">
+    <router-link class="" :to="'/resources/' + interaction.resource.id">
       <div class="">
         <div class="mb-2 font-bold text-sm">{{ interaction.resource.title }}</div>
         <div class="text-2xs mb-auto">{{ formatText(interaction.resource.subtitle) }}</div>

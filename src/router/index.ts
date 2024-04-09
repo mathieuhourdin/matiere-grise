@@ -37,12 +37,6 @@ const router = createRouter({
       component: () => import('@/views/LoginView.vue')
     },
     {
-      path: '/thought_outputs/:id',
-      name: 'seeArticle',
-      props: true,
-      component: () => import('@/views/SeeResourceView.vue')
-    },
-    {
       path: '/resources/:id',
       name: 'seeResource',
       props: true,

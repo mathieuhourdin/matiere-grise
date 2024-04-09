@@ -36,7 +36,7 @@
         {{ pageRatio }}
       </div>
     </div>
-    <router-link :to="'/thought_outputs/' + problem.id">
+    <router-link :to="'/resources/' + problem.id">
       <div class="">
         <div class="mb-2">{{ problem.title }}</div>
         <div class="text-2xs mb-auto">{{ formatText(problem.subtitle) }}</div>

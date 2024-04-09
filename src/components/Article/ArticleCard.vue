@@ -45,6 +45,6 @@ onMounted(async () => {
 
 const articleLink = computed(() => {
   if (!props.uuid) return ''
-  return '/thought_outputs/' + props.uuid
+  return '/resources/' + props.uuid
 })
 </script>

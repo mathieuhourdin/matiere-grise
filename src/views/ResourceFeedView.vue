@@ -44,7 +44,7 @@ const contextualResources = computed(() => {
 onMounted(async () => {
   relations.value = await getAllRelationsForResource(props.id)
   resource.value = await getResource(props.id)
-  headerValue.value = { text: resource.value.title, link: `/thought_outputs/${resource.value.id}` }
+  headerValue.value = { text: resource.value.title, link: `/resources/${resource.value.id}` }
 })
 
 onUnmounted(() => {
