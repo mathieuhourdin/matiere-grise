@@ -1,7 +1,9 @@
 <template>
   <div class="p-4">
     Ressources
-    <div class="text-sm italic underline" @click="createDraftResourceAndRedirect">Ajouter une resource externe non existante</div>
+    <div class="text-sm italic underline" @click="createDraftResourceAndRedirect">
+      Ajouter une resource externe non existante
+    </div>
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4 p-6">
       <div v-for="(article, i) in resources" :key="i">
         <ArticleCard
