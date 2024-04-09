@@ -12,7 +12,7 @@
         v-if="interaction"
         class="my-auto"
         label="Date d'écriture"
-        :model-value="interaction.interaction_date.split('T')[0]"
+        :model-value="interaction.interaction_date? interaction.interaction_date.split('T')[0] : null"
         @update:modelValue="(event) => updateFields({ ...interaction, interaction_date: event })"
         type="date"
       />
