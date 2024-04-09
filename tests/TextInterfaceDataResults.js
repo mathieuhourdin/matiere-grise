@@ -66,7 +66,16 @@ export const lines = [
         ]
       }
     ],
-    comments: []
+    comments: [
+      {
+        id: 'cd69c7ae-941b-492b-97e9-209c7d3dbb4b',
+        start_index: 3,
+        end_index: 4,
+        editing: false,
+        content: 'perfect',
+        created_at: 'today'
+      }
+    ]
   },
   {
     id: 1,
@@ -126,7 +135,16 @@ export const linesInsertY = [
         ]
       }
     ],
-    comments: []
+    comments: [
+      {
+        id: 'cd69c7ae-941b-492b-97e9-209c7d3dbb4b',
+        start_index: 4,
+        end_index: 5,
+        editing: false,
+        content: 'perfect',
+        created_at: 'today'
+      }
+    ]
   },
   {
     id: 1,
