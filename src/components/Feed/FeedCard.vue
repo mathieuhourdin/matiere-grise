@@ -10,13 +10,10 @@
         :secondBottomText="getResourceTypeNameFromCode(interaction.resource.resource_type)"
       />
       <div v-else class="animate-pulse w-2/3 bg-gradient-to-r from-slate-600 h-8 mb-1.5"></div>
-      <router-link :to="'/resources/' + interaction.resource.id + '/feed'" class="ml-auto"
-        ><ArrowRightCircleIcon class="w-8"
-      /></router-link>
     </div>
     <div
       @click="nextPage"
-      class="overflow-auto relative w-full md:h-3/5 min-h-60 mb-2 bg-gray-700"
+      class="overflow-auto relative w-full md:h-4/5 min-h-60 mb-2 bg-gray-700"
       ref="parentCard"
     >
       <img
@@ -41,13 +38,26 @@
         {{ pageRatio }}
       </div>
     </div>
+    <div class="flex">
+      <div title="Coming Soon ;)" class="w-6"><HeartIcon class="w-full my-auto" /></div>
+      <div title="Coming Soon ;)" class="w-6"><PaperAirplaneIcon class="w-full my-auto" /></div>
+      <router-link :to="'/resources/' + interaction.resource.id + '/feed'" class="ml-auto"
+        ><ArrowRightCircleIcon class="w-8"
+      /></router-link>
+    </div>
+    <div class="flex">
+      <div class="text-2xs">{{ Math.floor(Math.random() * 100) }} likes</div>
+      <router-link
+        :to="'/resources/' + interaction.resource.id + '/feed'"
+        class="ml-auto text-2xs underline"
+      >
+        {{ thoughtInputs.length }} relations
+      </router-link>
+    </div>
     <router-link class="" :to="'/resources/' + interaction.resource.id">
       <div class="">
         <div class="mb-2 font-bold text-sm">{{ interaction.resource.title }}</div>
         <div class="text-2xs mb-auto">{{ formatText(interaction.resource.subtitle) }}</div>
-        <div class="flex mt-2">
-          <div class="ml-auto text-2xs underline">{{ thoughtInputs.length }} inputs</div>
-        </div>
       </div>
     </router-link>
   </div>
@@ -55,7 +65,7 @@
 
 <script setup lang="ts">
 import UserMini from '@/components/User/UserMini.vue'
-import { ArrowRightCircleIcon } from '@heroicons/vue/24/outline'
+import { ArrowRightCircleIcon, HeartIcon, PaperAirplaneIcon } from '@heroicons/vue/24/outline'
 import { type ApiResource, type Interaction, type User } from '@/types/models'
 import { useResourceRelations } from '@/composables/useResourceRelations'
 import { onMounted, computed, ref } from 'vue'
