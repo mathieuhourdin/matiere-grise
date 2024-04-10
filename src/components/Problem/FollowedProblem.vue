@@ -6,7 +6,12 @@
         class="border-2 border-zinc-400 rounded-full max-w-full aspect-[2/2] object-cover object-center w-full"
       />
     </div>
-    <div class="text-center mt-1 text-xs">{{ problem.title }}</div>
+    <div
+      class="text-center overflow-hidden mt-1 text-xs"
+      style="display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 3"
+    >
+      {{ problem.title }}
+    </div>
   </router-link>
 </template>
 
