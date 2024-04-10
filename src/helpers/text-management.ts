@@ -1,9 +1,9 @@
-const splitTextForPanel = (text: string) => {
+const splitTextLineForPanel = (text: string) => {
   if (!text) return []
   const splittedContent = text.replace('/?/g', '?.').split('.')
   let i = 0
   const result = []
-  while (i < splittedContent.length - 1) {
+  while (i < splittedContent.length) {
     let size = 0
     let text = []
     if (splittedContent[i].length >= 270) {
@@ -21,6 +21,12 @@ const splitTextForPanel = (text: string) => {
   return result
 }
 
+const splitTextForPanel = (text: string) => {
+  if (!text) return []
+  const splittedLines = text.split('\n')
+  return splittedLines.map((line: string) => splitTextLineForPanel(line)).flat()
+}
+
 export const textManagement = {
-    splitTextForPanel
+  splitTextForPanel
 }
