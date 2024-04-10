@@ -32,13 +32,6 @@
       @update:modelValue="(event) => emitChange('category_id', event)"
     />
     <SelectInput
-      label="Stade d'écriture"
-      class="col-span-4 md:col-span-1"
-      :choices="maturingStateOptions"
-      :model-value="article.maturing_state"
-      @update:modelValue="(event) => emitChange('maturing_state', event)"
-    />
-    <SelectInput
       label="Type de ressource"
       class="col-span-4 md:col-span-1"
       :choices="resourceTypeOptions"
@@ -46,7 +39,7 @@
       :model-value="article.resource_type"
     />
     <SelectInput
-      label="Interne"
+      label="Ressource externe"
       class="col-span-4 md:col-span-1"
       :choices="[
         { text: 'Oui', value: true },
@@ -54,6 +47,13 @@
       ]"
       @update:modelValue="(event) => emitChange('is_external', JSON.parse(event))"
       :model-value="article.is_external"
+    />
+    <SelectInput
+      label="Stade d'écriture"
+      class="col-span-4 md:col-span-1"
+      :choices="maturingStateOptions"
+      :model-value="article.maturing_state"
+      @update:modelValue="(event) => emitChange('maturing_state', event)"
     />
   </div>
 </template>
@@ -96,6 +96,10 @@ const categoryOptions = computed(() => {
 const emitChange = (field: string, event: any) => {
   let article: any = { ...props.article }
   article[field] = event
+  if (article.is_external) {
+    article.maturing_state = 'fnsh'
+  }
+  console.log("Article : ", article)
   emit('change', article)
 }
 </script>
