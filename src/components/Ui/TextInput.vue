@@ -1,6 +1,6 @@
 <template>
-  <div class="m-4">
-    <label class="block text-xs text-slate-800">{{ label }}</label>
+  <div class="flex flex-col">
+    <label class="block text-2xs text-slate-800">{{ label }}</label>
     <input
       class="border border-neutral-400 block h-full w-full rounded-md border-2 p-1 pl-2 text-sm"
       :value="modelValue"

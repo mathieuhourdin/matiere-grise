@@ -1,74 +1,59 @@
 <template>
-  <div>
+  <div class="grid grid-cols-4 gap-y-2 gap-x-4 auto-rows-auto">
     <TextInput
+      class="col-span-4"
       label="Titre"
       :modelValue="article.title"
       @update:modelValue="(event) => emitChange('title', event)"
     />
     <TextInput
-      class="h-6"
+      class="col-span-4"
       label="Sous-titre"
       :modelValue="article.subtitle"
       @update:modelValue="(event) => emitChange('subtitle', event)"
     />
-    <div class="flex">
-      <NumberInput
-        class="mr-auto h-6"
-        label="Progression"
-        :modelValue="article.interaction_progress"
-        @update:modelValue="(event) => emitChange('progress', event)"
-      />
-      <div class="ml-auto h-6 m-4 w-1/3">
-        <SelectInput
-          label="Catégorie"
-          :choices="categoryOptions"
-          :model-value="article.category_id"
-          @update:modelValue="(event) => emitChange('category_id', event)"
-        />
-      </div>
-      <div class="ml-auto h-6 m-4 w-1/3">
-        <SelectInput
-          label="Stade d'écriture"
-          :choices="maturingStateOptions"
-          :model-value="article.maturing_state"
-          @update:modelValue="(event) => emitChange('maturing_state', event)"
-        />
-      </div>
-      <div class="ml-auto h-6 m-4 w-1/3">
-        <SelectInput
-          label="Type de ressource"
-          :choices="resourceTypeOptions"
-          @update:modelValue="(event) => emitChange('resource_type', event)"
-          :model-value="article.resource_type"
-        />
-      </div>
-      <div class="my-auto ml-auto h-6 m-4 w-1/3">
-        <CheckboxInput
-            class="mt-3"
-          label="Externe"
-          @update:modelValue="(event) => emitChange('is_external', event)"
-          :model-value="article.is_external"
-        />
-      </div>
-    </div>
-    <div class="flex">
-      <TextInput
-        class="h-6"
-        label="Lien contenu externe"
-        :modelValue="article.external_content_url"
-        @update:modelValue="(event) => emitChange('external_content_url', event)"
-      />
-      <TextInput
-        class="h-6"
-        label="Lien image"
-        :modelValue="article.image_url"
-        @update:modelValue="(event) => emitChange('image_url', event)"
-      />
-    </div>
-    <TextAreaInput
-      label="Pistes d'amélioration"
-      :modelValue="article.comment"
-      @update:modelValue="(event) => emitChange('comment', event)"
+    <TextInput
+      class="col-span-4 md:col-span-2"
+      label="Lien contenu externe"
+      :modelValue="article.external_content_url"
+      @update:modelValue="(event) => emitChange('external_content_url', event)"
+    />
+    <TextInput
+      class="col-span-4 md:col-span-2"
+      label="Lien image"
+      :modelValue="article.image_url"
+      @update:modelValue="(event) => emitChange('image_url', event)"
+    />
+    <SelectInput
+      label="Catégorie"
+      class="col-span-4 md:col-span-1"
+      :choices="categoryOptions"
+      :model-value="article.category_id"
+      @update:modelValue="(event) => emitChange('category_id', event)"
+    />
+    <SelectInput
+      label="Stade d'écriture"
+      class="col-span-4 md:col-span-1"
+      :choices="maturingStateOptions"
+      :model-value="article.maturing_state"
+      @update:modelValue="(event) => emitChange('maturing_state', event)"
+    />
+    <SelectInput
+      label="Type de ressource"
+      class="col-span-4 md:col-span-1"
+      :choices="resourceTypeOptions"
+      @update:modelValue="(event) => emitChange('resource_type', event)"
+      :model-value="article.resource_type"
+    />
+    <SelectInput
+      label="Interne"
+      class="col-span-4 md:col-span-1"
+      :choices="[
+        { text: 'Oui', value: true },
+        { text: 'Non', value: false }
+      ]"
+      @update:modelValue="(event) => emitChange('is_external', JSON.parse(event))"
+      :model-value="article.is_external"
     />
   </div>
 </template>

@@ -39,24 +39,20 @@
           </a>
         </div>
       </div>
-      <div v-else>
+      <div v-else class="my-2 flex flex-col">
         <ArticleForm
           :article="resource"
+          class=""
           @change="(event) => debouncedUpdateResource(resource.id, event)"
         />
         <ResourceAuthorPicker
-          class="mx-4"
+          class="my-2"
           :interaction="authorInteraction"
           :resource-id="id"
           @change="updateAuthorInteraction"
         />
-        <!--<ProblemForm
-        v-else
-        :problem="resource"
-        @change="(event) => debouncedUpdateResource(resource.id, event)"
-      />-->
-        <div class="flex flex-row-reverse">
-          <ActionButton class="mx-4" @click="setEditingMetaData(false)" type="valid" text="Preview"
+        <div class="flex flex-row-reverse mb-4">
+          <ActionButton class="ml-4" @click="setEditingMetaData(false)" type="valid" text="Preview"
             >Ok</ActionButton
           >
           <ActionButton
@@ -69,7 +65,13 @@
         </div>
       </div>
       <div>
-        <ToggleButtonGroup :choices="tabChoices" :default="toggleDefault" :url-key="urlParam" url />
+        <ToggleButtonGroup
+          v-if="!editingMetaData"
+          :choices="tabChoices"
+          :default="toggleDefault"
+          :url-key="urlParam"
+          url
+        />
       </div>
       <hr class="border-top border-zinc-400 my-4" />
       <div v-if="current_tab == 'ctnt'">
@@ -271,7 +273,6 @@ const contextualResources = computed(() => {
   })
 })
 
-
 /************** interactions *****************/
 
 const interactions = ref<Interaction[]>([])
@@ -281,7 +282,6 @@ const { getInteractionsForResource } = useInteraction()
 const loadInteractions = async () => {
   interactions.value = await getInteractionsForResource(props.id)
 }
-
 
 const contextualResourcesInteractions = computed(() => {
   return interactions.value.map((interaction) => {
@@ -298,7 +298,6 @@ const contextualResourcesInteractions = computed(() => {
 /************** target resources ***********/
 
 const targetResources = ref<ResourceRelation[]>([])
-
 
 const loadUsages = async () => {
   targetResources.value = await getUsagesForResource(props.id)

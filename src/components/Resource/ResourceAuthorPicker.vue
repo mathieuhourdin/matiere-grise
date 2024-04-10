@@ -1,31 +1,29 @@
 <template>
-  <div>
-    <div class="flex flex-wrap">
-      <SelectInput
-        label="Auteur"
-        class="my-auto"
-        :choices="usersChoices"
-        :model-value="userValue"
-        @update:modelValue="(event) => chooseUser(event)"
-      />
-      <TextInput
-        v-if="interaction"
-        class="my-auto"
-        label="Date d'écriture"
-        :model-value="interaction.interaction_date? interaction.interaction_date.split('T')[0] : null"
-        @update:modelValue="(event) => updateFields({ ...interaction, interaction_date: event })"
-        type="date"
-      />
-      <NumberInput
-        v-if="interaction"
-        class="my-auto"
-        label="Progression"
-        :modelValue="interaction.interaction_progress"
-        @update:modelValue="
-          (event) => updateFields({ ...interaction, interaction_progress: event })
-        "
-      />
-    </div>
+  <div class="grid grid-cols-3 gap-4">
+    <SelectInput
+      label="Auteur"
+      class=""
+      :choices="usersChoices"
+      :model-value="userValue"
+      @update:modelValue="(event) => chooseUser(event)"
+    />
+    <TextInput
+      v-if="interaction"
+      class="text-2xs"
+      label="Date d'écriture"
+      :model-value="
+        interaction.interaction_date ? interaction.interaction_date.split('T')[0] : null
+      "
+      @update:modelValue="(event) => updateFields({ ...interaction, interaction_date: event })"
+      type="date"
+    />
+    <NumberInput
+      v-if="interaction"
+      class=""
+      label="Progression"
+      :modelValue="interaction.interaction_progress"
+      @update:modelValue="(event) => updateFields({ ...interaction, interaction_progress: event })"
+    />
   </div>
 </template>
 

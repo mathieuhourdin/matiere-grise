@@ -1,10 +1,10 @@
 <template>
-  <div>
+  <div class="flex flex-col">
     <label class="block text-2xs text-slate-800">{{ label }}</label>
     <select
       :value="modelValue"
       name="Stade d'écriture"
-      class="text-xs w-full p-1 block rounded border-2 border-neutral-400"
+      class="text-sm h-full w-full p-1 pl-2 bg-white block rounded border-2 border-neutral-400"
       @input="(event) => emitChange(event)"
     >
       <option v-for="choice in choices" :key="choice.value" :value="choice.value">
