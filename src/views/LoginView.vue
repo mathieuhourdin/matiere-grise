@@ -1,5 +1,5 @@
 <template>
-  <div class="mt-10 mx-auto flex items-center justify-center">
+  <div class="mt-6 mx-auto flex justify-center">
     <LoginForm v-if="!signin"
       ><div class="ml-auto flex items-center">
         <div class="text-xs underline p-2" @click="signin = true">Créer un compte</div>
