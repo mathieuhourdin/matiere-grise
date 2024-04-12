@@ -1,8 +1,8 @@
 <template>
-  <div>
+  <div class="relative">
     <ClipboardIcon
       @click="copyText"
-      class="absolute h-6 right-2"
+      class="absolute z-10 h-6 right-2"
       :class="{ 'text-slate-400': textCopied }"
     />
     <div v-if="!mounted">
