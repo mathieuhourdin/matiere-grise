@@ -1,12 +1,6 @@
 <template>
   <div class="grid grid-cols-3 gap-4">
-    <SelectInput
-      label="Auteur"
-      class=""
-      :choices="usersChoices"
-      :model-value="userValue"
-      @update:modelValue="(event) => chooseUser(event)"
-    />
+    <UserPicker :model-value="userValue" @update:modelValue="(event) => chooseUser(event)" />
     <TextInput
       v-if="interaction"
       class="text-2xs"
@@ -31,6 +25,7 @@
 import SelectInput from '@/components/Ui/SelectInput.vue'
 import TextInput from '@/components/Ui/TextInput.vue'
 import NumberInput from '@/components/Ui/NumberInput.vue'
+import UserPicker from '@/components/User/UserPicker.vue'
 import { type User, type Interaction } from '@/types/models'
 import { watch, toRefs, ref, computed, onMounted } from 'vue'
 import { useUser } from '@/composables/useUser'
@@ -40,23 +35,8 @@ const props = defineProps<{
   interaction?: Interaction
   resourceId: string
 }>()
-const user = ref<User | null>(null)
-const users = ref<User[]>([])
 
-const formatUserForSelect = (toFormatUser: User) => {
-  if (!toFormatUser) return
-  return { text: `${toFormatUser.first_name} ${toFormatUser.last_name}`, value: toFormatUser.id }
-}
-
-const userValue = computed(() => user.value?.id)
-const usersChoices = computed(() => {
-  if (!users.value) return
-  return users.value.map((user) => formatUserForSelect(user))
-})
-const { getUsers, getUserById } = useUser()
-
-const loadUser = async (interaction) =>
-  (user.value = await getUserById(interaction.interaction_user_id))
+const userValue = computed(() => props.interaction?.interaction_user_id)
 
 const { createInteractionForResource, newInteraction, createInteraction, updateInteraction } =
   useInteraction()
@@ -85,10 +65,4 @@ const updateFields = async (newValue) => {
   emit('update')
 }
 
-onMounted(async () => {
-  users.value = await getUsers()
-  await loadUser(props.interaction)
-})
-
-watch(toRefs(props).interaction, async (interaction) => await loadUser(interaction))
 </script>

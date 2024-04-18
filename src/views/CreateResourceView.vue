@@ -1,7 +1,7 @@
 <template>
-  <div class="w-full"><ExternalResourcePreview /></div>
+  <div class="w-full"><CreateResourceProcess /></div>
 </template>
 
 <script setup lang="ts">
-import ExternalResourcePreview from '@/components/Resource/ExternalResourcePreview.vue'
+import CreateResourceProcess from '@/components/Resource/CreateResourceProcess.vue'
 </script>
