@@ -16,6 +16,11 @@ const router = createRouter({
       component: () => import('@/views/ProductionsListView.vue')
     },
     {
+      path: '/create-resource',
+      name: 'createResource',
+      component: () => import('@/views/CreateResourceView.vue')
+    },
+    {
       path: '/platform-presentation',
       name: 'platformPresentation',
       component: () => import('@/views/PlatformPresentationView.vue')
