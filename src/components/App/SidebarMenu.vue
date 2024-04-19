@@ -12,13 +12,8 @@
       <MenuItem to="/productions" title="Productions" subtitle="Internes à la plateforme" />
       <MenuItem to="/resources" title="Ressources" subtitle="Externes à la plateforme" />
       <MenuItem to="/thought_inputs" title="Bibliographies" subtitle="Lues par les utilisateurs" />
-      <MenuItem to="/friends" title="Utilisateurs" />
-      <MenuItem
-        to=""
-        @click="createDraftResourceAndRedirect"
-        title="Créer"
-        subtitle="Du nouveau contenu"
-      />
+      <MenuItem to="/friends" title="Utilisateurs" subtitle="Amis etc" />
+      <MenuItem to="/create-resource" title="Créer" subtitle="Du nouveau contenu" />
     </div>
   </div>
 </template>
