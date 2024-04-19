@@ -4,6 +4,8 @@ const menuOpen = ref(screen.width > 760)
 
 const headerValue = ref(null)
 
+const feedFilter = ref('all')
+
 const setMenuOpen = (isMenuOpen: boolean) => {
   menuOpen.value = isMenuOpen
 }
@@ -22,6 +24,7 @@ export function useMenu() {
     setMenuOpen,
     toggleMenuOpen,
     isMobile,
-    headerValue
+    headerValue,
+    feedFilter
   }
 }
