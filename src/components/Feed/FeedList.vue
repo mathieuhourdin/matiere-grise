@@ -4,6 +4,7 @@
       v-for="(interaction, i) in filteredInteractions"
       class="md:mb-2 flex-grow md:rounded max-h-screen border-b-1 border-black"
       :interaction="interaction"
+      :key="interaction.id"
     />
   </div>
 </template>
