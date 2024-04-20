@@ -11,33 +11,8 @@
       />
       <div v-else class="animate-pulse w-2/3 bg-gradient-to-r from-slate-600 h-8 mb-1.5"></div>
     </div>
-    <div
-      @click="nextPage"
-      class="overflow-auto relative w-full md:h-4/5 min-h-60 mb-2 bg-gray-700"
-      ref="parentCard"
-    >
-      <img
-        v-if="page == 0"
-        class="overflow-auto object-contain w-full h-full mt-auto mx-auto"
-        :src="interaction.resource.image_url"
-      />
-      <div
-        v-else-if="page > 0 && page <= contextSentencesList.length"
-        class="overflow-auto h-full overflow-scroll bg-red-100 p-1 pt-8 border"
-      >
-        <div class="bg-red-100 text-center text-sm my-auto">
-          {{ contextSentencesList[page - 1] }}
-        </div>
-      </div>
-      <div v-else class="overflow-auto h-full overflow-scroll bg-blue-100 p-1 pt-8 border">
-        <div class="bg-blue-100 text-center text-sm my-auto">
-          {{ resourceContentSentencesList[page - contextSentencesList.length - 1] }}
-        </div>
-      </div>
-      <div class="absolute right-2 top-2 bg-gray-400 rounded-xl p-1 text-xs opacity-70">
-        {{ pageRatio }}
-      </div>
-    </div>
+    <FeedCardTextInterface :interaction="interaction" />
+    
     <div class="flex">
       <div title="Coming Soon ;)" class="w-6"><HeartIcon class="w-full my-auto" /></div>
       <div title="Coming Soon ;)" class="w-6"><PaperAirplaneIcon class="w-full my-auto" /></div>
@@ -65,6 +40,7 @@
 
 <script setup lang="ts">
 import UserMini from '@/components/User/UserMini.vue'
+import FeedCardTextInterface from '@/components/Feed/FeedCardTextInterface.vue'
 import { ArrowRightCircleIcon, HeartIcon, PaperAirplaneIcon } from '@heroicons/vue/24/outline'
 import { type ApiResource, type Interaction, type User } from '@/types/models'
 import { useResourceRelations } from '@/composables/useResourceRelations'
@@ -104,7 +80,6 @@ const getResourceTypeNameFromCode = (typeCode: string) => {
   return typeCode
 }
 
-const page = ref<number>(0)
 
 const interactionAuthorInteraction = ref<Interaction | null>(null)
 const interactionAuthor = ref<User | null>(null)
@@ -115,23 +90,6 @@ const problemContentPerPage = (text: string, page: number) => {
     ? text.slice(page * 300, (page + 1) * 300) + '...'
     : text.slice(page * 300, (page + 1) * 300)
 }
-
-const nextPage = () => {
-  page.value = (page.value + 1) % pagesCount.value
-}
-const pageRatio = computed(() => `${page.value + 1}/${pagesCount.value}`)
-
-const pagesCount = computed(() => {
-  return contextSentencesList.value.length + resourceContentSentencesList.value.length + 1
-})
-
-const resourceContentSentencesList = computed(() => {
-  return textManagement.splitTextForPanel(props.interaction.resource.content)
-})
-
-const contextSentencesList = computed(() => {
-  return textManagement.splitTextForPanel(props.interaction.context_comment)
-})
 
 const formatText = (text: string) => {
   if (!text) return ''
@@ -157,12 +115,9 @@ const loadUser = async () => {
   isFetchedAuthor.value = true
 }
 
-const parentCard = ref(null)
 
 onMounted(async () => {
   await loadThoughtInputs()
   await loadUser()
-  const initialHeight = parentCard.value.offsetHeight
-  parentCard.value.style.height = `${initialHeight}px`
 })
 </script>
