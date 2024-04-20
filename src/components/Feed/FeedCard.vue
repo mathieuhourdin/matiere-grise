@@ -12,7 +12,7 @@
       <div v-else class="animate-pulse w-2/3 bg-gradient-to-r from-slate-600 h-8 mb-1.5"></div>
     </div>
     <FeedCardTextInterface :interaction="interaction" />
-    
+
     <div class="flex">
       <div title="Coming Soon ;)" class="w-6"><HeartIcon class="w-full my-auto" /></div>
       <div title="Coming Soon ;)" class="w-6"><PaperAirplaneIcon class="w-full my-auto" /></div>
@@ -80,7 +80,6 @@ const getResourceTypeNameFromCode = (typeCode: string) => {
   return typeCode
 }
 
-
 const interactionAuthorInteraction = ref<Interaction | null>(null)
 const interactionAuthor = ref<User | null>(null)
 
@@ -114,7 +113,6 @@ const loadUser = async () => {
   }
   isFetchedAuthor.value = true
 }
-
 
 onMounted(async () => {
   await loadThoughtInputs()
