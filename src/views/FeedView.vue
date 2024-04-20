@@ -23,7 +23,7 @@ const { getReadAndWriteInteractions } = useInteraction()
 const { feedFilter } = useMenu()
 const interactions = ref<ApiInteraction[]>([])
 const contextualResources = computed(() => {
-  const contextual = interactions.value
+  return interactions.value
     .map((interaction) => {
       return {
         resource: interaction.resource,
@@ -35,16 +35,6 @@ const contextualResources = computed(() => {
       }
     })
     .sort((a, b) => 0.5 - Math.random())
-  return contextual.filter((interaction) => {
-    if (feedFilter.value === "production") {
-      return interaction.interaction_type === "outp" && !interaction.resource.is_external && interaction.resource.resource_type !== "pblm"
-    } else if (feedFilter.value === "problem") {
-      return interaction.resource.resource_type === "pblm"
-    } else if (feedFilter.value === "biblio") {
-      return interaction.interaction_type === "inpt"
-    }
-    return true
-  })
 })
 const loadInteractions = async () => (interactions.value = await getReadAndWriteInteractions())
 

@@ -4,7 +4,7 @@
     <select
       :value="modelValue"
       name="Stade d'écriture"
-      class="text-sm h-full w-full p-1 pl-2 bg-white block rounded border-2 border-neutral-400"
+      class="text-sm h-full w-full p-1 pl-2 bg-inherit block rounded border-2 border-neutral-400"
       @input="(event) => emitChange(event)"
     >
       <option v-for="choice in choices" :key="choice.value" :value="choice.value">
