@@ -120,7 +120,7 @@
           :modelValue="resource.content"
           @update:modelValue="(event) => debouncedUpdateResourceContent(event)"
         />
-        <CommentsThread :resource-id="resourceId" />
+        <CommentsThread class="mt-6" :resource-id="resourceId" />
       </div>
       <div v-else-if="current_tab == 'bbli'">
         <ModalSheet

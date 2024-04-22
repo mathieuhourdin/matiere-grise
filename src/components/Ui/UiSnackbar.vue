@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="shadow-xl fixed left-1/2 -translate-x-1/2 bottom-3 p-4 bg-green-400 rounded-lg z-100" :class="cssClass">{{ message }}</div>
+    <div class="shadow-xl fixed left-1/2 -translate-x-1/2 bottom-3 p-2 bg-green-400 rounded-lg z-100 text-xs" :class="cssClass">{{ message }}</div>
   </div>
 </template>
 
