@@ -48,7 +48,7 @@
         <ResourceAuthorPicker
           class="my-2"
           :interaction="authorInteraction"
-          :resource-id="id"
+          :resource-id="resourceId"
           @change="updateAuthorInteraction"
         />
         <div class="flex flex-row-reverse mb-4">
@@ -76,8 +76,8 @@
       <hr class="border-top border-zinc-400 my-4" />
       <div v-if="current_tab == 'ctnt'">
         <div class="text-xs italic">Commentaire</div>
-        <TextInterface
-          :full-text="resource.comment"
+        <SelectionTextInterface
+          :text="resource.comment"
           :editable="isResourceEditable"
           v-if="resource.publishing_state != 'drft'"
           @change="(event) => debouncedUpdateResourceComment(event)"
@@ -91,12 +91,12 @@
         />
         <hr class="border-top border-zinc-400 my-4" />
         <div class="text-xs italic">Contenu</div>
-        <TextInterface
+        <SelectionTextInterface
           class="min-h-fit"
           v-if="resourceIsLoaded && !resource.is_local_draft && resource.publishing_state != 'drft'"
           :ext-comments="comments"
           :resource-id="resource.id"
-          :full-text="resource.content"
+          :text="resource.content"
           :editable="isResourceEditable"
           @change="(event) => debouncedUpdateResourceContent(event)"
         />
@@ -107,7 +107,7 @@
           :modelValue="resource.content"
           @update:modelValue="(event) => debouncedUpdateResourceContent(event)"
         />
-        <CommentsThread :resource-id="id" />
+        <CommentsThread :resource-id="resourceId" />
       </div>
       <div v-else-if="current_tab == 'bbli'">
         <ModalSheet
@@ -182,7 +182,7 @@ import CommentsThread from '@/components/Comment/CommentsThread.vue'
 import CreateInteraction from '@/components/CreateInteraction.vue'
 import DateField from '@/components/Ui/DateField.vue'
 import ToggleButtonGroup from '@/components/Ui/ToggleButtonGroup.vue'
-import TextInterface from '@/components/TextInterface.vue'
+import SelectionTextInterface from '@/components/SelectionTextInterface.vue'
 import ProgressBar from '@/components/ProgressBar.vue'
 import RoundLinkButton from '@/components/Ui/RoundLinkButton.vue'
 import ArticleForm from '@/components/Article/ArticleForm.vue'
@@ -209,7 +209,7 @@ import {
   type Comment
 } from '@/types/models'
 const props = defineProps<{
-  id: string
+  resourceId: string
   secondLevel?: boolean
 }>()
 const route = useRoute()
@@ -258,7 +258,7 @@ const openAddResourceRelationAsTarget = ref(false)
 const openAddResourceRelationAsOrigin = ref(false)
 
 const loadBiblio = async () => {
-  resourceRelations.value = await getResourceRelationsForResource(toRefs(props).id.value)
+  resourceRelations.value = await getResourceRelationsForResource(toRefs(props).resourceId.value)
 }
 
 const contextualResources = computed(() => {
@@ -280,7 +280,7 @@ const interactions = ref<Interaction[]>([])
 const { getInteractionsForResource } = useInteraction()
 
 const loadInteractions = async () => {
-  interactions.value = await getInteractionsForResource(props.id)
+  interactions.value = await getInteractionsForResource(props.resourceId)
 }
 
 const contextualResourcesInteractions = computed(() => {
@@ -300,7 +300,7 @@ const contextualResourcesInteractions = computed(() => {
 const targetResources = ref<ResourceRelation[]>([])
 
 const loadUsages = async () => {
-  targetResources.value = await getUsagesForResource(props.id)
+  targetResources.value = await getUsagesForResource(props.resourceId)
 }
 
 const contextualResourcesUsages = computed(() => {
@@ -352,15 +352,16 @@ const debouncedUpdateResource = (id: string, newResource: ApiResource) => {
 }
 
 const debouncedUpdateResourceContent = (newResourceContent: string) => {
+  //console.log("New resource content : ", newResourceContent)
   if (newResourceContent == '\n') return
-  debouncedUpdateResource(toRefs(props).id.value, {
+  debouncedUpdateResource(toRefs(props).resourceId.value, {
     ...resource.value,
     content: newResourceContent
   })
 }
 const debouncedUpdateResourceComment = (newResourceComment: string) => {
   if (newResourceComment == '\n') return
-  debouncedUpdateResource(toRefs(props).id.value, {
+  debouncedUpdateResource(toRefs(props).resourceId.value, {
     ...resource.value,
     comment: newResourceComment
   })
@@ -384,7 +385,7 @@ const authorInteraction = ref<Interaction | null>(null)
 const openAddInteraction = ref<boolean>(false)
 
 const updateAuthorInteraction = async () => {
-  authorInteraction.value = await getAuthorInteractionForResource(props.id)
+  authorInteraction.value = await getAuthorInteractionForResource(props.resourceId)
 }
 
 /************** comments section *****************/
@@ -393,13 +394,13 @@ const comments = ref<Comment[]>([])
 
 onMounted(async () => {
   resourceIsLoaded.value = false
-  resource.value = await getResource(props.id)
+  resource.value = await getResource(props.resourceId)
   resourceIsLoaded.value = true
   await loadBiblio()
   await loadInteractions()
   await loadUsages()
-  comments.value = await getCommentsForThoughtOutput(props.id)
-  authorInteraction.value = await getAuthorInteractionForResource(props.id)
+  comments.value = await getCommentsForThoughtOutput(props.resourceId)
+  authorInteraction.value = await getAuthorInteractionForResource(props.resourceId)
 
   if (authorInteraction.value)
     resourceUser.value = await getUserById(authorInteraction.value.interaction_user_id)

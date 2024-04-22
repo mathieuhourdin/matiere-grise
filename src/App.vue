@@ -28,7 +28,9 @@ computed
         v-if="menuOpen"
         class="absolute md:relative h-full w-full md:static md:basis-1/5"
       />
-      <RouterView class="h-full overflow-scroll" :key="routerViewKey" />
+      <div id="router-view" class="overflow-scroll h-full">
+        <RouterView class="h-full" :key="routerViewKey" />
+      </div>
       <div class="md:basis-1/5 w-0 md:w-auto"><UsersSidebarList /></div>
     </div>
   </div>

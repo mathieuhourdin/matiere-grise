@@ -1,10 +1,6 @@
 <template>
   <div class="relative">
-    <ClipboardIcon
-      @click="copyText"
-      class="absolute z-10 h-6 right-2"
-      :class="{ 'text-slate-400': textCopied }"
-    />
+    <ClipboardButton :text="fullText" class="absolute z-10 h-6 right-2" />
     <div v-if="!mounted">
       <span>{{ fullText }}</span>
     </div>
@@ -89,7 +85,7 @@
 
 <script setup lang="ts">
 import CommentCard from '@/components/Comment/CommentCard.vue'
-import { ClipboardIcon } from '@heroicons/vue/24/outline'
+import ClipboardButton from '@/components/ClipboardButton.vue'
 import { ref, computed, onMounted, watch, toRefs } from 'vue'
 import { useComments } from '@/composables/useComments'
 import { useUser } from '@/composables/useUser'
@@ -253,20 +249,6 @@ const pasteClipboard = async () => {
 
 const handleRelease = (event: any) => {
   if (event.key == 'Control') isControlOn.value = false
-}
-
-const textCopied = ref<boolean>(false)
-
-const { launchSnackbar } = useSnackbar()
-const copyText = async () => {
-  try {
-    await navigator.clipboard.writeText(props.fullText)
-    textCopied.value = true
-    launchSnackbar('Text copied to clipboard', 'success')
-    setTimeout(() => (textCopied.value = false), 2000)
-  } catch (err) {
-    console.log(`Error with copy : ${err}`)
-  }
 }
 
 /***************** Comments **********************/

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <TextInterface
+    <SelectionTextInterface
       :ext-comments="comments"
       :full-text="text"
       class="max-w-xl m-10 h-96"
@@ -10,7 +10,7 @@
 </template>
 
 <script setup lang="ts">
-import TextInterface from '@/components/TextInterface.vue'
+import SelectionTextInterface from '@/components/SelectionTextInterface.vue'
 import { type Comment } from '@/types/models'
 import { ref } from "vue"
 
