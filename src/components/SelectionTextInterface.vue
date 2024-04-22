@@ -1,5 +1,5 @@
 <template>
-  <div class="md:px-4">
+  <div class="">
     <div :style="cursorCoordinates" class="absolute flex flex-column">
       <div class="cursor bg-blue-400" />
     </div>
@@ -15,7 +15,7 @@
         <div v-if="!line.chip">
           {{ line.text }}
         </div>
-        <li v-else>
+        <li v-else class="ml-4">
           {{ line.text }}
         </li>
       </div>
