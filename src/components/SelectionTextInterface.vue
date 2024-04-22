@@ -125,7 +125,22 @@ const handleBackspace = async () => {
 }
 
 const handleWrite = async (key: string) => {
-  if (lastKeyPress.value === 'Dead') key = 'ê'
+  if (lastKeyPress.value === 'Dead') {
+    switch (key) {
+      case 'e':
+        key = 'ê'
+        break;
+      case 'o':
+        key = 'ô'
+        break;
+      case 'a':
+        key = 'â'
+        break;
+      case 'u':
+        key = 'û'
+        break;
+    }
+  }
   if (key === '#' && cursorPosition.value.charRange === 0) {
     textLines.value[cursorPosition.value.line].bold = true
   } else if (key === '*' && cursorPosition.value.charRange === 0) {
