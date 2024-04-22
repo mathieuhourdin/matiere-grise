@@ -10,10 +10,10 @@
         :class="{ 'font-bold': line.bold }"
         @click="setCursorPositionFromClick(index)"
         v-for="(line, index) in textLines"
-        :id="'line-apetipetou-' + index"
+        :id="`line-${componentUuid}-${index}`"
       >
         <div v-if="!line.chip">
-          {{ line.text }}
+          {{ line.text === '' ? ' ' : line.text }}
         </div>
         <li v-else class="ml-4">
           {{ line.text }}
@@ -26,17 +26,19 @@
 <script setup lang="ts">
 import ClipboardButton from '@/components/ClipboardButton.vue'
 import { onMounted, ref, computed, watch } from 'vue'
+import { v4 as uuidv4 } from 'uuid'
+import { useSnackbar } from '@/composables/useSnackbar'
 
 const emit = defineEmits(['change'])
 
 const props = defineProps<{
-  text?: string,
+  text?: string
   editable?: boolean
 }>()
 
-const myText = ref<string>(
-  "Ceci est un text d'essai. On va voir ce que ça donne.\nJe suis Mathieu Hourdin, j'ai 28 ans, j'habite à paris et j'ai une copine qui s'appelle mathilde. Je veux continuer à rajouter du texte, comme quand je fais des morning pages, ou ma morning routine"
-)
+const { launchSnackbar } = useSnackbar()
+
+const componentUuid = ref<string>('')
 
 const fullText = computed(() => {
   return formatText()
@@ -57,7 +59,9 @@ const getCursorCoordinates = () => {
   console.log(`CursorPosition : ${JSON.stringify(cursorPosition.value)}`)
   const range = document.createRange()
 
-  const selectedLine = document.getElementById('line-apetipetou-' + cursorPosition.value.line)
+  const selectedLine = document.getElementById(
+    `line-${componentUuid.value}-${cursorPosition.value.line}`
+  )
 
   console.log('Selected LIne : ', selectedLine)
 
@@ -213,7 +217,8 @@ const formatText = () => {
 const element = ref(null)
 
 onMounted(() => {
-  textLines.value = parseTextLines(props.text ? '\n' + props.text : '')
+  componentUuid.value = uuidv4()
+  textLines.value = parseTextLines(props.text)
 
   element.value = document.getElementById('editor-interface')
   element.focus
@@ -229,13 +234,19 @@ const debouncedUpdate = ref<number | null>(null)
 const debouncedEmit = () => {
   if (debouncedUpdate.value !== null) clearTimeout(debouncedUpdate.value)
   debouncedUpdate.value = setTimeout(async () => {
-    emit('change', formatText())
+    const toEmitText = formatText()
+    if (toEmitText === '' || !toEmitText) {
+      launchSnackbar('Try to update with empty content', 'error')
+    } else {
+      emit('change', formatText())
+    }
   }, 1000)
 }
 
 watch(editCount, () => {
   debouncedEmit()
 })
+//watch(textLines, () => console.log(`textLines : ${JSON.stringify(textLines)}`), {deep: true})
 watch(
   cursorPosition,
   () => {

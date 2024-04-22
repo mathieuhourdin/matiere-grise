@@ -52,16 +52,29 @@
           @change="updateAuthorInteraction"
         />
         <div class="flex flex-row-reverse mb-4">
-          <ActionButton class="ml-4" @click="setEditingMetaData(false)" type="valid" text="Preview"
+          <ActionButton class="ml-2" @click="setEditingMetaData(false)" type="valid" text="Preview"
             >Ok</ActionButton
           >
           <ActionButton
+            class="ml-2"
             v-if="resource.publishing_state == 'drft'"
             @click="publishResource"
             type="valid"
             text="Publier"
           />
-          <div v-else class="p-2 border rounded bg-neutral-100">Publié</div>
+          <ActionButton
+            class="ml-2"
+            v-else
+            @click="unpublishResource"
+            type="abort"
+            text="Dépublier"
+          />
+          <ActionButton
+            class="ml-2"
+            @click="isTextInterface = !isTextInterface"
+            type="valid"
+            :text="isTextInterface ? 'Text brut' : 'Editeur'"
+          />
         </div>
       </div>
       <div>
@@ -93,7 +106,7 @@
         <div class="text-xs italic">Contenu</div>
         <SelectionTextInterface
           class="min-h-fit"
-          v-if="resourceIsLoaded && !resource.is_local_draft && resource.publishing_state != 'drft'"
+          v-if="resourceIsLoaded && !resource.is_local_draft && isTextInterface"
           :ext-comments="comments"
           :resource-id="resource.id"
           :text="resource.content"
@@ -233,6 +246,7 @@ const tabChoices = computed(() => {
   ]
 })
 
+const isTextInterface = ref<boolean>(true)
 const toggleDefault = ref(
   route.query[urlParam.value] && typeof route.query[urlParam.value] === 'string'
     ? route.query[urlParam.value]
@@ -336,6 +350,12 @@ const setEditingMetaData = (value: boolean) => {
 const publishResource = () => {
   if (!resource.value || !resource.value.id) return
   resource.value.publishing_state = 'pbsh'
+  updateResource(resource.value.id, resource.value)
+}
+
+const unpublishResource = () => {
+  if (!resource.value || !resource.value.id) return
+  resource.value.publishing_state = 'drft'
   updateResource(resource.value.id, resource.value)
 }
 
