@@ -124,7 +124,7 @@ const handleBackspace = async () => {
   editCount.value += 1
 }
 
-const handleWrite = (key: string) => {
+const handleWrite = async (key: string) => {
   if (lastKeyPress.value === 'Dead') key = 'ê'
   if (key === '#' && cursorPosition.value.charRange === 0) {
     textLines.value[cursorPosition.value.line].bold = true
@@ -136,6 +136,7 @@ const handleWrite = (key: string) => {
       key,
       cursorPosition.value.charRange
     )
+    await new Promise((resolve) => setTimeout(resolve, 1))
     cursorPosition.value.charRange += 1
   }
   editCount.value += 1
@@ -165,7 +166,7 @@ const keydown = async (event) => {
   console.log('Keydown : ', key)
 
   if (key.length === 1) {
-    handleWrite(key)
+    await handleWrite(key)
   } else if (key === 'Enter') {
     await handleNewLine()
   } else if (key === 'Backspace') {
