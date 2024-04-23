@@ -41,7 +41,6 @@ export function useArticle() {
   //TODO replace by create resource
   const createArticle = async (article: Resource) => {
     try {
-      article.interaction_progress = Number(article.interaction_progress)
       const response = await fetchWrapper.post('/articles', article)
       return response.data
     } catch (error) {
@@ -52,7 +51,6 @@ export function useArticle() {
   //TODO replace by update resource
   const updateArticle = async (id: string, article: Resource) => {
     try {
-      article.interaction_progress = Number(article.interaction_progress)
       const response = await fetchWrapper.put('/thought_outputs/' + id, article)
       return response
     } catch (error) {

@@ -80,7 +80,8 @@ const resource = ref<Resource>({
   image_url: '',
   resource_type: '',
   comment: '',
-  is_local_draft: true
+  is_local_draft: true,
+  is_external: false
 })
 
 const chooseIsExternal = (value) => {
@@ -89,11 +90,13 @@ const chooseIsExternal = (value) => {
     //internal resource. The author is the logged in user
     resourceAuthorId.value = user.value.id
     resource.value.maturing_state = 'idea'
+    resource.is_external = false
     processStep.value = 1
     productionDate.value = new Date(Date.now()).toISOString().split('T')[0]
   } else {
     processStep.value = 1
     resource.value.maturing_state = 'fnsh'
+    resource.is_external = true
   }
 }
 

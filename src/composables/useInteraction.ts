@@ -2,6 +2,9 @@ import { fetchWrapper } from '@/helpers'
 import { type Interaction, type ApiInteraction } from '@/types/models'
 import { useSnackbar } from '@/composables/useSnackbar'
 const { launchSnackbar } = useSnackbar()
+import { useUser } from '@/composables/useUser'
+
+const { user } = useUser()
 
 function newInteraction(): Interaction {
   const interaction: Interaction = {
@@ -36,9 +39,14 @@ async function getReadAndWriteInteractions(): Promise<ApiInteraction[]> {
 async function getUserReadAndWriteInteractions(id: string): Promise<ApiInteraction[]> {
   const read = await fetchWrapper.get('/users/' + id + '/thought_inputs?limit=60')
   const write = await fetchWrapper.get('/users/' + id + '/thought_outputs?limit=60')
+  let drafts = { data: []}
+  if (user.value && user.value.id === id) {
+    drafts = await fetchWrapper.get('/users/' + id + '/thought_outputs?drafts=true')
+  }
   return read.data
     .map((thoughtInput: any) => formatApiResponse(thoughtInput))
     .concat(write.data.map((thoughtOutput: any) => formatApiResponse(thoughtOutput)))
+    .concat(drafts.data.map((thoughtOutput: any) => formatApiResponse(thoughtOutput)))
 }
 
 async function getUserThoughtOutputs(id: string): Promise<ApiInteraction[]> {
@@ -111,6 +119,6 @@ export function useInteraction() {
     getInteractionsForResource,
     getUserThoughtOutputs,
     getReadAndWriteInteractions,
-    getUserReadAndWriteInteractions,
+    getUserReadAndWriteInteractions
   }
 }

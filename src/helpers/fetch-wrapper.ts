@@ -35,6 +35,7 @@ function request(method: string) {
 }*/
 function handleResponse(response: any) {
   return response.text().then((text: string) => {
+    //console.log("Text : ", text)
     const data = text && JSON.parse(text)
 
     if (!response.ok) {

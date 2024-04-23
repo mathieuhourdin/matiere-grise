@@ -27,6 +27,13 @@ const filteredInteractions = computed(() => {
         !interaction.resource.is_external &&
         interaction.resource.resource_type !== 'pblm'
       )
+    } else if (feedFilter.value === 'draft') {
+      return (
+        interaction.interaction_type === 'outp' &&
+        !interaction.resource.is_external &&
+        interaction.resource.resource_type !== 'pblm' &&
+        interaction.resource.publishing_state === 'drft'
+      )
     } else if (feedFilter.value === 'problem') {
       return interaction.resource.resource_type === 'pblm'
     } else if (feedFilter.value === 'biblio') {
