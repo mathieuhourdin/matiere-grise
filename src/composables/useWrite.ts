@@ -7,10 +7,10 @@ type Cursor = {
 }
 
 type Line = {
-    index: number
-    text: string
-    bold: boolean
-    chip: boolean
+  index: number
+  text: string
+  bold: boolean
+  chip: boolean
 }
 
 const textLines = ref<Line[]>([])
@@ -116,7 +116,25 @@ const copyToClipboard = (cursorPosition: Ref<Cursor>) => {
     cursorPosition.value.startOffset,
     cursorPosition.value.endOffset
   )
+  localClipboard.value = copiedText
   console.log('CopiedText : ', copiedText)
+}
+const cutToClipboard = (cursorPosition: Ref<Cursor>) => {
+  copyToClipboard(cursorPosition)
+  const initialText = textLines.value[cursorPosition.value.line].text
+  const initalEndOffset = cursorPosition.value.endOffset
+  cursorPosition.value.endOffset = cursorPosition.value.endOffset
+  textLines.value[cursorPosition.value.line].text =
+    initialText.slice(0, cursorPosition.value.startOffset) + initialText.slice(initalEndOffset)
+}
+const pasteTextFromClipboard = (cursorPosition: Ref<Cursor>) => {
+  textLines.value[cursorPosition.value.line].text = insertAt(
+    textLines.value[cursorPosition.value.line].text,
+    localClipboard.value,
+    cursorPosition.value.startOffset
+  )
+  cursorPosition.value.startOffset += localClipboard.value.length
+  cursorPosition.value.endOffset = cursorPosition.value.startOffset
 }
 
 const keydown = async (event: any, cursorPosition: Ref<Cursor>) => {
@@ -129,6 +147,17 @@ const keydown = async (event: any, cursorPosition: Ref<Cursor>) => {
     lastKeyPress.value = key
     return
   }
+  if (key === 'x' && lastKeyPress.value === 'Control') {
+    cutToClipboard(cursorPosition)
+    lastKeyPress.value = key
+    return
+  }
+
+  if (key === 'v' && lastKeyPress.value === 'Control') {
+    pasteTextFromClipboard(cursorPosition)
+    lastKeyPress.value = key
+    return
+  }
 
   if (key.length === 1) {
     await handleWrite(key, cursorPosition)
@@ -137,7 +166,9 @@ const keydown = async (event: any, cursorPosition: Ref<Cursor>) => {
   } else if (key === 'Backspace') {
     await handleBackspace(cursorPosition)
   } else if (key === 'ArrowRight') {
-    if (cursorPosition.value.startOffset === textLines.value[cursorPosition.value.line].text.length) {
+    if (
+      cursorPosition.value.startOffset === textLines.value[cursorPosition.value.line].text.length
+    ) {
       cursorPosition.value = { line: cursorPosition.value.line + 1, startOffset: 1, endOffset: 1 }
     } else {
       cursorPosition.value.startOffset += 1
@@ -147,7 +178,7 @@ const keydown = async (event: any, cursorPosition: Ref<Cursor>) => {
       cursorPosition.value = {
         line: cursorPosition.value.line - 1,
         startOffset: textLines.value[cursorPosition.value.line - 1].text.length,
-          endOffset:textLines.value[cursorPosition.value.line - 1].text.length 
+        endOffset: textLines.value[cursorPosition.value.line - 1].text.length
       }
     } else {
       cursorPosition.value.startOffset -= 1
@@ -156,10 +187,10 @@ const keydown = async (event: any, cursorPosition: Ref<Cursor>) => {
   lastKeyPress.value = key
 }
 
-export function useWrite () {
-    return {
-        textLines,
-        keydown,
-        editCount
-    }
+export function useWrite() {
+  return {
+    textLines,
+    keydown,
+    editCount
+  }
 }
