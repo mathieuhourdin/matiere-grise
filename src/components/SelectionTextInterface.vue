@@ -6,7 +6,9 @@
     <input
       id="hidden-input"
       class="absolute"
-      :style="{ top: cursorCoordinates.top, left: '99999999px' }"
+      style="height: 0; width:0; border: none; padding: 0; border: 0"
+      :style="{ top: cursorCoordinates.top, left: cursorCoordinates.left }"
+      @keydown="(event) => handleKeydown(event)"
     />
     <ClipboardButton class="ml-auto h-6 w-6" :text="fullText" />
     <div id="editor-interface" tabindex="0" @keydown="(event) => handleKeydown(event)">
