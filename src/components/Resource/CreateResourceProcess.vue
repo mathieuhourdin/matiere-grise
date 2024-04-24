@@ -125,7 +125,8 @@ const resourceTypeOptions = ref([
   { text: 'Article de média', value: 'natc' },
   { text: 'Article de recherche', value: 'ratc' },
   { text: 'Film', value: 'movi' },
-  { text: 'Podcast', value: 'pcst' }
+  { text: 'Podcast', value: 'pcst' },
+  { text: 'Poême', value: 'poem' },
 ])
 
 const { createInteractionForResource, newInteraction } = useInteraction()
