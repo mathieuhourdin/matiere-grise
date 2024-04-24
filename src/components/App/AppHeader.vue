@@ -10,9 +10,6 @@
     </div>
     <div class="md:basis-1/3 basis-1/2 flex flex-row-reverse">
       <UserManagement class="mr-1 md:mr-4 my-auto" />
-      <router-link v-if="!isMobile" class="my-auto mr-1 md:mr-4 text-xs md:text-base" to="/platform-presentation"
-        >A Propos</router-link
-      >
     </div>
   </div>
 </template>

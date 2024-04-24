@@ -31,7 +31,7 @@ const choices = computed(() => {
     { text: 'Production', value: 'production' },
     { text: 'Problématiques', value: 'problem' },
     { text: 'Biblio', value: 'biblio' },
-    route && route.name === 'userFeed' &&
+    route && user.value && route.name === 'userFeed' &&
       route.params.pageUserId === user.value.id && { text: 'Brouillons', value: 'draft' }
   ].filter( Boolean)
 })

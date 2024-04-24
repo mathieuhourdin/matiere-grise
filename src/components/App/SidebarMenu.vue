@@ -8,12 +8,13 @@
         subtitle="Informations personnelles"
       />
       <MenuItem to="/feed" title="Fil d'actu" subtitle="Les travaux de vos amis" />
-      <MenuItem to="/problems" title="Problématiques" subtitle="Carrefours des réflexions" />
-      <MenuItem to="/productions" title="Productions" subtitle="Internes à la plateforme" />
-      <MenuItem to="/resources" title="Ressources" subtitle="Externes à la plateforme" />
-      <MenuItem to="/thought_inputs" title="Bibliographies" subtitle="Lues par les utilisateurs" />
-      <MenuItem to="/friends" title="Utilisateurs" subtitle="Amis etc" />
+      <!--<MenuItem to="/problems" title="Problématiques" subtitle="Carrefours des réflexions" />-->
+      <!--<MenuItem to="/productions" title="Productions" subtitle="Internes à la plateforme" />-->
+      <!--<MenuItem to="/resources" title="Ressources" subtitle="Externes à la plateforme" />-->
+      <!--<MenuItem to="/thought_inputs" title="Bibliographies" subtitle="Lues par les utilisateurs" />-->
+      <!--<MenuItem to="/friends" title="Utilisateurs" subtitle="Amis etc" />-->
       <MenuItem to="/create-resource" title="Créer" subtitle="Du nouveau contenu" />
+      <MenuItem to="/platform-presentation" title="A propos" subtitle="Présentation de la plateforme" />
     </div>
   </div>
 </template>
