@@ -1,6 +1,6 @@
 const splitTextLineForPanel = (text: string) => {
   if (!text) return []
-  const splittedContent = text.replace('/?/g', '?.').split('.')
+  const splittedContent = text.replace(/\?/g, '?.').split('.')
   let i = 0
   const result = []
   while (i < splittedContent.length) {
