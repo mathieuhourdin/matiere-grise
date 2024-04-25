@@ -88,7 +88,7 @@
       </div>
       <hr class="border-top border-zinc-400 my-4" />
       <div v-if="current_tab == 'ctnt'">
-        <div class="text-xs italic">Commentaire</div>
+        <!--<div class="text-xs italic">Commentaire</div>
         <SelectionTextInterface
           :text="resource.comment"
           :editable="isResourceEditable"
@@ -102,7 +102,7 @@
           :modelValue="resource.comment"
           @update:modelValue="(event) => debouncedUpdateResourceComment(event)"
         />
-        <hr class="border-top border-zinc-400 my-4" />
+        <hr class="border-top border-zinc-400 my-4" />-->
         <div class="text-xs italic">Contenu</div>
         <SelectionTextInterface
           class="min-h-fit"
