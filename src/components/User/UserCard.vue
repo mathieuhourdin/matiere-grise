@@ -2,7 +2,7 @@
   <div class="border shadow-lg rounded p-4">
     <router-link :to="'/users/' + user.id">
       <div class="text-right">{{ user.is_platform_user ? '' : 'externe' }}</div>
-      <div class="md:px-20">
+      <div>
         <img
           :src="user.profile_picture_url ? user.profile_picture_url : image_src"
           class="border border-slate-300 dark:border-zinc-700 rounded-xl max-w-full aspect-[2/2] object-cover object-center w-full"

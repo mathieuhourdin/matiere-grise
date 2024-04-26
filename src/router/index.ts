@@ -65,8 +65,8 @@ const router = createRouter({
       component: () => import('@/views/ProblemsView.vue')
     },
     {
-      path: '/friends',
-      name: 'friendsList',
+      path: '/users',
+      name: 'usersList',
       component: () => import('@/views/UsersView.vue')
     },
     {
