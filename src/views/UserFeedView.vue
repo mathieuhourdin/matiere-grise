@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="m-8">
+    <div class="mt-8">
       <UserInfos class="mx-auto border my-8" v-if="pageUser" :user="pageUser" />
       <div
         v-if="user && pageUserId == user.id"
