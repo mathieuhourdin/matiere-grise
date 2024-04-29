@@ -6,14 +6,19 @@ export const fetchWrapper = {
 }
 
 function request(method: string) {
-  return (url: string, body?: any) => {
+  return (url: string, body?: any, contentType?: string) => {
+    const endcontentType = contentType ? contentType : 'application/json'
     const requestOptions: any = {
       method,
       headers: {}
     }
     if (body) {
-      requestOptions.headers['Content-Type'] = 'application/json'
-      requestOptions.body = JSON.stringify(body)
+      if (contentType && contentType === 'multipart/form-data') {
+        requestOptions.body = body
+      } else {
+        requestOptions.headers['Content-Type'] = contentType ? contentType : 'application/json'
+        requestOptions.body = JSON.stringify(body)
+      }
     }
     requestOptions.headers['Authorization'] = localStorage.getItem('sessionId')
     return fetch(import.meta.env.VITE_API_URL + url, requestOptions).then(handleResponse)

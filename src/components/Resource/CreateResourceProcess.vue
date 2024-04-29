@@ -29,6 +29,8 @@
     <div v-if="processStep === 2">
       <div>
         <ExternalResourcePreview v-if="isExternal" @change="(event) => applyPreview(event)" />
+        <div>Ajouter a partir d'un fichier</div>
+        <input id="file" type="file" @change="uploadFile" placeholder="Ajouter depuis un fichier" />
         <div v-if="!isExternal || isPreviewLoaded">
           <TextInput class="mb-4" v-model="resource.title" label="Titre" />
           <TextInput class="mb-4" v-model="resource.subtitle" label="Description" />
@@ -40,6 +42,14 @@
             :choices="resourceTypeOptions"
             v-model="resource.resource_type"
           />
+          <div v-if="resource.content !== ''">
+            <div class="text-2xs text-slate-800">Text formaté</div>
+            <SelectionTextInterface
+              class="max-h-40 overflow-scroll border border-slate-400 mb-4 p-2 rounded"
+              type="textarea"
+              :text="resource.content"
+            />
+          </div>
           <ActionButton
             class="mb-4"
             text="Créer"
@@ -58,12 +68,14 @@ import SelectInput from '@/components/Ui/SelectInput.vue'
 import ActionButton from '@/components/Ui/ActionButton.vue'
 import UserPicker from '@/components/User/UserPicker.vue'
 import TextInput from '@/components/Ui/TextInput.vue'
+import SelectionTextInterface from '@/components/SelectionTextInterface.vue'
 import { ref } from 'vue'
 import { type Resource } from '@/types/models'
 import { useUser } from '@/composables/useUser'
 import { useResource } from '@/composables/useResource'
 import { useInteraction } from '@/composables/useInteraction'
 import { useRouter } from 'vue-router'
+import { useFileConverter } from '@/composables/useFileConverter'
 
 const processStep = ref<number>(0)
 
@@ -100,6 +112,19 @@ const chooseIsExternal = (value) => {
   }
 }
 
+const { postFileConversion } = useFileConverter()
+const uploadFile = async (event) => {
+  const file = event.target.files[0]
+
+  const formData = new FormData()
+
+  formData.append(file.name, file)
+
+  const response = await postFileConversion(formData)
+  resource.value.content = response.content
+  resource.value.title = response.name
+}
+
 const { user } = useUser()
 const resourceAuthorId = ref<string | null>(null)
 const productionDate = ref<string | null>(null)
@@ -126,7 +151,7 @@ const resourceTypeOptions = ref([
   { text: 'Article de recherche', value: 'ratc' },
   { text: 'Film', value: 'movi' },
   { text: 'Podcast', value: 'pcst' },
-  { text: 'Poême', value: 'poem' },
+  { text: 'Poême', value: 'poem' }
 ])
 
 const { createInteractionForResource, newInteraction } = useInteraction()
