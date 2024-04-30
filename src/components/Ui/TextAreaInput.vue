@@ -1,5 +1,5 @@
 <template>
-  <div class="m-4">
+  <div>
     <label class="block text-2xs text-slate-800">{{ label }}</label>
     <textarea class="border border-neutral-800 block h-full w-full" :value="modelValue" :placeholder="placeholder" @input="event => onInput(event)" />
   </div>

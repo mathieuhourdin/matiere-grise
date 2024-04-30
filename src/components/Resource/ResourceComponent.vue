@@ -106,8 +106,7 @@
         <div class="text-xs italic">Contenu</div>
         <TextAreaInput
           v-if="displayTextInterface"
-          class="h-96"
-          label="Contenu"
+          class="mt-4 h-96"
           :modelValue="resource.content"
           @update:modelValue="(event) => debouncedUpdateResourceContent(event)"
         />
@@ -233,7 +232,7 @@ const route = useRoute()
 const displayTextInterface = computed(() => {
   return (
     (isMobile.value && editingMetaData.value) ||
-    !isResourceIsLoaded.value ||
+    !resourceIsLoaded.value ||
     resource.value.is_local_draft ||
     !isTextInterface.value
   )
