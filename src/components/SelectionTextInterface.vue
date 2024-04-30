@@ -3,13 +3,6 @@
     <div :style="cursorCoordinates" class="absolute flex flex-column">
       <div class="cursor bg-blue-400" />
     </div>
-    <input
-      id="hidden-input"
-      class="absolute"
-      style="height: 0; width:0; border: none; padding: 0; border: 0"
-      :style="{ top: cursorCoordinates.top, left: cursorCoordinates.left }"
-      @keydown="(event) => handleKeydown(event)"
-    />
     <ClipboardButton class="ml-auto h-6 w-6" :text="fullText" />
     <div id="editor-interface" tabindex="0" @keydown="(event) => handleKeydown(event)">
       <div
@@ -55,16 +48,6 @@ const fullText = computed(() => {
   return formatText()
 })
 
-const launchHiddenInput = () => {
-  console.log('Trigger launchHiddenInput')
-  var hiddenInput = document.getElementById('hidden-input')
-  hiddenInput.style.opacity = '1' // Make the input field visible when interacting (optional)
-  hiddenInput.focus() // Focus on the hidden input to trigger the keyboard
-  setTimeout(() => {
-    hiddenInput.style.opacity = '0' // Hide again after clicking (optional)
-  }, 50)
-}
-
 const mouseupHandler = (event) => {
   console.log(event)
   const selection = window.getSelection()
@@ -78,7 +61,6 @@ const setCursorPositionFromClick = (index) => {
   const selection = window.getSelection()
   const range = selection.getRangeAt(0)
   cursorPosition.value = { line: index, startOffset: range.startOffset, endOffset: range.endOffset }
-  launchHiddenInput()
 }
 
 const getCursorCoordinates = () => {

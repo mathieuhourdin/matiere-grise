@@ -1,5 +1,4 @@
 import { ref, type Ref } from 'vue'
-import { useSnackbar } from '@/composables/useSnackbar'
 
 type Cursor = {
   line: number
@@ -138,10 +137,8 @@ const pasteTextFromClipboard = (cursorPosition: Ref<Cursor>) => {
   cursorPosition.value.endOffset = cursorPosition.value.startOffset
 }
 
-const { launchSnackbar } = useSnackbar()
 const keydown = async (event: any, cursorPosition: Ref<Cursor>) => {
   const key = event.key
-  launchSnackbar("event : " + key, "success")
   event.preventDefault()
   console.log('Keydown : ', key)
 
