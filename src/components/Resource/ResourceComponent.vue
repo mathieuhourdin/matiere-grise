@@ -104,21 +104,21 @@
         />
         <hr class="border-top border-zinc-400 my-4" />-->
         <div class="text-xs italic">Contenu</div>
+        <TextAreaInput
+          v-if="displayTextInterface"
+          class="h-96"
+          label="Contenu"
+          :modelValue="resource.content"
+          @update:modelValue="(event) => debouncedUpdateResourceContent(event)"
+        />
         <SelectionTextInterface
           class="min-h-fit"
-          v-if="resourceIsLoaded && !resource.is_local_draft && isTextInterface"
+          v-else
           :ext-comments="comments"
           :resource-id="resource.id"
           :text="resource.content"
           :editable="isResourceEditable"
           @change="(event) => debouncedUpdateResourceContent(event)"
-        />
-        <TextAreaInput
-          v-else
-          class="h-96"
-          label="Contenu"
-          :modelValue="resource.content"
-          @update:modelValue="(event) => debouncedUpdateResourceContent(event)"
         />
         <CommentsThread class="mt-6" :resource-id="resourceId" />
       </div>
@@ -209,6 +209,7 @@ import { useResource } from '@/composables/useResource'
 import { useInteraction } from '@/composables/useInteraction'
 import { useComments } from '@/composables/useComments'
 import { useUser } from '@/composables/useUser'
+import { useMenu } from '@/composables/useMenu'
 import { useResourceRelations } from '@/composables/useResourceRelations'
 import { PencilSquareIcon, ArrowDownOnSquareIcon, ShareIcon } from '@heroicons/vue/24/outline'
 import { watch, toRefs, ref, computed, onMounted, type Ref } from 'vue'
@@ -229,6 +230,14 @@ const route = useRoute()
 
 /************** tabs ******************/
 
+const displayTextInterface = computed(() => {
+  return (
+    (isMobile.value && editingMetaData.value) ||
+    !isResourceIsLoaded.value ||
+    resource.value.is_local_draft ||
+    !isTextInterface.value
+  )
+})
 const urlParam = computed(() => {
   if (props.secondLevel) {
     return 'popup_tab'
@@ -343,6 +352,8 @@ watch(
   }
 )
 const editingMetaData = ref(false)
+
+const { isMobile } = useMenu()
 const setEditingMetaData = (value: boolean) => {
   router.push({ query: { editing: value.toString() } })
 }
