@@ -21,6 +21,11 @@ const router = createRouter({
       component: () => import('@/views/CreateResourceView.vue')
     },
     {
+      path: '/spip-conversion',
+      name: 'spipConversion',
+      component: () => import('@/views/SpipConversionView.vue')
+    },
+    {
       path: '/platform-presentation',
       name: 'platformPresentation',
       component: () => import('@/views/PlatformPresentationView.vue')

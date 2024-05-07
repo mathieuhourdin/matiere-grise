@@ -29,7 +29,7 @@
     <div v-if="processStep === 2">
       <div>
         <ExternalResourcePreview v-if="isExternal" @change="(event) => applyPreview(event)" />
-        <div>Ajouter a partir d'un fichier</div>
+        <div>Optionnel : ajouter le contenu à partir d'un fichier La-tex</div>
         <input id="file" type="file" @change="uploadFile" placeholder="Ajouter depuis un fichier" />
         <div v-if="!isExternal || isPreviewLoaded">
           <TextInput class="mb-4" v-model="resource.title" label="Titre" />

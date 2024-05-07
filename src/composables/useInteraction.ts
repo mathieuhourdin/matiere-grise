@@ -23,17 +23,15 @@ function formatApiResponse(apiInteraction: any): ApiInteraction {
   return response
 }
 
-async function getInteractions(): Promise<ApiInteraction[]> {
-  const response = await fetchWrapper.get('/thought_inputs?limit=60')
-  return response.data.map((thoughtInput: any) => formatApiResponse(thoughtInput))
+async function getInteractions(interactionType: string = "inpt"): Promise<ApiInteraction[]> {
+  const response = await fetchWrapper.get('/interactions?limit=60&interaction_type=' + interactionType)
+  return response.data.map((interaction: any) => formatApiResponse(interaction))
 }
 
 async function getReadAndWriteInteractions(): Promise<ApiInteraction[]> {
-  const read = await fetchWrapper.get('/thought_inputs?limit=60')
-  const write = await fetchWrapper.get('/thought_outputs?limit=60')
-  return read.data
-    .map((thoughtInput: any) => formatApiResponse(thoughtInput))
-    .concat(write.data.map((thoughtOutput: any) => formatApiResponse(thoughtOutput)))
+  const read = await getInteractions("inpt");
+  const write = await getInteractions("outp");
+  return read.concat(write);
 }
 
 async function getUserReadAndWriteInteractions(id: string): Promise<ApiInteraction[]> {

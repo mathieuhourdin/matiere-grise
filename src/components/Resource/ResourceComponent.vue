@@ -143,60 +143,24 @@
       <div v-else-if="current_tab == 'inpt'">
         <ThoughtInputsList :contextual-resources="contextualResourcesInteractions" />
       </div>
-      <div class="fixed right-3 bottom-5">
-        <RoundLinkButton
-          v-if="isResourceEditable"
-          title="Modifier"
-          @click="setEditingMetaData(true)"
-          ><PencilSquareIcon class="m-1"
-        /></RoundLinkButton>
-        <RoundLinkButton
-          class="mt-2"
-          color="red"
-          title="Marquer comme lu"
-          v-if="isResourceEditable"
-          @click="openAddInteraction = true"
-          ><ArrowDownOnSquareIcon class="m-1"
-        /></RoundLinkButton>
-        <ModalSheet :open="openAddInteraction" @close="openAddInteraction = false">
-          <CreateInteraction
-            @refresh="loadInteractions"
-            @close="openAddInteraction = false"
-            :resource="resource"
-          />
-        </ModalSheet>
-        <RoundLinkButton
-          class="mt-2"
-          color="green"
-          title="Relier à d'autres ressources"
-          v-if="isResourceEditable"
-          @click="openAddResourceRelationAsOrigin = true"
-          ><ShareIcon class="m-1"
-        /></RoundLinkButton>
-        <ModalSheet
-          :open="openAddResourceRelationAsOrigin"
-          @close="openAddResourceRelationAsOrigin = false"
-        >
-          <CreateResourceRelationForm
-            @refresh="loadUsages"
-            @close="openAddResourceRelationAsOrigin = false"
-            :origin-resource="resource"
-          />
-        </ModalSheet>
-      </div>
+      <ResourceTools
+        class="fixed right-3 bottom-5"
+        :resource="resource"
+        :is-resource-editable="isResourceEditable"
+        @refresh="loadUsages() && loadInteractions()"
+        @edit="setEditingMetaData(true)"
+      />
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import CreateResourceRelationForm from '@/components/Resource/CreateResourceRelationForm.vue'
+import ResourceTools from '@/components/Resource/ResourceTools.vue'
 import CommentsThread from '@/components/Comment/CommentsThread.vue'
-import CreateInteraction from '@/components/CreateInteraction.vue'
 import DateField from '@/components/Ui/DateField.vue'
 import ToggleButtonGroup from '@/components/Ui/ToggleButtonGroup.vue'
 import SelectionTextInterface from '@/components/SelectionTextInterface.vue'
 import ProgressBar from '@/components/ProgressBar.vue'
-import RoundLinkButton from '@/components/Ui/RoundLinkButton.vue'
 import ArticleForm from '@/components/Article/ArticleForm.vue'
 import ResourceAuthorPicker from '@/components/Resource/ResourceAuthorPicker.vue'
 import ProblemForm from '@/components/Problem/ProblemForm.vue'
@@ -210,7 +174,6 @@ import { useComments } from '@/composables/useComments'
 import { useUser } from '@/composables/useUser'
 import { useMenu } from '@/composables/useMenu'
 import { useResourceRelations } from '@/composables/useResourceRelations'
-import { PencilSquareIcon, ArrowDownOnSquareIcon, ShareIcon } from '@heroicons/vue/24/outline'
 import { watch, toRefs, ref, computed, onMounted, type Ref } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import {
@@ -277,7 +240,6 @@ const { getResourceRelationsForResource, getUsagesForResource } = useResourceRel
 
 const resourceRelations = ref([])
 const openAddResourceRelationAsTarget = ref(false)
-const openAddResourceRelationAsOrigin = ref(false)
 
 const loadBiblio = async () => {
   resourceRelations.value = await getResourceRelationsForResource(toRefs(props).resourceId.value)
@@ -411,8 +373,6 @@ const resourceUser: Ref<User | null> = ref<User | null>(null)
 /************** interactions section *************/
 
 const authorInteraction = ref<Interaction | null>(null)
-
-const openAddInteraction = ref<boolean>(false)
 
 const updateAuthorInteraction = async () => {
   authorInteraction.value = await getAuthorInteractionForResource(props.resourceId)
