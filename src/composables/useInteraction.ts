@@ -23,21 +23,29 @@ function formatApiResponse(apiInteraction: any): ApiInteraction {
   return response
 }
 
-async function getInteractions(interactionType: string = "inpt"): Promise<ApiInteraction[]> {
-  const response = await fetchWrapper.get('/interactions?limit=60&interaction_type=' + interactionType)
+async function getInteractions(
+  interactionType: string = 'inpt',
+  maturingState: string = 'fnsh'
+): Promise<ApiInteraction[]> {
+  const response = await fetchWrapper.get(
+    '/interactions?limit=60&interaction_type=' +
+      interactionType +
+      '&maturing_state=' +
+      maturingState
+  )
   return response.data.map((interaction: any) => formatApiResponse(interaction))
 }
 
 async function getReadAndWriteInteractions(): Promise<ApiInteraction[]> {
-  const read = await getInteractions("inpt");
-  const write = await getInteractions("outp");
-  return read.concat(write);
+  const read = await getInteractions('inpt')
+  const write = await getInteractions('outp')
+  return read.concat(write)
 }
 
 async function getUserReadAndWriteInteractions(id: string): Promise<ApiInteraction[]> {
   const read = await fetchWrapper.get('/users/' + id + '/thought_inputs?limit=60')
   const write = await fetchWrapper.get('/users/' + id + '/thought_outputs?limit=60')
-  let drafts = { data: []}
+  let drafts = { data: [] }
   if (user.value && user.value.id === id) {
     drafts = await fetchWrapper.get('/users/' + id + '/thought_outputs?drafts=true')
   }

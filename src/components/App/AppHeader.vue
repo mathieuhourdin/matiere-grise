@@ -3,19 +3,28 @@
     <div class="basis-1/2 md:basis-1/3 flex">
       <Bars3Icon @click="toggleMenuOpen" class="p-1 md:p-2" />
       <FeedFilter v-if="isFeedRoute" class="my-auto bg-slate-300" />
-      <BaseLink v-else class="md:ml-4 my-auto mr-auto text-xs md:text-base">🫀 Matiere Grise</BaseLink>
+      <BaseLink v-else class="md:ml-4 my-auto mr-auto text-xs md:text-base"
+        >🫀 Matiere Grise</BaseLink
+      >
     </div>
     <div class="my-auto grow text-center">
-      <router-link v-if="headerValue" :to="headerValue.link" class="text-2xs md:text-base md:font-bold">{{ headerValue.text }}</router-link>
+      <router-link
+        v-if="headerValue"
+        :to="headerValue.link"
+        class="text-2xs md:text-base md:font-bold"
+        >{{ headerValue.text }}</router-link
+      >
     </div>
     <div class="md:basis-1/3 basis-1/2 flex flex-row-reverse">
       <UserManagement class="mr-1 md:mr-4 my-auto" />
+      <ReviewsNotifications class="my-auto w-8 mr-1 md:mr-2 border border-black border-2" />
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-  import FeedFilter from '@/components/Feed/FeedFilter.vue'
+import FeedFilter from '@/components/Feed/FeedFilter.vue'
+import ReviewsNotifications from '@/components/App/ReviewsNotifications.vue'
 import UserManagement from '@/components/App/UserManagement.vue'
 import BaseLink from '@/components/Ui/BaseLink.vue'
 import { Bars3Icon } from '@heroicons/vue/24/outline'
@@ -27,6 +36,6 @@ const { toggleMenuOpen, headerValue, isMobile } = useMenu()
 
 const route = useRoute()
 const isFeedRoute = computed(() => {
-  return route.name === "resourceFeed" || route.name === "feed" || route.name === "userFeed"
+  return route.name === 'resourceFeed' || route.name === 'feed' || route.name === 'userFeed'
 })
 </script>

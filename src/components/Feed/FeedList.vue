@@ -34,6 +34,8 @@ const filteredInteractions = computed(() => {
         interaction.resource.resource_type !== 'pblm' &&
         interaction.resource.publishing_state === 'drft'
       )
+    } else if (feedFilter.value === 'reviews') {
+      return interaction.interaction_type === 'rvew'
     } else if (feedFilter.value === 'problem') {
       return interaction.resource.resource_type === 'pblm'
     } else if (feedFilter.value === 'biblio') {

@@ -41,7 +41,7 @@ const { getUserById, user } = useUser()
 
 const pageUser = ref(null)
 
-const { getUserReadAndWriteInteractions } = useInteraction()
+const { getUserReadAndWriteInteractions, getInteractions } = useInteraction()
 const interactions = ref<ApiInteraction[]>([])
 const contextualInteractions = computed(() => {
   return interactions.value
@@ -61,5 +61,7 @@ const contextualInteractions = computed(() => {
 onMounted(async () => {
   pageUser.value = await getUserById(props.pageUserId)
   interactions.value = await getUserReadAndWriteInteractions(props.pageUserId)
+  const reviews = await getInteractions("rvew")
+  interactions.value = interactions.value.concat(reviews)
 })
 </script>
