@@ -33,6 +33,7 @@ const colorClass = computed(() => {
   if (props.color === 'green') return { 'bg-green-400': true }
   if (props.color === 'red') return { 'bg-red-400': true }
   if (props.color === 'gray') return { 'bg-gray-300': true }
+  if (props.color === 'slate-light') return { 'bg-slate-200': true }
   if (props.color === 'white') return { 'bg-white': true }
   return { 'bg-blue-400': true }
 })

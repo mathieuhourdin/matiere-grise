@@ -1,5 +1,5 @@
 <template>
-  <RoundLinkButton :to="user ? '/users/' + user.id + '?feed_filter=reviews' : ''" color="white" class="relative"
+  <RoundLinkButton :to="user ? '/users/' + user.id + '?feed_filter=reviews' : ''" color="slate-light" class="relative"
     ><template #chip
       ><div
         v-if="reviewsCount > 0"
