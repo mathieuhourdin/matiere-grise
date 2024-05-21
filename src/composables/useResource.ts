@@ -19,6 +19,22 @@ const newResource = (): ApiResource => {
   }
 }
 
+const resourceTypeOptions = [
+  { text: 'book', value: 'book' },
+  { text: 'readingNote', value: 'rdnt' },
+  { text: 'resourceList', value: 'list' },
+  { text: 'problem', value: 'pblm' },
+  { text: 'researchArticle', value: 'ratc' },
+  { text: 'newsArticle', value: 'natc' },
+  { text: 'opinionArticle', value: 'oatc' },
+  { text: 'movie', value: 'movi' },
+  { text: 'video', value: 'vide' },
+  { text: 'podcast', value: 'pcst' },
+  { text: 'song', value: 'song' },
+  { text: 'course', value: 'curs' },
+  { text: 'idea', value: 'idea' }
+]
+
 const getResource = async (id: string): Promise<ApiResource> => {
   try {
     const response = await fetchWrapper.get('/resources/' + id)
@@ -69,6 +85,7 @@ export function useResource() {
     getResources,
     updateResource,
     createResource,
-    getAuthorInteractionForResource
+    getAuthorInteractionForResource,
+    resourceTypeOptions
   }
 }

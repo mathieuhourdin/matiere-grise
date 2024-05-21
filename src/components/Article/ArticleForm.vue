@@ -65,6 +65,7 @@ import TextInput from '@/components/Ui/TextInput.vue'
 import NumberInput from '@/components/Ui/NumberInput.vue'
 import TextAreaInput from '@/components/Ui/TextAreaInput.vue'
 import { useCategories } from '@/composables/useCategories'
+import { useResource } from '@/composables/useResource'
 import { type Article } from '@/types/models'
 import { ref, computed } from 'vue'
 
@@ -79,14 +80,15 @@ const maturingStateOptions = ref([
   { text: 'Idée', value: 'idea' }
 ])
 
-const resourceTypeOptions = ref([
+const { resourceTypeOptions } = useResource()
+/*const resourceTypeOptions = ref([
   { text: 'Livre', value: 'book' },
   { text: 'Fiche de lecture', value: 'shet' },
   { text: 'Article de média', value: 'natc' },
   { text: 'Article de recherche', value: 'ratc' },
   { text: 'Film', value: 'movi' },
   { text: 'Podcast', value: 'pcst' }
-])
+])*/
 
 const { categories } = useCategories()
 const categoryOptions = computed(() => {

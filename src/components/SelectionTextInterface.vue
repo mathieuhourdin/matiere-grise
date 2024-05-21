@@ -40,7 +40,7 @@ const props = defineProps<{
 
 const { launchSnackbar } = useSnackbar()
 
-const { textLines, keydown, editCount } = useWrite()
+const { formatText, textLines, keydown, editCount, parseTextLines } = useWrite()
 
 const componentUuid = ref<string>('')
 
@@ -99,27 +99,6 @@ const handleKeydown = (event) => {
 const cursorCoordinates = ref({ left: '0px', right: '0px' })
 
 const cursorPosition = ref({ line: undefined, startOffset: undefined, endOffset: undefined })
-
-const parseTextLines = (text) => {
-  return text.split('\n').map((text, index) => {
-    let bold = false
-    let chip = false
-    if (text[0] === '#') {
-      text = text.slice(1)
-      bold = true
-    }
-    if (text[0] === '*') {
-      text = text.slice(1)
-      chip = true
-    }
-    return { index, text, bold, chip }
-  })
-}
-const formatText = () => {
-  return textLines.value
-    .map((line) => (line.bold ? '#' : '') + (line.chip ? '*' : '') + line.text)
-    .join('\n')
-}
 
 onMounted(() => {
   componentUuid.value = uuidv4()

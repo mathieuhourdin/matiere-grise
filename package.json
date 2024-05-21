@@ -19,6 +19,7 @@
     "n": "^9.1.0",
     "uuid": "^9.0.1",
     "vue": "^3.3.4",
+    "vue-i18n": "^10.0.0-alpha.5",
     "vue-router": "^4.2.4"
   },
   "devDependencies": {

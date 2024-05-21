@@ -15,7 +15,7 @@ export function useArticle() {
       publishing_state: 'drft',
       external_content_url: '',
       image_url: '',
-      resource_type: 'atcl'
+      resource_type: 'oatc'
     })
   }
 

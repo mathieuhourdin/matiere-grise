@@ -8,7 +8,7 @@
       @input="(event) => emitChange(event)"
     >
       <option v-for="choice in choices" :key="choice.value" :value="choice.value">
-        {{ displayFunction(choice) }}
+        {{ $t(displayFunction(choice)) }}
       </option>
     </select>
   </div>

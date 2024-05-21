@@ -7,7 +7,7 @@
         :user="interactionAuthor"
         :secondText="formatDate(interaction.date)"
         :firstBottomText="getInteractionTypeName(interaction.interaction_type)"
-        :secondBottomText="getResourceTypeNameFromCode(interaction.resource.resource_type)"
+        :secondBottomText="$t(getResourceTypeNameFromCode(interaction.resource.resource_type))"
       />
       <div v-else class="animate-pulse w-2/3 bg-gradient-to-r from-slate-600 h-8 mb-1.5"></div>
     </div>
@@ -66,18 +66,9 @@ const getInteractionTypeName = (typeCode: string) => {
   return typeCode === 'outp' ? 'Production personnelle' : 'Bibliographie'
 }
 
+const { resourceTypeOptions } = useResource()
 const getResourceTypeNameFromCode = (typeCode: string) => {
-  switch (typeCode) {
-    case 'pblm':
-      return 'Problématique'
-    case 'book':
-      return 'Livre'
-    case 'atcl':
-      return 'Article'
-    case 'ratc':
-      return 'Article de recherche'
-  }
-  return typeCode
+  return resourceTypeOptions.find((option) => option.value === typeCode).text
 }
 
 const interactionAuthorInteraction = ref<Interaction | null>(null)

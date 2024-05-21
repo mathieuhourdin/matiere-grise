@@ -187,10 +187,33 @@ const keydown = async (event: any, cursorPosition: Ref<Cursor>) => {
   lastKeyPress.value = key
 }
 
+const parseTextLines = (text: string) => {
+  return text.split('\n').map((text: string, index: number) => {
+    let bold = false
+    let chip = false
+    if (text[0] === '#') {
+      text = text.slice(1)
+      bold = true
+    }
+    if (text[0] === '*') {
+      text = text.slice(1)
+      chip = true
+    }
+    return { index, text, bold, chip }
+  })
+}
+const formatText = () => {
+  return textLines.value
+    .map((line) => (line.bold ? '#' : '') + (line.chip ? '*' : '') + line.text)
+    .join('\n')
+}
+
 export function useWrite() {
   return {
     textLines,
     keydown,
-    editCount
+    editCount,
+    parseTextLines,
+    formatText
   }
 }
