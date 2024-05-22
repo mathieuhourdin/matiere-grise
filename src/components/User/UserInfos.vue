@@ -2,7 +2,10 @@
   <div class="text-center p-4 bg-slate-200">
     <div class="relative" v-if="!editUser">
       <img :src="user.profile_picture_url" class="mx-auto m-4 w-1/6" />
-      <div class="text-2xl bold">{{ user.first_name }} {{ user.last_name }}</div>
+      <div v-if="user.id === authUser.id" class="text-2xl bold">
+        {{ user.first_name }} {{ user.last_name }} {{ user.pseudonym }}
+      </div>
+      <div v-else class="text-2xl bold">{{ user.display_name }}</div>
       <div>{{ user.handle }}</div>
       <div>{{ user.email }}</div>
       <div class="mt-4">{{ user.biography }}</div>
@@ -11,21 +14,37 @@
       /></RoundLinkButton>
     </div>
     <div v-else>
-      <TextInput
-        class="mx-auto w-2/3"
-        v-model="editableUser.profile_picture_url"
-        label="Photo de profil"
-      />
-      <div class="flex mx-auto">
-        <TextInput class="ml-auto" v-model="editableUser.first_name" label="Prénom" />
-        <TextInput class="mr-auto" v-model="editableUser.last_name" label="Nom" />
+      <div class="grid grid-cols-2 gap-y-1 gap-x-2">
+        <TextInput
+          class="col-span-2"
+          v-model="editableUser.profile_picture_url"
+          label="Photo de profil"
+        />
+        <TextInput class="col-span-1" v-model="editableUser.first_name" label="Prénom" />
+        <TextInput class="col-span-1" v-model="editableUser.last_name" label="Nom" />
+        <TextInput class="col-span-1" v-model="editableUser.pseudonym" label="Pseudo" />
+        <div class="col-span-1 flex flex-col">
+          <CheckboxInput
+            class="item-center mr-auto my-auto"
+            v-model="editableUser.pseudonymized"
+            label="Ne montrer que votre pseudo"
+          />
+        </div>
+        <TextInput
+          v-if="editableUser.is_platform_user"
+          class="col-span-1"
+          v-model="editableUser.handle"
+          label="Handle"
+        />
+        <TextInput
+          v-if="editableUser.is_platform_user"
+          class="col-span-1"
+          v-model="editableUser.email"
+          label="Email"
+        />
+        <div class="col-span-2"><TextAreaInput v-model="editableUser.biography" label="Bio" /></div>
       </div>
-      <div v-if="editableUser.is_platform_user" class="flex">
-        <TextInput class="ml-auto" v-model="editableUser.handle" label="Handle" />
-        <TextInput class="mr-auto" v-model="editableUser.email" label="Email" />
-      </div>
-      <div><TextAreaInput v-model="editableUser.biography" label="Bio" /></div>
-      <div class="flex flex-row-reverse">
+      <div class="mt-2 flex flex-row-reverse">
         <ActionButton @click="editUser = false" text="Valider" type="valid" />
       </div>
     </div>
@@ -35,6 +54,7 @@
 <script setup lang="ts">
 import RoundLinkButton from '@/components/Ui/RoundLinkButton.vue'
 import TextInput from '@/components/Ui/TextInput.vue'
+import CheckboxInput from '@/components/Ui/CheckboxInput.vue'
 import TextAreaInput from '@/components/Ui/TextAreaInput.vue'
 import ActionButton from '@/components/Ui/ActionButton.vue'
 import { PencilSquareIcon } from '@heroicons/vue/24/outline'
@@ -62,7 +82,13 @@ onMounted(() => {
   editUser.value = route.query.editingUser
 })
 
-watch(editableUser, (editableUser) => debouncedUpdateUser(editableUser.id, editableUser), {
-  deep: true
-})
+watch(
+  editableUser,
+  (editableUser) => {
+    if (isUserEditable.value) debouncedUpdateUser(editableUser.id, editableUser)
+  },
+  {
+    deep: true
+  }
+)
 </script>

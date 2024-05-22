@@ -8,7 +8,7 @@
           class="border border-slate-300 dark:border-zinc-700 rounded-xl max-w-full aspect-[2/2] object-cover object-center w-full"
         />
       </div>
-      <div class="text-center mt-4">{{ user.first_name }} {{ user.last_name }}</div>
+      <div class="text-center mt-4">{{ user.display_name }}</div>
       <div class="text-center mt-4">{{ user.handle }}</div>
       <div class="text-center mt-4 text-xs">{{ displayBioStart(user.biography) }}</div>
     </router-link>

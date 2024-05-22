@@ -1,7 +1,7 @@
 <template>
   <div>
-    <input class="m-2" type="checkbox" :id="checkboxId" v-model="isChecked" @change="handleChange" />
-    <label :for="checkboxId">{{ label }}</label>
+    <input class="" type="checkbox" :id="checkboxId" v-model="isChecked" @change="handleChange" />
+    <label :for="checkboxId" class="ml-2 text-2xs text-slate-800">{{ label }}</label>
   </div>
 </template>
 

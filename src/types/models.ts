@@ -10,6 +10,9 @@ export interface User {
   handle: string
   password?: string
   profile_picture_url?: string
+  pseudonym?: string
+  pseudonymized?: boolean
+  display_name?: string
 }
 
 export interface Category {

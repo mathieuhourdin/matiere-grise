@@ -4,7 +4,7 @@
     <div class="h-full flex flex-col w-full">
       <div class="flex w-auto my-auto shrink overflow-auto">
         <div v-if="user" class="sm:text-xs text-sm font-semibold ml-2">
-          {{ user.first_name }} {{ user.last_name }}
+         {{ user.display_name }} 
         </div>
         <div v-else class="sm:text-xs text-sm italic ml-2">Connectez vous pour voir l'auteur</div>
         <div v-if="secondText" class="mx-1 my-auto rounded-full bg-gray-800 w-1 h-1"></div>

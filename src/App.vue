@@ -16,6 +16,12 @@ const route = useRoute()
 const routerViewKey = computed(() => {
   return route.meta.requiresRender === false ? route.path : route.fullPath
 })
+const isUserSidebarListDisplayed = computed(() => {
+  return route.name !== 'login' && route.name !== 'seeResource'
+})
+const isSidebarMenuOpen = computed(() => {
+  return route.name !== 'login' && menuOpen.value
+})
 onMounted(async () => await loadCategories())
 computed
 </script>
@@ -25,13 +31,15 @@ computed
     <AppHeader class="overflow-auto" />
     <div class="overflow-hidden flex justify-between h-full" style="width: 100%">
       <SidebarMenu
-        v-if="menuOpen"
+        v-if="isSidebarMenuOpen"
         class="absolute md:relative h-full w-full md:static md:basis-1/6 md:shrink-0"
       />
       <div id="router-view" class="overflow-scroll h-full w-full">
         <RouterView class="h-full" :key="routerViewKey" />
       </div>
-      <div class="md:basis-1/6 w-0 md:w-auto md:shrink-0"><UsersSidebarList /></div>
+      <div v-if="isUserSidebarListDisplayed" class="md:basis-1/6 w-0 md:w-auto md:shrink-0 overflow-y-scroll">
+        <UsersSidebarList />
+      </div>
     </div>
   </div>
   <UiSnackbar v-if="snackbar" :message="snackbar.message" :type="snackbar.type" />
