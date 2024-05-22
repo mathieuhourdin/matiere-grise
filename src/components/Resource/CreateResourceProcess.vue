@@ -79,7 +79,7 @@ import { useFileConverter } from '@/composables/useFileConverter'
 
 const processStep = ref<number>(0)
 
-const { newResource, createResource } = useResource()
+const { newResource, createResource, resourceTypeOptions } = useResource()
 
 const resource = ref<Resource>({
   id: '',
@@ -143,16 +143,6 @@ const applyPreview = (preview: any) => {
   resource.value.external_content_url = preview.external_content_url
   isPreviewLoaded.value = true
 }
-
-const resourceTypeOptions = ref([
-  { text: 'Livre', value: 'book' },
-  { text: 'Fiche de lecture', value: 'shet' },
-  { text: 'Article de média', value: 'natc' },
-  { text: 'Article de recherche', value: 'ratc' },
-  { text: 'Film', value: 'movi' },
-  { text: 'Podcast', value: 'pcst' },
-  { text: 'Poême', value: 'poem' }
-])
 
 const { createInteractionForResource, newInteraction } = useInteraction()
 const router = useRouter()
