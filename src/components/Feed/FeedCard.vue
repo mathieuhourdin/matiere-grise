@@ -10,6 +10,7 @@
         :secondBottomText="$t(getResourceTypeNameFromCode(interaction.resource.resource_type))"
       />
       <div v-else class="animate-pulse w-2/3 bg-gradient-to-r from-slate-600 h-8 mb-1.5"></div>
+      <FeedCardTypeIcon :interaction="interaction" class="ml-auto" />
     </div>
     <FeedCardTextInterface :interaction="interaction" />
 
@@ -40,6 +41,7 @@
 
 <script setup lang="ts">
 import UserMini from '@/components/User/UserMini.vue'
+import FeedCardTypeIcon from '@/components/Feed/FeedCardTypeIcon.vue'
 import FeedCardTextInterface from '@/components/Feed/FeedCardTextInterface.vue'
 import { ArrowRightCircleIcon, HeartIcon, PaperAirplaneIcon } from '@heroicons/vue/24/outline'
 import { type ApiResource, type Interaction, type User } from '@/types/models'
