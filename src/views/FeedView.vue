@@ -10,7 +10,6 @@
 <script setup lang="ts">
 import FeedList from '@/components/Feed/FeedList.vue'
 import FollowedProblemsList from '@/components/Problem/FollowedProblemsList.vue'
-import { useProblem } from '@/composables/useProblem'
 import { useMenu } from '@/composables/useMenu'
 import { computed, onMounted, ref } from 'vue'
 import { useCategories } from '@/composables/useCategories'

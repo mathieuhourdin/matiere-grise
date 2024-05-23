@@ -6,14 +6,14 @@
 
 <script setup lang="ts">
 import FollowedProblem from '@/components/Problem/FollowedProblem.vue'
-import { useProblem } from '@/composables/useProblem'
+import { useResource } from '@/composables/useResource'
 import { ref, onMounted } from 'vue'
 
-const { getProblems } = useProblem()
+const { getResources } = useResource()
 
 const problems = ref<Problem[]>([])
 
 onMounted(async () => {
-  problems.value = await getProblems()
+  problems.value = await getResources({ is_external: false, resource_type: 'pblm' })
 })
 </script>

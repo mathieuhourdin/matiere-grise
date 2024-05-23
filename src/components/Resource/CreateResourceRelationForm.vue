@@ -50,7 +50,6 @@ import { useUser } from '@/composables/useUser'
 import { useThoughtInputs } from '@/composables/useThoughtInputs'
 import { useResource } from '@/composables/useResource'
 import { useResourceRelations } from '@/composables/useResourceRelations'
-import { useProblem } from '@/composables/useProblem'
 import { ref, computed, onMounted } from 'vue'
 import { type ApiInteraction, type ApiResource } from '@/types/models'
 const { user } = useUser()
@@ -87,7 +86,6 @@ const relation_type = ref('')
 
 const { createResourceRelation } = useResourceRelations()
 const { getResources } = useResource()
-const { getProblems } = useProblem()
 
 const contextualOriginResources = computed(() => {
   return thoughtInputs.value.map((thoughtInput) => {
