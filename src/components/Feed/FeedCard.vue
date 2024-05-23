@@ -10,7 +10,7 @@
         :secondBottomText="$t(getResourceTypeNameFromCode(interaction.resource.resource_type))"
       />
       <div v-else class="animate-pulse w-2/3 bg-gradient-to-r from-slate-600 h-8 mb-1.5"></div>
-      <FeedCardTypeIcon :interaction="interaction" class="ml-auto" />
+      <!--<FeedCardTypeIcon :interaction="interaction" class="ml-auto" />-->
     </div>
     <FeedCardTextInterface :interaction="interaction" />
 
