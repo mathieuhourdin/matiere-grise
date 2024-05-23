@@ -32,7 +32,8 @@ const filteredInteractions = computed(() => {
         interaction.interaction_type === 'outp' &&
         !interaction.resource.is_external &&
         interaction.resource.resource_type !== 'pblm' &&
-        interaction.resource.publishing_state === 'drft'
+        (interaction.resource.maturing_state === 'drft' ||
+          interaction.resource.maturing_state === 'rvew')
       )
     } else if (feedFilter.value === 'reviews') {
       return interaction.interaction_type === 'rvew'
