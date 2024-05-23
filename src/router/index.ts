@@ -10,12 +10,6 @@ const router = createRouter({
       component: () => import('@/views/FeedView.vue')
     },
     {
-      path: '/productions',
-      name: 'home',
-      meta: { requiresRender: false },
-      component: () => import('@/views/ProductionsListView.vue')
-    },
-    {
       path: '/create-resource',
       name: 'createResource',
       component: () => import('@/views/CreateResourceView.vue')
