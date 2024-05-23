@@ -5,12 +5,10 @@ import UsersSidebarList from '@/components/User/UsersSidebarList.vue'
 import SidebarMenu from '@/components/App/SidebarMenu.vue'
 import UiSnackbar from '@/components/Ui/UiSnackbar.vue'
 import { onMounted } from 'vue'
-import { useCategories } from '@/composables/useCategories'
 import { useMenu } from '@/composables/useMenu'
 import { useSnackbar } from '@/composables/useSnackbar.ts'
 import { computed } from 'vue'
 const { menuOpen } = useMenu()
-const { loadCategories } = useCategories()
 const { snackbar } = useSnackbar()
 const route = useRoute()
 const routerViewKey = computed(() => {
@@ -22,8 +20,6 @@ const isUserSidebarListDisplayed = computed(() => {
 const isSidebarMenuOpen = computed(() => {
   return route.name !== 'login' && menuOpen.value
 })
-onMounted(async () => await loadCategories())
-computed
 </script>
 
 <template>

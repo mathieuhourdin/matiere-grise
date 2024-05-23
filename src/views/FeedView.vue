@@ -12,8 +12,7 @@ import FeedList from '@/components/Feed/FeedList.vue'
 import FollowedProblemsList from '@/components/Problem/FollowedProblemsList.vue'
 import { useMenu } from '@/composables/useMenu'
 import { computed, onMounted, ref } from 'vue'
-import { useCategories } from '@/composables/useCategories'
-import { type Resource, type Category } from '@/types/models'
+import { type Resource } from '@/types/models'
 import { useInteraction } from '@/composables/useInteraction'
 
 /// ThoughtInputs ///

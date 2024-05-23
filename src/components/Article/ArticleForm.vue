@@ -25,15 +25,8 @@
       @update:modelValue="(event) => emitChange('image_url', event)"
     />
     <SelectInput
-      label="Catégorie"
-      class="col-span-4 md:col-span-1"
-      :choices="categoryOptions"
-      :model-value="article.category_id"
-      @update:modelValue="(event) => emitChange('category_id', event)"
-    />
-    <SelectInput
       label="Type de ressource"
-      class="col-span-4 md:col-span-1"
+      class="col-span-4 md:col-span-2"
       :choices="resourceTypeOptions"
       @update:modelValue="(event) => emitChange('resource_type', event)"
       :model-value="article.resource_type"
@@ -64,7 +57,6 @@ import CheckboxInput from '@/components/Ui/CheckboxInput.vue'
 import TextInput from '@/components/Ui/TextInput.vue'
 import NumberInput from '@/components/Ui/NumberInput.vue'
 import TextAreaInput from '@/components/Ui/TextAreaInput.vue'
-import { useCategories } from '@/composables/useCategories'
 import { useResource } from '@/composables/useResource'
 import { type Article } from '@/types/models'
 import { ref, computed } from 'vue'
@@ -81,19 +73,6 @@ const maturingStateOptions = ref([
 ])
 
 const { resourceTypeOptions } = useResource()
-/*const resourceTypeOptions = ref([
-  { text: 'Livre', value: 'book' },
-  { text: 'Fiche de lecture', value: 'shet' },
-  { text: 'Article de média', value: 'natc' },
-  { text: 'Article de recherche', value: 'ratc' },
-  { text: 'Film', value: 'movi' },
-  { text: 'Podcast', value: 'pcst' }
-])*/
-
-const { categories } = useCategories()
-const categoryOptions = computed(() => {
-  return categories.value.map((category) => ({ text: category.display_name, value: category.id }))
-})
 
 const emitChange = (field: string, event: any) => {
   let article: any = { ...props.article }

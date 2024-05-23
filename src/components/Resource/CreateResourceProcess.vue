@@ -101,7 +101,7 @@ const chooseIsExternal = (value) => {
   if (!value) {
     //internal resource. The author is the logged in user
     resourceAuthorId.value = user.value.id
-    resource.value.maturing_state = 'idea'
+    resource.value.maturing_state = 'drft'
     resource.is_external = false
     processStep.value = 1
     productionDate.value = new Date(Date.now()).toISOString().split('T')[0]

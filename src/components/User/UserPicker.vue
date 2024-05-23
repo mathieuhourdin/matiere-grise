@@ -25,7 +25,7 @@ const users = ref<User[]>([])
 
 const formatUserForSelect = (toFormatUser: User) => {
   if (!toFormatUser) return
-  return { text: `${toFormatUser.first_name} ${toFormatUser.last_name}`, value: toFormatUser.id }
+  return { text: toFormatUser.display_name, value: toFormatUser.id }
 }
 
 const usersChoices = computed(() => {
