@@ -47,7 +47,7 @@ async function getUserReadAndWriteInteractions(id: string): Promise<ApiInteracti
   const write = await fetchWrapper.get('/users/' + id + '/thought_outputs?limit=60')
   let drafts = { data: [] }
   if (user.value && user.value.id === id) {
-    drafts = await fetchWrapper.get('/users/' + id + '/thought_outputs?drafts=true')
+    drafts = await fetchWrapper.get('/users/' + id + '/thought_outputs?maturing_state=drft')
   }
   return read.data
     .map((thoughtInput: any) => formatApiResponse(thoughtInput))
