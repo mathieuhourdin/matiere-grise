@@ -13,7 +13,7 @@ const newProblem = () => {
     content: '',
     external_content_url: '',
     publishing_state: 'drft',
-    maturing_state: 'idea',
+    maturing_state: 'drft',
     image_url: '',
     resource_type: 'pblm',
     comment: '',

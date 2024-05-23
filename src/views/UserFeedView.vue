@@ -19,7 +19,6 @@
 <script setup lang="ts">
 import FeedList from '@/components/Feed/FeedList.vue'
 import UserInfos from '@/components/User/UserInfos.vue'
-import ArticleCard from '@/components/Article/ArticleCard.vue'
 import ToggleButtonGroup from '@/components/Ui/ToggleButtonGroup.vue'
 import ModalSheet from '@/components/Ui/ModalSheet.vue'
 import CreateThoughtInput from '@/components/ThoughtInput/CreateThoughtInput.vue'

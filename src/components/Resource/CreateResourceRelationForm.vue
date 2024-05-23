@@ -50,7 +50,6 @@ import { useUser } from '@/composables/useUser'
 import { useThoughtInputs } from '@/composables/useThoughtInputs'
 import { useResource } from '@/composables/useResource'
 import { useResourceRelations } from '@/composables/useResourceRelations'
-import { useArticle } from '@/composables/useArticle'
 import { useProblem } from '@/composables/useProblem'
 import { ref, computed, onMounted } from 'vue'
 import { type ApiInteraction, type ApiResource } from '@/types/models'
@@ -88,7 +87,6 @@ const relation_type = ref('')
 
 const { createResourceRelation } = useResourceRelations()
 const { getResources } = useResource()
-const { getArticles } = useArticle()
 const { getProblems } = useProblem()
 
 const contextualOriginResources = computed(() => {
@@ -141,9 +139,9 @@ onMounted(async () => {
   if (!user.value || !user.value.id) return
   if (props.targetResource) thoughtInputs.value = await getUserThoughtInputs(user.value.id)
   if (props.originResource) {
-    externalResources.value = await getResources()
-    internalArticles.value = await getArticles({ author: true })
-    problems.value = await getProblems()
+    externalResources.value = await getResources({ is_external: true })
+    internalArticles.value = await getResources({ is_external: false, resource_type: 'oatc' })
+    problems.value = await getResources({ is_external: false, resource_type: 'pblm' })
   }
 })
 </script>

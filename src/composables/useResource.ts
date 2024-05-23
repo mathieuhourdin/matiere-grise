@@ -45,9 +45,10 @@ const getResource = async (id: string): Promise<ApiResource> => {
     throw error
   }
 }
-const getResources = async (): Promise<ApiResource[]> => {
+const getResources = async (params: any = {}): Promise<ApiResource[]> => {
   try {
-    const response = await fetchWrapper.get('/resources?limit=60')
+    const queryString = Object.keys(params).map((key: string) => `${key}=${params[key]}`).join('&');
+    const response = await fetchWrapper.get('/resources?limit=60&' + queryString)
     return response.data
   } catch (error) {
     launchSnackbar(`Error getting resources : ${error}`, 'error')

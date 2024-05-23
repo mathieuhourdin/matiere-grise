@@ -49,7 +49,7 @@
           class="my-2"
           :interaction="authorInteraction"
           :resource-id="resourceId"
-          @change="updateAuthorInteraction"
+          @change="fetchAuthorInteraction"
         />
         <div class="flex flex-row-reverse mb-4">
           <ActionButton class="ml-2" @click="setEditingMetaData(false)" type="valid" text="Preview"
@@ -57,15 +57,15 @@
           >
           <ActionButton
             class="ml-2"
-            v-if="resource.publishing_state == 'drft'"
-            @click="publishResource"
+            v-if="!authorInteraction.interaction_is_public"
+            @click="publishInteraction"
             type="valid"
             text="Publier"
           />
           <ActionButton
             class="ml-2"
             v-else
-            @click="unpublishResource"
+            @click="unpublishInteraction"
             type="abort"
             text="Dépublier"
           />
@@ -156,6 +156,7 @@
 
 <script setup lang="ts">
 import ResourceTools from '@/components/Resource/ResourceTools.vue'
+import CreateResourceRelationForm from '@/components/Resource/CreateResourceRelationForm.vue'
 import CommentsThread from '@/components/Comment/CommentsThread.vue'
 import DateField from '@/components/Ui/DateField.vue'
 import ToggleButtonGroup from '@/components/Ui/ToggleButtonGroup.vue'
@@ -261,7 +262,7 @@ const contextualResources = computed(() => {
 
 const interactions = ref<Interaction[]>([])
 
-const { getInteractionsForResource } = useInteraction()
+const { getInteractionsForResource, updateInteraction } = useInteraction()
 
 const loadInteractions = async () => {
   interactions.value = await getInteractionsForResource(props.resourceId)
@@ -319,18 +320,6 @@ const setEditingMetaData = (value: boolean) => {
   router.push({ query: { editing: value.toString() } })
 }
 
-const publishResource = () => {
-  if (!resource.value || !resource.value.id) return
-  resource.value.publishing_state = 'pbsh'
-  updateResource(resource.value.id, resource.value)
-}
-
-const unpublishResource = () => {
-  if (!resource.value || !resource.value.id) return
-  resource.value.publishing_state = 'drft'
-  updateResource(resource.value.id, resource.value)
-}
-
 const debouncedUpdateResource = (id: string, newResource: ApiResource) => {
   resource.value = newResource
   if (debouncedUpdate.value !== null) clearTimeout(debouncedUpdate.value)
@@ -374,9 +363,22 @@ const resourceUser: Ref<User | null> = ref<User | null>(null)
 
 const authorInteraction = ref<Interaction | null>(null)
 
-const updateAuthorInteraction = async () => {
+const fetchAuthorInteraction = async () => {
   authorInteraction.value = await getAuthorInteractionForResource(props.resourceId)
 }
+
+const publishInteraction = async () => {
+  if (!authorInteraction.value || !authorInteraction.value.id) return
+  await updateInteraction(authorInteraction.value.id, { ...authorInteraction.value, interaction_is_public: true })
+  fetchAuthorInteraction()
+}
+
+const unpublishInteraction = async () => {
+  if (!authorInteraction.value || !authorInteraction.value.id) return
+  await updateInteraction(authorInteraction.value.id, { ...authorInteraction.value, interaction_is_public: false })
+  fetchAuthorInteraction()
+}
+
 
 /************** comments section *****************/
 const { getCommentsForThoughtOutput } = useComments()
