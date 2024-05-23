@@ -69,7 +69,7 @@ const props = defineProps<{
 const maturingStateOptions = ref([
   { text: 'Terminé', value: 'fnsh' },
   { text: 'Relecture', value: 'rvew' },
-  { text: 'Idée', value: 'idea' }
+  { text: 'Brouillon', value: 'drft' }
 ])
 
 const { resourceTypeOptions } = useResource()
