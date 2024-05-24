@@ -17,7 +17,8 @@
     </div>
     <div class="md:basis-1/3 basis-1/2 flex flex-row-reverse">
       <UserManagement class="mr-1 md:mr-4 my-auto" />
-      <ReviewsNotifications class="my-auto w-8 mr-1 md:mr-2 border border-black border-2" />
+      <ReviewsNotifications class="my-auto w-8 ml-1 mr-1 md:mr-2 border border-black border-2" />
+      <DraftsNotifications class="my-auto w-8 mr-1 md:mr-2 border border-black border-2" />
     </div>
   </div>
 </template>
@@ -25,6 +26,7 @@
 <script setup lang="ts">
 import FeedFilter from '@/components/Feed/FeedFilter.vue'
 import ReviewsNotifications from '@/components/App/ReviewsNotifications.vue'
+import DraftsNotifications from '@/components/App/DraftsNotifications.vue'
 import UserManagement from '@/components/App/UserManagement.vue'
 import BaseLink from '@/components/Ui/BaseLink.vue'
 import { Bars3Icon } from '@heroicons/vue/24/outline'

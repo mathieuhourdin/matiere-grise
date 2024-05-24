@@ -60,7 +60,7 @@ const contextualInteractions = computed(() => {
 onMounted(async () => {
   pageUser.value = await getUserById(props.pageUserId)
   interactions.value = await getUserReadAndWriteInteractions(props.pageUserId)
-  const reviews = await getInteractions("rvew")
+  const reviews = await getInteractions({ interaction_type: "rvew", interaction_user_id: user.value.id })
   interactions.value = interactions.value.concat(reviews)
 })
 </script>

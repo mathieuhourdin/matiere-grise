@@ -13,7 +13,7 @@
 import SelectInput from '@/components/Ui/SelectInput.vue'
 import { useMenu } from '@/composables/useMenu'
 import { useUser } from '@/composables/useUser'
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 import { useRoute } from 'vue-router'
 
 const { feedFilter } = useMenu()
@@ -22,7 +22,7 @@ const route = useRoute()
 const { user } = useUser()
 
 const isOnLoggedInUserPage = computed(() => {
-  return route.name === 'userFeed' && router.params.pageUserId === user.value.id
+  return route.name === 'userFeed' && route.params.pageUserId === user.value.id
 })
 
 const choices = computed(() => {
@@ -41,11 +41,16 @@ const choices = computed(() => {
       route.params.pageUserId === user.value.id && { text: 'Reviews', value: 'reviews' }
   ].filter(Boolean)
 })
-onMounted(() => {
-  console.log("useMenu mounted")
-  if (route.query.feed_filter && typeof route.query.feed_filter === "string") {
+
+const loadRouteParam = () => {
+  console.log('loadRouteParam')
+  if (route.query.feed_filter && typeof route.query.feed_filter === 'string') {
     feedFilter.value = route.query.feed_filter
   }
+}
+watch(route, () => loadRouteParam(), { deep: true })
+onMounted(() => {
+  console.log('useMenu mounted')
+  loadRouteParam()
 })
-
 </script>

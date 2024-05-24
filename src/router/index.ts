@@ -66,7 +66,7 @@ const router = createRouter({
     {
       path: '/users/:pageUserId',
       name: 'userFeed',
-      meta: { requiresRender: false },
+      meta: { requiresRender: true },
       props: true,
       component: () => import('@/views/UserFeedView.vue')
     },

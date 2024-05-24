@@ -17,42 +17,49 @@ function newInteraction(): Interaction {
 }
 
 function formatApiResponse(apiInteraction: any): ApiInteraction {
-  console.log('Date : ', apiInteraction.interaction_date)
   apiInteraction.interaction_date = new Date(apiInteraction.interaction_date)
   const response: ApiInteraction = apiInteraction
   return response
 }
 
-async function getInteractions(
+async function getInteractions(query: any = {}): Promise<ApiInteraction[]> {
+  const queryString = Object.keys(query)
+    .map((key: string) => `${key}=${query[key]}`)
+    .join('&')
+  const response = await fetchWrapper.get('/interactions?limit=60&' + queryString)
+  return response.data.map((interaction: any) => formatApiResponse(interaction))
+}
+
+async function getUserInteractions(
+  userId: string,
   interactionType: string = 'inpt',
   maturingState: string = 'fnsh'
 ): Promise<ApiInteraction[]> {
   const response = await fetchWrapper.get(
-    '/interactions?limit=60&interaction_type=' +
-      interactionType +
-      '&maturing_state=' +
-      maturingState
+    `/users/${userId}/interactions?interaction_type=${interactionType}&maturing_state=${maturingState}`
   )
   return response.data.map((interaction: any) => formatApiResponse(interaction))
 }
 
 async function getReadAndWriteInteractions(): Promise<ApiInteraction[]> {
-  const read = await getInteractions('inpt')
-  const write = await getInteractions('outp')
+  const read = await getInteractions({ interaction_type: 'inpt' })
+  const write = await getInteractions({ interaction_type: 'outp' })
   return read.concat(write)
 }
 
 async function getUserReadAndWriteInteractions(id: string): Promise<ApiInteraction[]> {
-  const read = await fetchWrapper.get('/users/' + id + '/thought_inputs?limit=60')
-  const write = await fetchWrapper.get('/users/' + id + '/thought_outputs?limit=60')
-  let drafts = { data: [] }
+
+  const read = await getInteractions({ interaction_type: 'inpt', interaction_user_id: id})
+  const write = await getInteractions({ interaction_type: 'outp', interaction_user_id: id})
+
+  let drafts: any[] = []
   if (user.value && user.value.id === id) {
-    drafts = await fetchWrapper.get('/users/' + id + '/thought_outputs?maturing_state=drft')
+    drafts = await getInteractions({ interaction_type: 'outp', maturing_state: 'drft', interaction_user_id: id})
   }
-  return read.data
+  return read
     .map((thoughtInput: any) => formatApiResponse(thoughtInput))
-    .concat(write.data.map((thoughtOutput: any) => formatApiResponse(thoughtOutput)))
-    .concat(drafts.data.map((thoughtOutput: any) => formatApiResponse(thoughtOutput)))
+    .concat(write.map((thoughtOutput: any) => formatApiResponse(thoughtOutput)))
+    .concat(drafts.map((thoughtOutput: any) => formatApiResponse(thoughtOutput)))
 }
 
 async function getUserThoughtOutputs(id: string): Promise<ApiInteraction[]> {
@@ -65,14 +72,8 @@ async function getInteraction(id: string): Promise<ApiInteraction> {
   return formatApiResponse(response.data)
 }
 
-async function getUserInteractions(userId: string): Promise<ApiInteraction[]> {
-  const response = await fetchWrapper.get('/users/' + userId + '/thought_inputs')
-  return response.data.map((thoughtInput: any) => formatApiResponse(thoughtInput))
-}
-
 async function updateInteraction(id: string, thoughtInput: any): Promise<ApiInteraction> {
   const date_interaction_date = new Date(thoughtInput.interaction_date)
-  console.log('Date : ', date_interaction_date)
   const interaction_date = date_interaction_date.toISOString().split('.')[0]
   thoughtInput.interaction_progress = Number(thoughtInput.interaction_progress)
   const response = await fetchWrapper.put('/interactions/' + id, {
@@ -84,7 +85,6 @@ async function updateInteraction(id: string, thoughtInput: any): Promise<ApiInte
 
 async function createInteraction(thoughtInput: Interaction): Promise<ApiInteraction> {
   const date_interaction_date = new Date(thoughtInput.interaction_date)
-  console.log('Date : ', date_interaction_date)
   const interaction_date = date_interaction_date.toISOString().split('.')[0]
   thoughtInput.interaction_progress = Number(thoughtInput.interaction_progress)
   const response = await fetchWrapper.post('/thought_inputs', { ...thoughtInput, interaction_date })
@@ -97,7 +97,6 @@ async function createInteractionForResource(
   thoughtInput: Interaction
 ): Promise<ApiInteraction> {
   const date_interaction_date = new Date(thoughtInput.interaction_date)
-  console.log('Date : ', date_interaction_date)
   const interaction_date = date_interaction_date.toISOString().split('.')[0]
   thoughtInput.interaction_progress = Number(thoughtInput.interaction_progress)
   const response = await fetchWrapper.post(`/resources/${resource_id}/interactions`, {

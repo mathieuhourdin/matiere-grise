@@ -1,22 +1,22 @@
 <template>
   <RoundLinkButton
-    :to="user ? '/users/' + user.id + '?feed_filter=reviews' : ''"
+    :to="user ? '/users/' + user.id + '?feed_filter=draft' : ''"
     color="slate-light"
     class="relative"
     ><template #chip
       ><div
-        v-if="reviewsCount > 0"
+        v-if="draftsCount > 0"
         class="absolute text-xs top-0 right-0 rounded-full w-3.5 h-3.5 bg-red-600 text-white"
       >
-        {{ reviewsCount }}
+        {{ draftsCount }}
       </div></template
-    ><BookOpenIcon
+    ><PencilSquareIcon
   /></RoundLinkButton>
 </template>
 
 <script setup lang="ts">
 import RoundLinkButton from '@/components/Ui/RoundLinkButton.vue'
-import { BookOpenIcon } from '@heroicons/vue/24/outline'
+import { PencilSquareIcon } from '@heroicons/vue/24/outline'
 import { ref, onMounted, watch } from 'vue'
 import { useUser } from '@/composables/useUser'
 import { useInteraction } from '@/composables/useInteraction'
@@ -24,20 +24,24 @@ import { useInteraction } from '@/composables/useInteraction'
 const { user } = useUser()
 const { getInteractions } = useInteraction()
 
-const reviewsCount = ref(0)
+const draftsCount = ref(0)
 
-const calculateReviewsCount = async () => {
+const calculateDraftsCount = async () => {
   if (!user.value) return
-  const reviews = await getInteractions({
-    interaction_type: 'rvew',
+  const drafts = await getInteractions({
+    maturing_state: 'drft',
+    interaction_type: 'outp',
     interaction_user_id: user.value.id
   })
-  reviewsCount.value = reviews.length
+  console.log(drafts)
+  draftsCount.value = drafts.length
 }
 
 onMounted(async () => {
-  await calculateReviewsCount()
+  await calculateDraftsCount()
 })
 
-watch(user, async () => await calculateReviewsCount())
+watch(user, async () => {
+  await calculateDraftsCount()
+})
 </script>
