@@ -4,9 +4,10 @@
       <Bars3Icon @click="toggleMenuOpen" class="p-1 md:p-2" />
       <FeedFilter v-if="isFeedRoute" class="my-auto bg-slate-300" />
       <BaseLink v-else class="md:ml-4 my-auto mr-auto text-xs md:text-base"
-        >🫀 Matiere Grise</BaseLink
+        >🫀 Matieres Grises</BaseLink
       >
     </div>
+      <div>Matieres grises</div>
     <div class="my-auto grow text-center">
       <router-link
         v-if="headerValue"
