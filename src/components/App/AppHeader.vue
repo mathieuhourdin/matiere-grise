@@ -7,7 +7,6 @@
         >🫀 Matieres Grises</BaseLink
       >
     </div>
-      <div>Matieres grises</div>
     <div class="my-auto grow text-center">
       <router-link
         v-if="headerValue"

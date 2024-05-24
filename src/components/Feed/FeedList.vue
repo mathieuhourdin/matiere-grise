@@ -31,7 +31,6 @@ const filteredInteractions = computed(() => {
       return (
         interaction.interaction_type === 'outp' &&
         !interaction.resource.is_external &&
-        interaction.resource.resource_type !== 'pblm' &&
         (interaction.resource.maturing_state === 'drft' ||
           interaction.resource.maturing_state === 'rvew')
       )
