@@ -53,8 +53,8 @@ watch(
   () => {
     loadRouteParam()
     if (
-      (route.name !== 'userFeed' && feedFilter.value === 'draft') ||
-      feedFilter.value === 'reviews'
+      route.name !== 'userFeed' &&
+      (feedFilter.value === 'draft' || feedFilter.value === 'reviews')
     ) {
       feedFilter.value = 'all'
     }

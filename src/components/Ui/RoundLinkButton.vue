@@ -1,7 +1,7 @@
 <template>
   <router-link
     v-if="to"
-    class="ml-auto w-12 rounded-square p-1 text-center text-4xl"
+    class="w-12 rounded-square p-1 text-center text-4xl"
     :class="colorClass"
     :title="title"
     :to="to"
@@ -11,7 +11,7 @@
   </router-link>
   <div
     v-else
-    class="ml-auto w-12 rounded-square p-1 text-center text-4xl"
+    class="w-12 rounded-square p-1 text-center text-4xl"
     :title="title"
     :class="colorClass"
     @click="emitClick"

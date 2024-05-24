@@ -15,10 +15,10 @@
         >{{ headerValue.text }}</router-link
       >
     </div>
-    <div class="md:basis-1/3 basis-1/2 flex flex-row-reverse">
+    <div class="md:basis-1/3 basis-1/2 flex">
+      <DraftsNotifications class="my-auto ml-auto w-8 mr-1 md:mr-2 border border-black border-2" />
+      <ReviewsNotifications class="my-auto w-8 mr-1 md:mr-2 border border-black border-2" />
       <UserManagement class="mr-1 md:mr-4 my-auto" />
-      <ReviewsNotifications class="my-auto w-8 ml-1 mr-1 md:mr-2 border border-black border-2" />
-      <DraftsNotifications class="my-auto w-8 mr-1 md:mr-2 border border-black border-2" />
     </div>
   </div>
 </template>
