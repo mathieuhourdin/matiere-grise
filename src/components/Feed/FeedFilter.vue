@@ -48,7 +48,19 @@ const loadRouteParam = () => {
     feedFilter.value = route.query.feed_filter
   }
 }
-watch(route, () => loadRouteParam(), { deep: true })
+watch(
+  route,
+  () => {
+    loadRouteParam()
+    if (
+      (route.name !== 'userFeed' && feedFilter.value === 'draft') ||
+      feedFilter.value === 'reviews'
+    ) {
+      feedFilter.value = 'all'
+    }
+  },
+  { deep: true }
+)
 onMounted(() => {
   console.log('useMenu mounted')
   loadRouteParam()
