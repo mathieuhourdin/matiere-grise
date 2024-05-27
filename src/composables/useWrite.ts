@@ -1,6 +1,6 @@
 import { ref, type Ref } from 'vue'
 
-type Cursor = {
+export type Cursor = {
   line: number
   startOffset: number
   endOffset: number
@@ -26,7 +26,8 @@ const removeAt = (original: string, index: number) => {
 
 const editCount = ref<number>(0)
 
-const handleBackspace = async (cursorPosition: Ref<Cursor>) => {
+const handleBackspace = async (cursorPosition: Ref<Cursor|null>) => {
+  if (!cursorPosition.value) return
   if (cursorPosition.value.startOffset !== 0) {
     textLines.value[cursorPosition.value.line].text = removeAt(
       textLines.value[cursorPosition.value.line].text,
@@ -59,7 +60,8 @@ const handleBackspace = async (cursorPosition: Ref<Cursor>) => {
   editCount.value += 1
 }
 
-const handleWrite = async (key: string, cursorPosition: Ref<Cursor>) => {
+const handleWrite = async (key: string, cursorPosition: Ref<Cursor|null>) => {
+  if (!cursorPosition.value) return
   if (lastKeyPress.value === 'Dead') {
     switch (key) {
       case 'e':
@@ -92,7 +94,8 @@ const handleWrite = async (key: string, cursorPosition: Ref<Cursor>) => {
   editCount.value += 1
 }
 
-const handleNewLine = async (cursorPosition: Ref<Cursor>) => {
+const handleNewLine = async (cursorPosition: Ref<Cursor|null>) => {
+  if (!cursorPosition.value) return
   const line = cursorPosition.value.line
   const startOffset = cursorPosition.value.startOffset
   const initialText = textLines.value[cursorPosition.value.line].text
@@ -111,7 +114,8 @@ const handleNewLine = async (cursorPosition: Ref<Cursor>) => {
 }
 
 const localClipboard = ref<string>('')
-const copyToClipboard = (cursorPosition: Ref<Cursor>) => {
+const copyToClipboard = (cursorPosition: Ref<Cursor|null>) => {
+  if (!cursorPosition.value) return
   const copiedText = textLines.value[cursorPosition.value.line].text.slice(
     cursorPosition.value.startOffset,
     cursorPosition.value.endOffset
@@ -119,7 +123,8 @@ const copyToClipboard = (cursorPosition: Ref<Cursor>) => {
   localClipboard.value = copiedText
   console.log('CopiedText : ', copiedText)
 }
-const cutToClipboard = (cursorPosition: Ref<Cursor>) => {
+const cutToClipboard = (cursorPosition: Ref<Cursor|null>) => {
+  if (!cursorPosition.value) return
   copyToClipboard(cursorPosition)
   const initialText = textLines.value[cursorPosition.value.line].text
   const initalEndOffset = cursorPosition.value.endOffset
@@ -127,7 +132,8 @@ const cutToClipboard = (cursorPosition: Ref<Cursor>) => {
   textLines.value[cursorPosition.value.line].text =
     initialText.slice(0, cursorPosition.value.startOffset) + initialText.slice(initalEndOffset)
 }
-const pasteTextFromClipboard = (cursorPosition: Ref<Cursor>) => {
+const pasteTextFromClipboard = (cursorPosition: Ref<Cursor|null>) => {
+  if (!cursorPosition.value) return
   textLines.value[cursorPosition.value.line].text = insertAt(
     textLines.value[cursorPosition.value.line].text,
     localClipboard.value,
@@ -137,7 +143,8 @@ const pasteTextFromClipboard = (cursorPosition: Ref<Cursor>) => {
   cursorPosition.value.endOffset = cursorPosition.value.startOffset
 }
 
-const keydown = async (event: any, cursorPosition: Ref<Cursor>) => {
+const keydown = async (event: any, cursorPosition: Ref<Cursor|null>) => {
+  if (!cursorPosition.value) return
   const key = event.key
   event.preventDefault()
   console.log('Keydown : ', key)

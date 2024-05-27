@@ -30,6 +30,7 @@ import { onMounted, ref, computed, watch } from 'vue'
 import { v4 as uuidv4 } from 'uuid'
 import { useSnackbar } from '@/composables/useSnackbar'
 import { useWrite } from '@/composables/useWrite'
+import { useCursor } from '@/composables/useCursor'
 
 const emit = defineEmits(['change'])
 
@@ -42,63 +43,15 @@ const { launchSnackbar } = useSnackbar()
 
 const { formatText, textLines, keydown, editCount, parseTextLines } = useWrite()
 
-const componentUuid = ref<string>('')
-
-const fullText = computed(() => {
-  return formatText()
-})
-
-const mouseupHandler = (event) => {
-  console.log(event)
-  const selection = window.getSelection()
-  console.log('selection : ', selection)
-  const range = selection.getRangeAt(0)
-  console.log('range : ', range)
-}
-
-const setCursorPositionFromClick = (index) => {
-  if (!props.editable) return
-  const selection = window.getSelection()
-  const range = selection.getRangeAt(0)
-  cursorPosition.value = { line: index, startOffset: range.startOffset, endOffset: range.endOffset }
-}
-
-const getCursorCoordinates = () => {
-  if (cursorPosition.value.line === undefined) return
-
-  console.log(`CursorPosition : ${JSON.stringify(cursorPosition.value)}`)
-  const range = document.createRange()
-
-  const selectedLine = document.getElementById(
-    `line-${componentUuid.value}-${cursorPosition.value.line}`
-  )
-
-  console.log('Selected LIne : ', selectedLine)
-
-  const textLineHeight = window.getComputedStyle(selectedLine).lineHeight
-
-  const textNode = selectedLine.firstChild.firstChild
-  range.setStart(textNode, 0)
-  range.setEnd(textNode, cursorPosition.value.startOffset)
-
-  const boundingRects = range.getClientRects()
-  const lastRect = boundingRects[boundingRects.length - 1]
-
-  cursorCoordinates.value = {
-    left: `${lastRect.right}px`,
-    bottom: `${lastRect.bottom}px`,
-    top: `${lastRect.top - 3}px`,
-    height: textLineHeight
-  }
-}
-
-const handleKeydown = (event) => {
-  keydown(event, cursorPosition)
-}
-
-const cursorCoordinates = ref({ left: '0px', right: '0px' })
-
-const cursorPosition = ref({ line: undefined, startOffset: undefined, endOffset: undefined })
+const {
+  getCursorCoordinates,
+  cursorPosition,
+  cursorCoordinates,
+  componentUuid,
+  handleKeydown,
+  mouseupHandler,
+  setCursorPositionFromClick
+} = useCursor()
 
 onMounted(() => {
   componentUuid.value = uuidv4()
