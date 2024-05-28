@@ -271,7 +271,7 @@ const addComment = async () => {
   console.log(menuIndex.value)
   if (!props.resourceId || !menuIndex.value) return
   console.log('Add Comment 2')
-  const newComment = await createComment(props.resourceId, menuIndex.value)
+  const newComment = await createComment(props.resourceId, menuIndex.value, menuIndex.value)
   comments.value.push(newComment)
 }
 

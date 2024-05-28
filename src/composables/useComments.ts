@@ -4,11 +4,11 @@ import { fetchWrapper } from '@/helpers'
 import { useSnackbar } from '@/composables/useSnackbar'
 const { launchSnackbar } = useSnackbar()
 
-const createComment = async (articleId: string, startIndex: number|null, content?: string, editing?: boolean): Promise<Comment> => {
+const createComment = async (articleId: string, startIndex: number|null, endIndex: number|null, content?: string, editing?: boolean): Promise<Comment> => {
   const { user } = useUser()
   const payload = {
     start_index: startIndex,
-    end_index: startIndex,
+    end_index: endIndex,
     content: content,
     editing: editing
   }

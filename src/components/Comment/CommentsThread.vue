@@ -49,7 +49,7 @@ const filteredComments = computed(() => {
 
 const newCommentContent = ref<string>('')
 const validateNewComment = async () => {
-  await createComment(props.resourceId, null, newCommentContent.value, false)
+  await createComment(props.resourceId, null, null, newCommentContent.value, false)
   newCommentContent.value = ''
   await loadComments()
 }
