@@ -10,10 +10,7 @@
       :src="interaction.resource.image_url"
       @load="fixHeight"
     />
-    <div
-      v-else-if="page == 0"
-      class="bg-white h-full text-center align-text-bottom flex items-center justify-center"
-    >
+    <div v-else-if="page == 0" class="bg-white h-full text-center flex items-center justify-center">
       <div>
         <div class="text-2xl text-black">
           {{ interaction.resource.title }}
@@ -25,15 +22,19 @@
     </div>
     <div
       v-else
-      class="overflow-auto h-full overflow-scroll p-1 pt-8 border"
+      class="h-full overflow-scroll p-1 pb-16 border flex items-center justify-center"
       :class="getTextPropertiesFromPage(page).class"
     >
       <div
         :class="getTextPropertiesFromPage(page).class"
         class="text-center text-sm my-auto text-white"
       >
-        <div class="text-bold mb-2">{{ getTextPropertiesFromPage(page).header }}</div>
-        {{ getTextPropertiesFromPage(page).text }}
+        <div>
+          <div class="text-bold mb-2">{{ getTextPropertiesFromPage(page).header }}</div>
+          <div>
+            {{ getTextPropertiesFromPage(page).text }}
+          </div>
+        </div>
       </div>
     </div>
     <div class="absolute right-2 top-2 bg-gray-400 rounded-xl p-1 text-xs opacity-70">
