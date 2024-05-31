@@ -4,8 +4,18 @@
     <TextInput class="mt-2" label="Email*" v-model="newUser.email" />
     <TextInput class="mt-2" label="Prénom" v-model="newUser.first_name" />
     <TextInput class="mt-2" label="Nom" v-model="newUser.last_name" />
+    <TextInput class="mt-2" label="Photo de profil" v-model="newUser.profile_picture_url" />
+    <img
+      v-if="newUser.profile_picture_url != ''"
+      class="rounded mt-2 mx-auto"
+      :src="newUser.profile_picture_url"
+    />
     <TextInput class="mt-2" label="Pseudo" v-model="newUser.pseudonym" />
-    <CheckboxInput class="mt-2" v-model="newUser.pseudonymized" label="Ne montrer que votre pseudo" />
+    <CheckboxInput
+      class="mt-2"
+      v-model="newUser.pseudonymized"
+      label="Ne montrer que votre pseudo"
+    />
     <TextInput class="mt-2" label="handle* (@comme_sur_insta)" v-model="newUser.handle" />
     <TextInput class="mt-2" label="Password*" v-model="newUser.password" type="password" />
     <div class="mt-2 flex">
@@ -29,6 +39,7 @@ const newUser = ref({
   email: '',
   first_name: '',
   last_name: '',
+  profile_picture_url: '',
   handle: '@',
   password: '',
   pseudonym: '',
