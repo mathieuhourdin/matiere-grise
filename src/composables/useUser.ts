@@ -8,18 +8,23 @@ const { launchSnackbar } = useSnackbar()
 
 const user = ref<User | null>(null)
 
+const isUserLoaded = ref<boolean>(false)
+
 async function loadUser() {
   const userIdStored = localStorage.getItem('userId')
   console.log('userIdStored : ', userIdStored)
   if (!userIdStored) {
     user.value = null
+    isUserLoaded.value = true
     return
   }
   try {
     const response = await fetchWrapper.get('/users/' + userIdStored)
     user.value = response.data
+    isUserLoaded.value = true
   } catch (error) {
     user.value = null
+    isUserLoaded.value = true
   }
 }
 
@@ -55,6 +60,7 @@ async function debouncedUpdateUser(id: string, user: User) {
 function logOut() {
   localStorage.removeItem('userId')
   user.value = null
+  router.push({ path: '/login' })
 }
 
 async function authUser(login: any, redirectPath: string = '/') {
@@ -112,6 +118,7 @@ export function useUser() {
     getUsers,
     updateUser,
     debouncedUpdateUser,
-    createNewDraftUser
+    createNewDraftUser,
+    isUserLoaded
   }
 }

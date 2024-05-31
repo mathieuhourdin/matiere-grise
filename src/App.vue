@@ -4,12 +4,12 @@ import AppHeader from './components/App/AppHeader.vue'
 import UsersSidebarList from '@/components/User/UsersSidebarList.vue'
 import SidebarMenu from '@/components/App/SidebarMenu.vue'
 import UiSnackbar from '@/components/Ui/UiSnackbar.vue'
-import { onMounted } from 'vue'
+import { onMounted, watch, computed } from 'vue'
 import { useMenu } from '@/composables/useMenu'
 import { useSnackbar } from '@/composables/useSnackbar.ts'
-import { computed } from 'vue'
 const { menuOpen } = useMenu()
 const { snackbar } = useSnackbar()
+
 const route = useRoute()
 const routerViewKey = computed(() => {
   return route.meta.requiresRender === false ? route.path : route.fullPath
