@@ -32,6 +32,19 @@
         />
       </div>
     </div>
+    <div v-else-if="user.id === author.id">
+      <div>{{ modelValue }}</div>
+      <div class="flex">
+        <ActionButton
+          @click="editComment"
+          class="text-sm"
+          rounded
+          size="2xs"
+          text="Editer"
+          type="valid"
+        />
+      </div>
+    </div>
     <div v-else class="text-xs mt-0.5">
       {{ modelValue }}
     </div>
@@ -42,13 +55,16 @@
 import ActionButton from '@/components/Ui/ActionButton.vue'
 import { type User } from '@/types/models'
 import { computed, toRefs } from 'vue'
-const emit = defineEmits(['update:modelValue', 'validate', 'abort'])
+import { useUser } from '@/composables/useUser'
+
+const emit = defineEmits(['update:modelValue', 'validate', 'abort', 'edit'])
 const props = defineProps<{
   editing: boolean
   modelValue: string
   author?: User
   createdAt?: Date
 }>()
+
 const formattedDate = computed(() => {
   if (!props.createdAt) return ''
   return props.createdAt.toLocaleString('fr-FR', {
@@ -59,6 +75,9 @@ const formattedDate = computed(() => {
     year: '2-digit'
   })
 })
+
+const { user } = useUser()
+
 const onInput = (event: any) => {
   emit('update:modelValue', event.target.value)
 }
@@ -67,5 +86,8 @@ const validateComment = () => {
 }
 const abortComment = () => {
   emit('abort')
+}
+const editComment = () => {
+  emit('edit')
 }
 </script>

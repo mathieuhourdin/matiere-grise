@@ -13,9 +13,9 @@
         v-for="(line, index) in textLines"
         :id="`line-${componentUuid}-${index}`"
       >
-        <div v-if="!line.chip">
+        <span v-if="!line.chip">
           {{ line.text === '' ? ' ' : line.text }}
-        </div>
+        </span>
         <li v-else class="ml-4">
           {{ line.text }}
         </li>
@@ -25,16 +25,55 @@
       v-if="canComment"
       class="absolute right-2 w-9"
       :style="{ top: cursorCoordinates.top }"
-      @click="addComment"
+      @click="addComment(resourceId)"
     >
       <ChatBubbleBottomCenterTextIcon />
     </RoundLinkButton>
+    <UserAvatar
+      v-for="(comment, cindex) in parentComments"
+      :key="cindex"
+      class="absolute right-2 w-16"
+      :style="{ top: comment.top }"
+      :user="comment.author"
+      @click="openComment(comment)"
+    />
+    <ModalSheet :open="commentIsOpen" @close="commentIsOpen = false">
+      <div class="text-sm mb-4">Commentaire de : "...{{ openedCommentText }}..."</div>
+      <CommentCard
+        v-if="commentIsOpen"
+        v-model="openedComment.content"
+        :editing="openedComment.editing"
+        @validate="openedComment.editing = false"
+        @edit="openedComment.editing = true"
+        :created-at="openedComment.created_at"
+        :author="openedComment.author"
+      />
+      <CommentCard
+        v-for="comment in getChildComments(comments, openedComment)"
+        v-model="comment.content"
+        :editing="comment.editing"
+        @validate="comment.editing = false"
+        @edit="comment.editing = true"
+        :created-at="comment.created_at"
+        :author="comment.author"
+      />
+      <ActionButton
+        text="Répondre"
+        type="valid"
+        class="w-1/5"
+        @click="addComment(resourceId, openedComment.id)"
+      />
+    </ModalSheet>
   </div>
 </template>
 
 <script setup lang="ts">
 import ClipboardButton from '@/components/ClipboardButton.vue'
 import RoundLinkButton from '@/components/Ui/RoundLinkButton.vue'
+import ActionButton from '@/components/Ui/ActionButton.vue'
+import CommentCard from '@/components/Comment/CommentCard.vue'
+import UserAvatar from '@/components/User/UserAvatar.vue'
+import ModalSheet from '@/components/Ui/ModalSheet.vue'
 import { ChatBubbleBottomCenterTextIcon } from '@heroicons/vue/24/outline'
 import { onMounted, ref, computed, watch } from 'vue'
 import { v4 as uuidv4 } from 'uuid'
@@ -42,6 +81,7 @@ import { useSnackbar } from '@/composables/useSnackbar'
 import { useWrite } from '@/composables/useWrite'
 import { useCursor } from '@/composables/useCursor'
 import { useComments } from '@/composables/useComments'
+import { useTextInterfaceComments } from '@/composables/useTextInterfaceComments'
 import { type Comment } from '@/types/models'
 
 const emit = defineEmits(['change'])
@@ -66,40 +106,23 @@ const {
   setCursorPositionFromClick
 } = useCursor()
 
-const canComment = computed(() => {
-  if (!cursorPosition.value) return
-  return cursorPosition.value.startOffset < cursorPosition.value.endOffset
-})
+const {
+  comments,
+  canComment,
+  loadComments,
+  addComment,
+  getCommentsTopPosition,
+  openComment,
+  openedComment,
+  openedCommentText,
+  commentIsOpen,
+  debouncedEditCommentTimeout,
+  getChildComments,
+  getParentComments,
+  parentComments
+} = useTextInterfaceComments()
 
 const { getCommentsForThoughtOutput, createComment, batchUpdateComments } = useComments()
-
-const comments = ref<Comment[]>([])
-const addComment = async () => {
-  createComment(props.resourceId, cursorPosition.value.startOffset, cursorPosition.value.endOffset)
-}
-const openComment = () => {
-  console.log('OpenComment')
-}
-const loadComments = async () => {
-  const comments = await getCommentsForThoughtOutput(props.resourceId)
-  comments.map((comment) => {
-    return findCommentLineAndOffset(comment)
-  })
-}
-
-const findCommentLineAndOffset = (comment) => {
-  let counter = 0
-  let lineIndex = 0
-  while (counter < comment.startIndex) {
-    counter +=
-      textLines.value[lineIndex].text.length + textLines.value[lineIndex].bold ||
-      textLines.value[lineIndex].italic
-    if (lineIndex >= textLines.value.length) {
-      break;
-    }
-    lineIndex += 1
-  }
-}
 
 onMounted(async () => {
   componentUuid.value = uuidv4()
@@ -107,8 +130,10 @@ onMounted(async () => {
   const routerView = document.getElementById('router-view')
   routerView.addEventListener('scroll', () => {
     getCursorCoordinates()
+    getCommentsTopPosition(comments)
   })
-  comments.value = await getCommentsForThoughtOutput(props.resourceId)
+  comments.value = await loadComments(props.resourceId)
+  getCommentsTopPosition(comments.value)
 })
 const debouncedUpdate = ref<number | null>(null)
 const debouncedEmit = () => {
@@ -123,6 +148,14 @@ const debouncedEmit = () => {
   }, 1000)
 }
 
+watch(
+  comments,
+  async (comments) => {
+    if (debouncedEditCommentTimeout.value !== null) clearTimeout(debouncedEditCommentTimeout.value)
+    debouncedEditCommentTimeout.value = setTimeout(() => batchUpdateComments(comments), 1000)
+  },
+  { deep: true }
+)
 watch(editCount, () => {
   debouncedEmit()
 })
@@ -145,5 +178,11 @@ watch(
   50% {
     opacity: 0;
   }
+}
+.highlight {
+  background-color: rgba(255, 255, 0, 0.5); /* Semi-transparent yellow */
+  position: absolute;
+  z-index: -1; /* Lower z-index to place it behind the text */
+  pointer-events: none; /* Allow interactions to pass through */
 }
 </style>

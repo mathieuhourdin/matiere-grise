@@ -23,14 +23,53 @@ const mouseupHandler = (event: any) => {
 const setCursorPositionFromClick = (index: number) => {
   const selection = window.getSelection()
   if (!selection) return
+  console.log('Selection : ', selection)
   const range = selection.getRangeAt(0)
   cursorPosition.value = { line: index, startOffset: range.startOffset, endOffset: range.endOffset }
+}
+
+const getCoordinatesFromTextRange = (textRange: CursorPosition) => {
+  const range = document.createRange()
+  const selectedLine = document.getElementById(`line-${componentUuid.value}-${textRange.line}`)
+  if (!selectedLine) return
+  const textLineHeight = window.getComputedStyle(selectedLine).lineHeight
+  if (!selectedLine.firstChild) return
+  const textNode = selectedLine.firstChild.firstChild
+  if (!textNode) return
+  console.log(textRange.startOffset)
+  console.log(textRange.endOffset)
+  try {
+    range.setStart(textNode, textRange.startOffset)
+    range.setEnd(textNode, textRange.endOffset)
+  } catch {
+    return
+  }
+
+  const boundingRects = range.getClientRects()
+  const lastRect = boundingRects[boundingRects.length - 1]
+
+  return {
+    left: `${lastRect.right}px`,
+    bottom: `${lastRect.bottom}px`,
+    top: `${lastRect.top - 3}px`,
+    height: textLineHeight
+  }
 }
 
 const getCursorCoordinates = () => {
   if (!cursorPosition.value) return
 
-  console.log(`CursorPosition : ${JSON.stringify(cursorPosition.value)}`)
+  const tempCursorCoordinates = getCoordinatesFromTextRange({
+    line: cursorPosition.value.line,
+    startOffset: 0,
+    endOffset: cursorPosition.value.startOffset
+  })
+
+  if (!tempCursorCoordinates) return
+
+  cursorCoordinates.value = tempCursorCoordinates
+
+  /*console.log(`CursorPosition : ${JSON.stringify(cursorPosition.value)}`)
   const range = document.createRange()
 
   const selectedLine = document.getElementById(
@@ -59,7 +98,7 @@ const getCursorCoordinates = () => {
     bottom: `${lastRect.bottom}px`,
     top: `${lastRect.top - 3}px`,
     height: textLineHeight
-  }
+  }*/
 }
 
 const handleKeydown = (event: any) => {
@@ -79,6 +118,7 @@ export function useCursor() {
     mouseupHandler,
     handleKeydown,
     getCursorCoordinates,
-    setCursorPositionFromClick
+    setCursorPositionFromClick,
+    getCoordinatesFromTextRange
   }
 }

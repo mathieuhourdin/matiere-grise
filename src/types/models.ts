@@ -88,4 +88,9 @@ export interface Comment {
   author_id?: string
   author?: User
   editing: boolean
+  top?: string
+  line?: number
+  startOffset?: number
+  endOffset?: number
+  highlights?: []
 }
