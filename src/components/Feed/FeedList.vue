@@ -15,6 +15,7 @@ import { computed } from 'vue'
 import { useMenu } from '@/composables/useMenu'
 const { feedFilter } = useMenu()
 
+
 const props = defineProps<{
   interactionsList: Problem[]
 }>()
@@ -25,7 +26,8 @@ const filteredInteractions = computed(() => {
       return (
         interaction.interaction_type === 'outp' &&
         !interaction.resource.is_external &&
-        interaction.resource.resource_type !== 'pblm'
+        interaction.resource.resource_type !== 'pblm' &&
+        !interaction.resource.is_external
       )
     } else if (feedFilter.value === 'draft') {
       return (
