@@ -5,11 +5,24 @@
     ref="parentCard"
   >
     <img
-      v-if="page == 0"
+      v-if="page == 0 && interaction.resource.image_url !== ''"
       class="overflow-auto object-contain w-full h-full mt-auto mx-auto"
       :src="interaction.resource.image_url"
       @load="fixHeight"
     />
+    <div
+      v-else-if="page == 0"
+      class="bg-white h-full text-center align-text-bottom flex items-center justify-center"
+    >
+      <div>
+        <div class="text-2xl text-black">
+          {{ interaction.resource.title }}
+        </div>
+        <div class="text-lg text-bold mt-2">
+          {{ interaction.resource.subtitle }}
+        </div>
+      </div>
+    </div>
     <div
       v-else
       class="overflow-auto h-full overflow-scroll p-1 pt-8 border"
@@ -30,7 +43,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { onMounted, computed, ref } from 'vue'
 import { textManagement } from '@/helpers'
 import { type Interaction } from '@/types/models'
 
@@ -54,10 +67,10 @@ const getTextPropertiesFromPage = (page) => {
     //display text from resource
     const text = resourceContentSentencesList.value[page - contextSentencesList.value.length - 1]
     return {
-      text: text.replace(/#/g, ''),
+      text: text ? text.replace(/#/g, '') : '',
       header: page === contextSentencesList.value.length + 1 ? 'Contenu : ' : null,
       class: {
-        'font-black': text.charAt(0) === '#',
+        'font-black': text && text.charAt(0) === '#',
         'bg-slate-700': true
       }
     }
@@ -82,8 +95,17 @@ const contextSentencesList = computed(() => {
   return textManagement.splitTextForPanel(props.interaction.context_comment)
 })
 const fixHeight = () => {
-  const initialHeight = parentCard.value.offsetHeight
-  parentCard.value.style.height = `${initialHeight}px`
+  if (props.interaction.resource.image_url !== '') {
+    const initialHeight = parentCard.value.offsetHeight
+    parentCard.value.style.height = `${initialHeight}px`
+  }
 }
+
 const parentCard = ref(null)
+
+onMounted(() => {
+  if (props.interaction.resource.image_url === '') {
+    parentCard.value.style.height = '400px'
+  }
+})
 </script>
