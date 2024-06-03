@@ -1,19 +1,11 @@
 <template>
   <div class="m-4">
     <div>Derniers apports</div>
-    <div v-if="user" class="italic underline text-xs" @click="openNewThoughtInput = true">
-      Ajouter un nouvel apport
-    </div>
-    <ModalSheet :open="openNewThoughtInput" @close="openNewThoughtInput = false">
-      <CreateThoughtInput @refresh="loadThoughtInputs" @close="openNewThoughtInput = false" />
-    </ModalSheet>
     <ThoughtInputsList class="mt-10" :contextual-resources="contextualResources" />
   </div>
 </template>
 
 <script setup lang="ts">
-import ModalSheet from '@/components/Ui/ModalSheet.vue'
-import CreateThoughtInput from '@/components/ThoughtInput/CreateThoughtInput.vue'
 import ThoughtInputsList from '@/components/ThoughtInput/ThoughtInputsList.vue'
 import { useThoughtInputs } from '@/composables/useThoughtInputs'
 import { useUser } from '@/composables/useUser'

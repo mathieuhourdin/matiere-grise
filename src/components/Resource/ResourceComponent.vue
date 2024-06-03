@@ -40,7 +40,7 @@
         </div>
       </div>
       <div v-else class="my-2 flex flex-col">
-        <ArticleForm
+        <ResourceForm
           :article="resource"
           class=""
           @change="(event) => debouncedUpdateResource(resource.id, event)"
@@ -162,7 +162,7 @@ import DateField from '@/components/Ui/DateField.vue'
 import ToggleButtonGroup from '@/components/Ui/ToggleButtonGroup.vue'
 import SelectionTextInterface from '@/components/SelectionTextInterface.vue'
 import ProgressBar from '@/components/ProgressBar.vue'
-import ArticleForm from '@/components/Article/ArticleForm.vue'
+import ResourceForm from '@/components/Resource/ResourceForm.vue'
 import ResourceAuthorPicker from '@/components/Resource/ResourceAuthorPicker.vue'
 import ActionButton from '@/components/Ui/ActionButton.vue'
 import TextAreaInput from '@/components/Ui/TextAreaInput.vue'

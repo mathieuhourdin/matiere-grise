@@ -6,7 +6,7 @@
     </div>
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4 p-6">
       <div v-for="(article, i) in resources" :key="i">
-        <ArticleCard
+        <ResourceCard
           :title="article.title"
           :subtitle="article.subtitle"
           :image-url="article.image_url"
@@ -19,7 +19,7 @@
 </template>
 
 <script setup lang="ts">
-import ArticleCard from '@/components/Article/ArticleCard.vue'
+import ResourceCard from '@/components/Resource/ResourceCard.vue'
 import { useResource } from '@/composables/useResource'
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'

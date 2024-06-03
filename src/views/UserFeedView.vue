@@ -2,16 +2,6 @@
   <div>
     <div class="mt-8 md:mx-6">
       <UserInfos class="mx-auto border my-8" v-if="pageUser" :user="pageUser" />
-      <div
-        v-if="user && pageUserId == user.id"
-        class="italic underline text-xs mb-4"
-        @click="openNewThoughtInput = true"
-      >
-        Ajouter un nouvel apport
-      </div>
-      <ModalSheet :open="openNewThoughtInput">
-        <CreateThoughtInput @close="openNewThoughtInput = false" />
-      </ModalSheet>
       <FeedList :interactions-list="contextualInteractions" />
     </div>
   </div>
@@ -19,10 +9,6 @@
 <script setup lang="ts">
 import FeedList from '@/components/Feed/FeedList.vue'
 import UserInfos from '@/components/User/UserInfos.vue'
-import ToggleButtonGroup from '@/components/Ui/ToggleButtonGroup.vue'
-import ModalSheet from '@/components/Ui/ModalSheet.vue'
-import CreateThoughtInput from '@/components/ThoughtInput/CreateThoughtInput.vue'
-import ThoughtInputsList from '@/components/ThoughtInput/ThoughtInputsList.vue'
 import { ref, computed, onMounted, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { useUser } from '@/composables/useUser'
@@ -33,8 +19,6 @@ import { type ApiInteraction, type ContextualResource } from '@/types/models'
 const props = defineProps<{
   pageUserId: string
 }>()
-
-const openNewThoughtInput = ref(false)
 
 const { getUserById, user } = useUser()
 
