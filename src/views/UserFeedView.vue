@@ -38,7 +38,7 @@ const contextualInteractions = computed(() => {
         ...interaction
       }
     })
-    .sort((a, b) => b.date - a.date)
+    .sort((a, b) => b.resource.updated_at - a.resource.updated_at)
 })
 
 onMounted(async () => {
