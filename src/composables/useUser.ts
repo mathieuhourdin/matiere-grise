@@ -34,7 +34,7 @@ async function getUserById(id: string) {
 }
 
 async function getUsers() {
-  const response = await fetchWrapper.get('/users')
+  const response = await fetchWrapper.get('/users?limit=100')
   return response.data
 }
 
