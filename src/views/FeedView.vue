@@ -32,7 +32,7 @@ const contextualResources = computed(() => {
         ...interaction
       }
     })
-    .sort((a, b) => 0.5 - Math.random())
+    .sort((a, b) => b.date - a.date)
 })
 const loadInteractions = async () => (interactions.value = await getReadAndWriteInteractions())
 
