@@ -106,7 +106,7 @@ const parentCard = ref(null)
 
 onMounted(() => {
   if (props.interaction.resource.image_url === '') {
-    parentCard.value.style.height = '400px'
+    parentCard.value.style.height = '500px'
   }
 })
 </script>
