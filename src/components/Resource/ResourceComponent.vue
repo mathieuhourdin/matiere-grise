@@ -57,14 +57,14 @@
           >
           <ActionButton
             class="ml-2"
-            v-if="!authorInteraction.interaction_is_public"
+            v-if="authorInteraction && !authorInteraction.interaction_is_public"
             @click="publishInteraction"
             type="valid"
             text="Publier"
           />
           <ActionButton
             class="ml-2"
-            v-else
+            v-else-if="authorInteraction"
             @click="unpublishInteraction"
             type="abort"
             text="Dépublier"
