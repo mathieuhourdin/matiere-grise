@@ -37,10 +37,10 @@ const contextualResources = computed(() => {
       }
     })
     .sort(
-      (a, b) =>
+      (b, a) =>
         (a.interaction_type === 'inpt'
           ? a.interaction_date
-          : new Date(a.resource.created_at)) <
+          : new Date(a.resource.created_at)) -
         (b.interaction_type === 'inpt' ? b.interaction_date : b.resource.created_at)
     )
 })
