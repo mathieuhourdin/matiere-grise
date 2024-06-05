@@ -26,14 +26,23 @@ const contextualResources = computed(() => {
       return {
         resource: interaction.resource,
         date: interaction.interaction_date,
-        post_date: interaction.interaction_type === 'inpt' ? interaction.interaction_date : new Date(interaction.resource.created_at),
+        post_date:
+          interaction.interaction_type === 'inpt'
+            ? interaction.interaction_date
+            : new Date(interaction.resource.created_at),
         user_id: interaction.interaction_user_id,
         context_comment: interaction.interaction_comment,
         progress: interaction.interaction_progress,
         ...interaction
       }
     })
-    .sort((a, b) => a.post_date < b.post_date)
+    .sort(
+      (a, b) =>
+        (a.interaction_type === 'inpt'
+          ? a.interaction_date
+          : new Date(a.resource.created_at)) <
+        (b.interaction_type === 'inpt' ? b.interaction_date : b.resource.created_at)
+    )
 })
 const loadInteractions = async () => (interactions.value = await getReadAndWriteInteractions())
 
