@@ -1,5 +1,6 @@
 <template>
   <div
+    v-if="interaction.interaction_type != 'inpt'"
     @click="nextPage"
     class="overflow-auto relative w-full md:h-4/5 min-h-60 mb-2 bg-gray-700"
     ref="parentCard"
@@ -41,12 +42,26 @@
       {{ pageRatio }}
     </div>
   </div>
+  <div v-else>
+    <FeedCard
+      v-if="resourceAuthorInteraction"
+      :interaction="resourceAuthorInteraction"
+      class="h-96"
+    />
+    <div v-else>
+      <router-link :to="'/resources/' + interaction.resource.id">{{
+        interaction.resource.title
+      }}</router-link>
+    </div>
+  </div>
 </template>
 
 <script setup lang="ts">
+import FeedCard from '@/components/Feed/FeedCard.vue'
 import { onMounted, computed, ref } from 'vue'
 import { textManagement } from '@/helpers'
 import { type Interaction } from '@/types/models'
+import { useResource } from '@/composables/useResource'
 
 const props = defineProps<{
   interaction: Interaction
@@ -96,17 +111,26 @@ const contextSentencesList = computed(() => {
   return textManagement.splitTextForPanel(props.interaction.context_comment)
 })
 const fixHeight = () => {
-  if (props.interaction.resource.image_url !== '') {
+  if (props.interaction.interaction_type != 'inpt' && props.interaction.resource.image_url !== '') {
     const initialHeight = parentCard.value.offsetHeight
     parentCard.value.style.height = `${initialHeight}px`
   }
 }
 
+const { getAuthorInteractionForResource } = useResource()
+const resourceAuthorInteraction = ref(null)
+
 const parentCard = ref(null)
 
-onMounted(() => {
-  if (props.interaction.resource.image_url === '') {
+onMounted(async () => {
+  if (props.interaction.interaction_type != 'inpt' && props.interaction.resource.image_url === '') {
     parentCard.value.style.height = '500px'
+  }
+  const authorInteraction = await getAuthorInteractionForResource(props.interaction.resource.id)
+  if (authorInteraction) {
+    authorInteraction.resource = props.interaction.resource
+    authorInteraction.user_id = authorInteraction.interaction_user_id
+    resourceAuthorInteraction.value = authorInteraction
   }
 })
 </script>
