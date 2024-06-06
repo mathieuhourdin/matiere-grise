@@ -16,6 +16,16 @@ function newInteraction(): Interaction {
   return interaction
 }
 
+const interactionSortFunction = (interaction: any) => {
+  if (interaction.interaction_type === 'inpt') {
+    return new Date(interaction.created_at)
+  } else {
+    return interaction.resource.updated_at
+      ? new Date(interaction.resource.updated_at)
+      : new Date(interaction.resource.created_at)
+  }
+}
+
 function formatApiResponse(apiInteraction: any): ApiInteraction {
   apiInteraction.interaction_date = new Date(apiInteraction.interaction_date)
   const response: ApiInteraction = apiInteraction
@@ -48,13 +58,16 @@ async function getReadAndWriteInteractions(): Promise<ApiInteraction[]> {
 }
 
 async function getUserReadAndWriteInteractions(id: string): Promise<ApiInteraction[]> {
-
-  const read = await getInteractions({ interaction_type: 'inpt', interaction_user_id: id})
-  const write = await getInteractions({ interaction_type: 'outp', interaction_user_id: id})
+  const read = await getInteractions({ interaction_type: 'inpt', interaction_user_id: id })
+  const write = await getInteractions({ interaction_type: 'outp', interaction_user_id: id })
 
   let drafts: any[] = []
   if (user.value && user.value.id === id) {
-    drafts = await getInteractions({ interaction_type: 'outp', maturing_state: 'drft', interaction_user_id: id})
+    drafts = await getInteractions({
+      interaction_type: 'outp',
+      maturing_state: 'drft',
+      interaction_user_id: id
+    })
   }
   return read
     .map((thoughtInput: any) => formatApiResponse(thoughtInput))
@@ -124,6 +137,7 @@ export function useInteraction() {
     getInteractionsForResource,
     getUserThoughtOutputs,
     getReadAndWriteInteractions,
-    getUserReadAndWriteInteractions
+    getUserReadAndWriteInteractions,
+    interactionSortFunction
   }
 }

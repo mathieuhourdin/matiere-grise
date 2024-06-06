@@ -24,7 +24,7 @@ const { getUserById, user } = useUser()
 
 const pageUser = ref(null)
 
-const { getUserReadAndWriteInteractions, getInteractions } = useInteraction()
+const { getUserReadAndWriteInteractions, getInteractions, interactionSortFunction } = useInteraction()
 const interactions = ref<ApiInteraction[]>([])
 const contextualInteractions = computed(() => {
   return interactions.value
@@ -38,7 +38,7 @@ const contextualInteractions = computed(() => {
         ...interaction
       }
     })
-    .sort((a, b) => b.resource.updated_at - a.resource.updated_at)
+    .sort((a, b) => interactionSortFunction(b) - interactionSortFunction(a))
 })
 
 onMounted(async () => {

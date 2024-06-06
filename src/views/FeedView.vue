@@ -17,7 +17,7 @@ import { useInteraction } from '@/composables/useInteraction'
 
 /// ThoughtInputs ///
 
-const { getReadAndWriteInteractions } = useInteraction()
+const { getReadAndWriteInteractions, interactionSortFunction } = useInteraction()
 const { feedFilter } = useMenu()
 const interactions = ref<ApiInteraction[]>([])
 const contextualResources = computed(() => {
@@ -38,13 +38,7 @@ const contextualResources = computed(() => {
     })
     .sort((a, b) => interactionSortFunction(b) - interactionSortFunction(a))
 })
-const interactionSortFunction = (interaction) => {
-  if (interaction.interaction_type === 'inpt') {
-  return new Date(interaction.created_at)
-  } else {
-    return interaction.resource.updated_at ? new Date(interaction.resource.updated_at) : new Date(interaction.resource.created_at)
-  }
-}
+
 const loadInteractions = async () => (interactions.value = await getReadAndWriteInteractions())
 
 onMounted(async () => {
