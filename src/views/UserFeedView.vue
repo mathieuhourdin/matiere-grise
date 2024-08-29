@@ -12,7 +12,6 @@ import UserInfos from '@/components/User/UserInfos.vue'
 import { ref, computed, onMounted, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { useUser } from '@/composables/useUser'
-import { useThoughtInputs } from '@/composables/useThoughtInputs'
 import { useInteraction } from '@/composables/useInteraction'
 import { type ApiInteraction, type ContextualResource } from '@/types/models'
 

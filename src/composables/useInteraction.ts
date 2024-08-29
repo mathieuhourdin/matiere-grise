@@ -75,16 +75,6 @@ async function getUserReadAndWriteInteractions(id: string): Promise<ApiInteracti
     .concat(drafts.map((thoughtOutput: any) => formatApiResponse(thoughtOutput)))
 }
 
-async function getUserThoughtOutputs(id: string): Promise<ApiInteraction[]> {
-  const response = await fetchWrapper.get('/users/' + id + '/thought_outputs?limit=60')
-  return response.data.map((thoughtOutput: any) => formatApiResponse(thoughtOutput))
-}
-
-async function getInteraction(id: string): Promise<ApiInteraction> {
-  const response = await fetchWrapper.get('/thought_inputs/' + id)
-  return formatApiResponse(response.data)
-}
-
 async function updateInteraction(id: string, thoughtInput: any): Promise<ApiInteraction> {
   const date_interaction_date = new Date(thoughtInput.interaction_date)
   const interaction_date = date_interaction_date.toISOString().split('.')[0]
@@ -93,15 +83,6 @@ async function updateInteraction(id: string, thoughtInput: any): Promise<ApiInte
     ...thoughtInput,
     interaction_date
   })
-  return formatApiResponse(response.data)
-}
-
-async function createInteraction(thoughtInput: Interaction): Promise<ApiInteraction> {
-  const date_interaction_date = new Date(thoughtInput.interaction_date)
-  const interaction_date = date_interaction_date.toISOString().split('.')[0]
-  thoughtInput.interaction_progress = Number(thoughtInput.interaction_progress)
-  const response = await fetchWrapper.post('/thought_inputs', { ...thoughtInput, interaction_date })
-  launchSnackbar(`Creation de l'input réussie`, 'success')
   return formatApiResponse(response.data)
 }
 
@@ -129,13 +110,10 @@ export function useInteraction() {
   return {
     getUserInteractions,
     newInteraction,
-    createInteraction,
     getInteractions,
-    getInteraction,
     updateInteraction,
     createInteractionForResource,
     getInteractionsForResource,
-    getUserThoughtOutputs,
     getReadAndWriteInteractions,
     getUserReadAndWriteInteractions,
     interactionSortFunction

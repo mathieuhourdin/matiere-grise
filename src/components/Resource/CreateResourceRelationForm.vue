@@ -47,7 +47,7 @@ import ActionButton from '@/components/Ui/ActionButton.vue'
 import TextAreaInput from '@/components/Ui/TextAreaInput.vue'
 import ThoughtInputsList from '@/components/ThoughtInput/ThoughtInputsList.vue'
 import { useUser } from '@/composables/useUser'
-import { useThoughtInputs } from '@/composables/useThoughtInputs'
+import { useInteractions } from '@/composables/useInteractions'
 import { useResource } from '@/composables/useResource'
 import { useResourceRelations } from '@/composables/useResourceRelations'
 import { ref, computed, onMounted } from 'vue'
@@ -127,7 +127,7 @@ const localCreateResourceRelation = async () => {
   emit('close')
 }
 
-const { getUserThoughtInputs } = useThoughtInputs()
+const { getUserInteractions } = useInteractions()
 
 const selectResource = (contextualResource: ContextualResource) => {
   selectedLinkResource.value = contextualResource.resource
@@ -135,7 +135,7 @@ const selectResource = (contextualResource: ContextualResource) => {
 
 onMounted(async () => {
   if (!user.value || !user.value.id) return
-  if (props.targetResource) thoughtInputs.value = await getUserThoughtInputs(user.value.id)
+  if (props.targetResource) thoughtInputs.value = await getUserInteractions(user.value.id)
   if (props.originResource) {
     externalResources.value = await getResources({ is_external: true })
     internalArticles.value = await getResources({ is_external: false, resource_type: 'oatc' })

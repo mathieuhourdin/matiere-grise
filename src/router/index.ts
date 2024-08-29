@@ -53,18 +53,6 @@ const router = createRouter({
       component: () => import('@/views/SeeResourceView.vue')
     },
     {
-      path: '/thought_inputs/:id',
-      name: 'seeThoughtInput',
-      props: true,
-      component: () => import('@/views/SeeThoughtInputView.vue')
-    },
-    {
-      path: '/thought_inputs',
-      name: 'thoughtInputs',
-      props: false,
-      component: () => import('@/views/ThoughtInputsView.vue')
-    },
-    {
       path: '/users',
       name: 'usersList',
       component: () => import('@/views/UsersView.vue'),

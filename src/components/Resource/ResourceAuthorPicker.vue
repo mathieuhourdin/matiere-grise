@@ -38,7 +38,7 @@ const props = defineProps<{
 
 const userValue = computed(() => props.interaction?.interaction_user_id)
 
-const { createInteractionForResource, newInteraction, createInteraction, updateInteraction } =
+const { createInteractionForResource, newInteraction, updateInteraction } =
   useInteraction()
 
 const chooseUser = async (newUser) => {
