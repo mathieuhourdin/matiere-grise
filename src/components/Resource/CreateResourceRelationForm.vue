@@ -47,7 +47,7 @@ import ActionButton from '@/components/Ui/ActionButton.vue'
 import TextAreaInput from '@/components/Ui/TextAreaInput.vue'
 import ThoughtInputsList from '@/components/ThoughtInput/ThoughtInputsList.vue'
 import { useUser } from '@/composables/useUser'
-import { useInteractions } from '@/composables/useInteractions'
+import { useInteraction } from '@/composables/useInteraction'
 import { useResource } from '@/composables/useResource'
 import { useResourceRelations } from '@/composables/useResourceRelations'
 import { ref, computed, onMounted } from 'vue'
@@ -127,7 +127,7 @@ const localCreateResourceRelation = async () => {
   emit('close')
 }
 
-const { getUserInteractions } = useInteractions()
+const { getUserInteractions } = useInteraction()
 
 const selectResource = (contextualResource: ContextualResource) => {
   selectedLinkResource.value = contextualResource.resource
