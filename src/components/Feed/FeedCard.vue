@@ -1,6 +1,6 @@
 <template>
-  <div class="flex flex-col border p-1.5 overflow-auto">
-    <div class="flex">
+  <div class="flex flex-col border py-1.5 overflow-auto">
+    <div class="flex ml-1.5">
       <UserMini
         v-if="isFetchedAuthor"
         class="flex mb-1.5 h-8"
@@ -14,14 +14,14 @@
     </div>
     <FeedCardTextInterface :interaction="interaction" />
 
-    <div v-if="interaction.interaction_type != 'inpt'" class="flex">
+    <div v-if="interaction.interaction_type != 'inpt'" class="flex ml-1.5">
       <div title="Coming Soon ;)" class="w-6"><HeartIcon class="w-full my-auto" /></div>
       <div title="Coming Soon ;)" class="w-6"><PaperAirplaneIcon class="w-full my-auto" /></div>
       <router-link :to="'/resources/' + interaction.resource.id + '/feed'" class="ml-auto"
         ><ArrowRightCircleIcon class="w-8"
       /></router-link>
     </div>
-    <div v-if="interaction.interaction_type != 'inpt'" class="flex">
+    <div v-if="interaction.interaction_type != 'inpt'" class="flex ml-1.5">
       <div class="text-2xs">{{ Math.floor(Math.random() * 100) }} likes</div>
       <router-link
         :to="'/resources/' + interaction.resource.id + '/feed'"
@@ -30,7 +30,7 @@
         {{ thoughtInputs.length }} relations
       </router-link>
     </div>
-    <router-link v-if="interaction.interaction_type != 'inpt'" class="" :to="'/resources/' + interaction.resource.id">
+    <router-link v-if="interaction.interaction_type != 'inpt'" class="ml-1.5" :to="'/resources/' + interaction.resource.id">
       <div class="">
         <div class="mb-2 font-bold text-sm">{{ interaction.resource.title }}</div>
         <div class="text-2xs mb-auto">{{ formatText(interaction.resource.subtitle) }}</div>

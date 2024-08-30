@@ -33,7 +33,7 @@ const isSidebarMenuOpen = computed(() => {
       <div id="router-view" class="overflow-scroll h-full w-full">
         <RouterView class="h-full" :key="routerViewKey" />
       </div>
-      <div v-if="isUserSidebarListDisplayed" class="md:basis-1/6 w-0 md:w-auto md:shrink-0 overflow-y-scroll">
+      <div v-if="isUserSidebarListDisplayed" class="md:basis-1/6 w-0 md:w-auto md:ml-3 md:shrink-0 overflow-y-scroll">
         <UsersSidebarList />
       </div>
     </div>

@@ -2,7 +2,7 @@
   <div class="flex flex-col">
     <FeedCard
       v-for="(interaction, i) in filteredInteractions"
-      class="md:mb-2 flex-grow md:rounded max-h-screen border-b-1 border-black"
+      class="md:mb-2 md:mx-1 flex-grow md:rounded max-h-screen border-t-1 border-black"
       :interaction="interaction"
       :key="interaction.id"
     />

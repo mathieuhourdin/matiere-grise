@@ -46,7 +46,7 @@
     <FeedCard
       v-if="resourceAuthorInteraction"
       :interaction="resourceAuthorInteraction"
-      class="h-96"
+      class="mx-1.5 h-96"
     />
     <div v-else>
       <router-link :to="'/resources/' + interaction.resource.id">{{
