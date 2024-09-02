@@ -1,8 +1,8 @@
 <template>
   <router-link class="flex mb-1.5 h-8" :to="user ? '/users/' + user.id : '/'">
     <UserAvatar class="my-auto" :user="user" />
-    <div class="h-full flex flex-col w-full">
-      <div class="flex w-auto my-auto shrink overflow-auto">
+    <div id="mycomponent" class="h-full flex flex-col w-full">
+      <div v-if="user" id="mycomponent-2" class="flex w-auto my-auto shrink overflow-auto">
         <div v-if="user" class="sm:text-xs text-sm font-semibold ml-2">
          {{ user.display_name }} 
         </div>
