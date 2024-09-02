@@ -1,7 +1,6 @@
 <template>
   <div
     v-if="interaction.interaction_type != 'inpt'"
-    @click="nextPage"
     class="overflow-auto relative w-full md:h-4/5 min-h-60 mb-2 bg-gray-700"
     ref="parentCard"
   >
@@ -40,6 +39,10 @@
     </div>
     <div class="absolute right-2 top-2 bg-gray-400 rounded-xl p-1 text-xs opacity-70">
       {{ pageRatio }}
+    </div>
+    <div class="absolute h-full w-full left-0 top-0 flex">
+      <div class="w-1/2 h-full" @click="previousPage"></div>
+      <div class="w-1/2 h-full" @click="nextPage"></div>
     </div>
   </div>
   <div v-else>
@@ -96,6 +99,13 @@ const getTextPropertiesFromPage = (page) => {
 const page = ref<number>(0)
 const nextPage = () => {
   page.value = (page.value + 1) % pagesCount.value
+}
+const previousPage = () => {
+  if (page.value === 0) {
+    page.value = pagesCount.value - 1
+  } else {
+    page.value = (page.value - 1) % pagesCount.value
+  }
 }
 const pageRatio = computed(() => `${page.value + 1}/${pagesCount.value}`)
 
