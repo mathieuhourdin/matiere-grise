@@ -19,6 +19,12 @@ const router = createRouter({
       meta: { requiresAuth: true }
     },
     {
+      path: '/create-resource/audio',
+      name: 'createResourceAudio',
+      component: () => import('@/views/AudioView.vue'),
+      meta: { requiresAuth: true }
+    },
+    {
       path: '/spip-conversion',
       name: 'spipConversion',
       component: () => import('@/views/SpipConversionView.vue')
