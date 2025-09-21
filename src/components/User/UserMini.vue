@@ -2,7 +2,7 @@
   <router-link class="flex mb-1.5 h-8 hover:bg-gray-100 dark:hover:bg-gray-700 rounded px-2 py-1 transition-colors duration-200" :to="user ? '/users/' + user.id : '/'">
     <UserAvatar class="my-auto" :user="user" />
     <div id="mycomponent" class="h-full flex flex-col w-full">
-      <div v-if="user" id="mycomponent-2" class="flex w-auto my-auto shrink overflow-auto">
+      <div v-if="user" id="mycomponent-2" class="flex w-auto my-auto shrink">
         <div v-if="user" class="sm:text-xs text-sm font-semibold ml-2 text-gray-800 dark:text-gray-200">
          {{ user.display_name }} 
         </div>
