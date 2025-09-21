@@ -22,7 +22,7 @@
     </div>
     <div
       v-else
-      class="h-full overflow-scroll p-1 pb-16 border flex items-center justify-center"
+      class="h-full overflow-scroll p-1 pb-16 h-full border flex items-center justify-center"
       :class="getTextPropertiesFromPage(page).class"
     >
       <div
@@ -135,7 +135,7 @@ const parentCard = ref(null)
 onMounted(async () => {
   if (props.interaction.interaction_type != 'inpt' && props.interaction.resource.image_url === '' || props.interaction.resource.image_url === null) {
     //parentCard.value.style.height = '500px'
-    page.value = 2
+    page.value = 1
   }
   const authorInteraction = await getAuthorInteractionForResource(props.interaction.resource.id)
   if (authorInteraction) {
