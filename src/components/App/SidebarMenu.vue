@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-slate-200 z-10 border-r border-slate-400">
+  <div class="bg-slate-200 dark:bg-gray-800 z-10 border-r border-slate-400 dark:border-gray-600 transition-colors duration-200">
     <div>
       <MenuItem
         v-if="user"
@@ -15,12 +15,14 @@
       <!--<MenuItem to="/friends" title="Utilisateurs" subtitle="Amis etc" />-->
       <MenuItem to="/create-resource" title="Créer" subtitle="Du nouveau contenu" />
       <MenuItem to="/platform-presentation" title="A propos" subtitle="Présentation de la plateforme" />
+      <DarkModeMenuItem />
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import MenuItem from '@/components/App/MenuItem.vue'
+import DarkModeMenuItem from '@/components/App/DarkModeMenuItem.vue'
 import { useUser } from '@/composables/useUser'
 import { useResource } from '@/composables/useResource'
 import { useRouter } from 'vue-router'

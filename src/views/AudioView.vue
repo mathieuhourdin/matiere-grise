@@ -242,7 +242,7 @@ async function uploadAudio(blob: Blob) {
     // Store the API response for display
     apiResponse.value = response;
     
-    if (response.status === 200) {
+    if (response.status === 200 && response.data?.created_interaction) {
       uploadStatus.value = `Enregistrement envoyé avec succès! ID: ${response.data?.id || 'N/A'}`;
       
       // Check if we have a resource ID to redirect to
@@ -272,6 +272,8 @@ async function uploadAudio(blob: Blob) {
           uploadStatus.value = '';
         }, 3000);
       }
+    } else if (response.status === 200 && !response.data?.created_interaction) {
+      uploadStatus.value = ` Audio non reconnu par l'API: ${response.data.transcription} - ${response.data?.message || 'Erreur inconnue'}`;
     } else {
       uploadStatus.value = `Erreur lors de l'upload: ${response.status} - ${response.data?.message || 'Erreur inconnue'}`;
     }

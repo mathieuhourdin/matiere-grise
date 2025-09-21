@@ -2,7 +2,7 @@
   <div>
     <SelectInput
       text="Type de ressources"
-      class="bg-slate-300"
+      class="bg-slate-300 dark:bg-gray-800"
       :choices="choices"
       v-model="feedFilter"
     />

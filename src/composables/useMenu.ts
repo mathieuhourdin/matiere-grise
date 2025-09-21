@@ -2,7 +2,7 @@ import { ref, computed } from 'vue'
 
 const menuOpen = ref(screen.width > 760)
 
-const headerValue = ref(null)
+const headerValue = ref<{ link: string; text: string } | null>(null)
 
 const feedFilter = ref('all')
 

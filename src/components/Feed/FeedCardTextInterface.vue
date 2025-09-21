@@ -133,8 +133,9 @@ const resourceAuthorInteraction = ref(null)
 const parentCard = ref(null)
 
 onMounted(async () => {
-  if (props.interaction.interaction_type != 'inpt' && props.interaction.resource.image_url === '') {
-    parentCard.value.style.height = '500px'
+  if (props.interaction.interaction_type != 'inpt' && props.interaction.resource.image_url === '' || props.interaction.resource.image_url === null) {
+    //parentCard.value.style.height = '500px'
+    page.value = 2
   }
   const authorInteraction = await getAuthorInteractionForResource(props.interaction.resource.id)
   if (authorInteraction) {
@@ -143,4 +144,4 @@ onMounted(async () => {
     resourceAuthorInteraction.value = authorInteraction
   }
 })
-</script>
+</script>u

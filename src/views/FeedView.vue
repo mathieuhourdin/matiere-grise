@@ -1,7 +1,7 @@
 <template>
   <div class="mt-1">
     <FollowedProblemsList
-      class="overflow-scroll mb-2 md:mx-8"
+      class="overflow-x-scroll mb-2 md:mx-8"
       style="scrollbar-width: none; -ms-overflow-style: none"
     />
     <FeedList :interactions-list="contextualResources" class="md:w-2/3 mx-auto" />

@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-col py-1.5 overflow-auto">
+  <div class="flex flex-col py-1.5 overflow-auto dark:border-gray-600 border-t border-black">
     <div class="flex mx-1.5">
       <UserMini
         v-if="isFetchedAuthor"
