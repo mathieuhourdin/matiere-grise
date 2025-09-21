@@ -1,7 +1,7 @@
 <template>
   <div
     v-if="interaction.interaction_type != 'inpt'"
-    class="overflow-auto relative w-full md:h-4/5 min-h-60 mb-2 bg-gray-700"
+    class="overflow-auto relative w-full md:h-4/5 h-full min-h-60 mb-2 bg-gray-700"
     ref="parentCard"
   >
     <img
@@ -22,7 +22,7 @@
     </div>
     <div
       v-else
-      class="h-full overflow-scroll p-1 pb-16 h-full border flex items-center justify-center"
+      class="h-full overflow-scroll p-1 pb-16 border flex items-center justify-center"
       :class="getTextPropertiesFromPage(page).class"
     >
       <div
