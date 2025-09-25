@@ -1,6 +1,6 @@
 <template>
   <div
-    v-if="interaction.interaction_type != 'inpt'"
+    v-if="interaction.interaction_type != 'inpt' && interaction.interaction_type != 'bibl'"
     class="overflow-auto relative w-full md:h-4/5 h-full min-h-60 mb-2 bg-gray-700"
     ref="parentCard"
   >

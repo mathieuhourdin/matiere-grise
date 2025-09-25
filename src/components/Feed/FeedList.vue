@@ -42,7 +42,7 @@ const filteredInteractions = computed(() => {
     } else if (feedFilter.value === 'biblio') {
       return interaction.interaction_type === 'inpt'
     }
-    return interaction.interaction_type === 'inpt' || !interaction.resource.is_external
+    return interaction.interaction_type === 'bibl' || interaction.interaction_type === 'inpt' || !interaction.resource.is_external
   })
 })
 </script>

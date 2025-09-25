@@ -34,6 +34,7 @@ const contextualResources = computed(() => {
         date: targetResource.created_at,
         user_id: targetResource.user_id,
         context_comment: targetResource.relation_comment,
+        interaction_type: 'bibl',
         progress: null,
         ...targetResource
       }

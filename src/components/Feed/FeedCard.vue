@@ -68,7 +68,7 @@ const getInteractionTypeName = (typeCode: string) => {
   return typeCode === 'outp' ? 'Production personnelle' : 'Bibliographie'
 }
 
-const { resourceTypeOptions } = useResource()
+const { resourceTypeOptions, getAuthorInteractionForResource } = useResource()
 const getResourceTypeNameFromCode = (typeCode: string) => {
   return resourceTypeOptions.find((option) => option.value === typeCode).text
 }
@@ -99,12 +99,17 @@ const { getUserById } = useUser()
 
 const isFetchedAuthor = ref(false)
 const loadUser = async () => {
-  try {
-    interactionAuthor.value = await getUserById(props.interaction.user_id)
-  } catch (error) {
-    console.log(error)
+  if (!props.interaction.user_id) {
+    const interactionAuthorId = await getAuthorInteractionForResource(props.interaction.resource.id)
+    interactionAuthor.value = await getUserById(interactionAuthorId.value) 
+  } else {
+    try {
+      interactionAuthor.value = await getUserById(props.interaction.user_id)
+    } catch (error) {
+      console.log(error)
+    }
+    isFetchedAuthor.value = true
   }
-  isFetchedAuthor.value = true
 }
 
 onMounted(async () => {
