@@ -3,11 +3,11 @@
     tabindex="0"
     @keyup.esc="emit('close')"
     v-if="modalOpen"
-    class="fixed top-0 left-0 w-full h-full z-10 bg-slate-500/50"
+    class="fixed top-0 left-0 w-full h-full z-10 bg-slate-500/50 dark:bg-gray-600/50"
     @click="emit('close')"
   >
     <div
-      class="max-w-xl overflow-y-scroll max-h-screen mb-10 bg-white mx-auto mt-6 p-4 rounded shadow"
+      class="max-w-xl overflow-y-scroll max-h-screen mb-10 bg-white dark:bg-gray-900 mx-auto mt-6 p-4 rounded shadow"
       @click.stop=""
     >
       <div class="flex">

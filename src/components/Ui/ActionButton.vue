@@ -39,8 +39,8 @@
     return "rounded";
   };
   const buttonClass = computed(() => {
-    if (props.type == "valid") return "w-full bg-blue-500 hover:bg-blue-700 text-white font-bold" ;
-    if (props.type == "abort") return "w-full bg-white hover:bg-gray-100 text-gray-800 font-semibold border border-gray-400 shadow";
+    if (props.type == "valid") return "w-full bg-blue-500 hover:bg-blue-700 dark:bg-blue-600 dark:hover:bg-blue-800 text-white font-bold transition-colors duration-200" ;
+    if (props.type == "abort") return "w-full bg-white dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 text-gray-800 dark:text-gray-200 font-semibold border border-gray-400 dark:border-gray-600 shadow transition-colors duration-200";
     return "";
   });
   const clickOnButton = () => {

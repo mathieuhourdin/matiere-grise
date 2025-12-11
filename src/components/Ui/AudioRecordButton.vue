@@ -18,6 +18,6 @@ import { useRouter } from 'vue-router'
 const router = useRouter()
 
 const navigateToAudioRecording = () => {
-  router.push('/create-resource/audio')
+  //router.push('/create-resource/audio')
 }
 </script> 

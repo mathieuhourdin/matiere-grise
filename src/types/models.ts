@@ -89,3 +89,7 @@ export interface Comment {
   author?: User
   editing: boolean
 }
+
+export interface Trace {
+  content: string
+}

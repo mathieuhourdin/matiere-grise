@@ -35,6 +35,18 @@ const router = createRouter({
       component: () => import('@/views/PlatformPresentationView.vue')
     },
     {
+      path: '/mission-choice',
+      name: 'missionChoice',
+      component: () => import('@/views/MissionChoiceView.vue'),
+      meta: { requiresAuth: true }
+    },
+    {
+      path: '/mentor-choice',
+      name: 'mentorChoice',
+      component: () => import('@/views/MentorChoiceView.vue'),
+      meta: { requiresAuth: true }
+    },
+    {
       path: '/resources/:id/feed',
       name: 'resourceFeed',
       props: true,

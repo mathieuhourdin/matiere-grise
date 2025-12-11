@@ -2,3 +2,15 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer components {
+.bg-custom {
+    min-height: 100vh;
+    margin: 0;
+    background:
+      radial-gradient(circle at top left,  #1f2937 0, transparent 45%),
+      radial-gradient(circle at bottom right, #0f172a 0, transparent 50%),
+      #020617;  /* couleur de base */
+    color: #e5e7eb;
+  }
+}

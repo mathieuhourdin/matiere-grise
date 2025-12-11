@@ -7,6 +7,7 @@
       class="md:w-96"
       :contextual-resource="thoughtInput"
       :is-disabled="isDisabled"
+      :open="open"
     />
   </div>
 </template>
@@ -23,6 +24,7 @@ const props = withDefaults(
     thoughtInput: ContextualResource
     usageReason?: string
     isDisabled: boolean
+    open: boolean
   }>(),
   { isDisabled: false }
 )

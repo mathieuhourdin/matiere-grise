@@ -103,6 +103,10 @@
           @update:modelValue="(event) => debouncedUpdateResourceComment(event)"
         />
         <hr class="border-top border-zinc-400 my-4" />-->
+        <div class="mb-4">
+          <div class="text-xs italic">Sujets</div>
+          <ThoughtInputsList :contextual-resources="contextualResourcesUsages" />
+        </div>
         <div class="text-xs italic">Contenu</div>
         <TextAreaInput
           v-if="displayTextInterface"

@@ -32,7 +32,8 @@ const resourceTypeOptions = [
   { text: 'podcast', value: 'pcst' },
   { text: 'song', value: 'song' },
   { text: 'course', value: 'curs' },
-  { text: 'idea', value: 'idea' }
+  { text: 'idea', value: 'idea' },
+  { text: 'mission', value: 'miss' }
 ]
 
 const getResource = async (id: string): Promise<ApiResource> => {
@@ -74,6 +75,15 @@ const createResource = async (resource: Resource) => {
     throw error
   }
 }
+const createTrace = async (trace: Trace) => {
+  try {
+    const response = await fetchWrapper.post('/traces', trace)
+    return response.data
+  } catch (error) {
+    launchSnackbar(`Error creating trace : ${error}`, 'error')
+    throw error
+  }
+}
 async function getAuthorInteractionForResource(resource_id: string): Promise<ApiInteraction> {
   const response = await fetchWrapper.get('/resources/' + resource_id + '/author_interaction')
   return response.data
@@ -83,6 +93,7 @@ export function useResource() {
   return {
     newResource,
     getResource,
+    createTrace,
     getResources,
     updateResource,
     createResource,

@@ -4,14 +4,17 @@ import AppHeader from './components/App/AppHeader.vue'
 import UsersSidebarList from '@/components/User/UsersSidebarList.vue'
 import SidebarMenu from '@/components/App/SidebarMenu.vue'
 import UiSnackbar from '@/components/Ui/UiSnackbar.vue'
-import { onMounted, watch, computed } from 'vue'
+import QuickCreateResourceModal from '@/components/QuickCreateResourceModal.vue'
+import { onMounted, watch, computed, ref } from 'vue'
 import { useMenu } from '@/composables/useMenu'
 import { useSnackbar } from '@/composables/useSnackbar'
 import { useDarkMode } from '@/composables/useDarkMode'
+import { useUser } from '@/composables/useUser'
 import AudioRecordButton from '@/components/Ui/AudioRecordButton.vue'
 const { menuOpen } = useMenu()
 const { snackbar } = useSnackbar()
 const { isDarkMode } = useDarkMode()
+const { user, isUserLoaded } = useUser()
 
 const route = useRoute()
 const routerViewKey = computed(() => {
@@ -23,10 +26,34 @@ const isUserSidebarListDisplayed = computed(() => {
 const isSidebarMenuOpen = computed(() => {
   return route.name !== 'login' && menuOpen.value
 })
+
+const showQuickCreateModal = ref(false)
+
+// Show modal when user arrives (once per session)
+watch([isUserLoaded, () => user.value, () => route.name], ([loaded, currentUser, routeName]) => {
+  if (loaded && currentUser && routeName !== 'login') {
+    const hasShownModal = sessionStorage.getItem('quickCreateModalShown')
+    if (!hasShownModal) {
+      // Small delay to ensure UI is ready
+      setTimeout(() => {
+        showQuickCreateModal.value = true
+        sessionStorage.setItem('quickCreateModalShown', 'true')
+      }, 500)
+    }
+  }
+}, { immediate: true })
+
+const handleModalClose = () => {
+  showQuickCreateModal.value = false
+}
+
+const handleResourceCreated = (resourceId: string) => {
+  showQuickCreateModal.value = false
+}
 </script>
 
 <template>
-  <div class="flex flex-col h-screen bg-white dark:bg-gray-900 transition-colors duration-200">
+  <div class="flex flex-col h-screen bg-white dark:bg-custom transition-colors duration-200">
     <AppHeader class="overflow-auto" />
     <div class="overflow-hidden flex justify-between h-full" style="width: 100%">
       <SidebarMenu
@@ -42,5 +69,23 @@ const isSidebarMenuOpen = computed(() => {
     </div>
   </div>
   <UiSnackbar v-if="snackbar" :message="snackbar.message" :type="snackbar.type" />
-  <AudioRecordButton class="absolute top-80 right-4"/>
+  <AudioRecordButton @click="showQuickCreateModal = true" class="absolute top-80 right-4"/>
+  <QuickCreateResourceModal 
+    :open="showQuickCreateModal" 
+    @close="handleModalClose"
+    @created="handleResourceCreated"
+  />
 </template>
+
+<style>
+
+.dark-bg {
+  min-height: 100vh;
+  margin: 0;
+  background:
+    radial-gradient(circle at top left,  #2f4f7c 0, transparent 70%),
+    radial-gradient(circle at bottom right, #242f4b 0, transparent 70%),
+    #020617;  /* couleur de base */
+  color: #e5e7eb;
+}
+</style>

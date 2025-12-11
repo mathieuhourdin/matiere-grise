@@ -1,6 +1,47 @@
 <template>
   <div class="w-full md:w-96">
-    <div v-if="contextualResource.context_comment" class="text-xs italic mb-2 bg-white">
+    <component
+      :is="isDisabled ? 'span' : 'vue-router'"
+      v-if="contextualResource.resource"
+      :to="'/resources/' + contextualResource.resource.id + '?tab=ctnt'"
+    >
+      <div v-if="contextualResource.resource" class="border shadow-lg rounded p-4 pl-2 md:w-96 bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-600 text-gray-900 dark:text-gray-100">
+        <div class="flex">
+          <div class="flex flex-col mr-1">
+          <img
+            v-if="contextualResource.resource"
+            class="w-8 h-fit"
+            :src="contextualResource.resource.image_url"
+          />
+          <div class="w-4 h-4 mt-auto" @click="isOpen = !isOpen"><ArrowDownIcon v-if="!isOpen" /> <ArrowUpIcon v-else /></div>
+          </div>
+
+          <div>
+            <div>
+              {{ contextualResource.resource.title }}
+              <div v-if="contextualResource.resource.subtitle" class="text-gray-500 dark:text-gray-400 text-xs">
+              {{ contextualResource.resource.subtitle }}
+              </div>
+            </div>
+            <div class="flex flex-wrap w-full mt-auto" >
+              <router-link
+                v-if="resourceAuthor"
+                :to="'/users/' + resourceAuthor.id"
+                class="text-2xs underline"
+                >{{ resourceAuthor.first_name }} {{ resourceAuthor.last_name }}</router-link
+              >
+            </div>
+            <div class="text-2xs">{{ formatText(contextualResource.resource.comment) }}</div>
+          </div>
+        </div>
+        <div class="flex flex-wrap">
+          <div v-if="contextualResource.date" class="text-2xs italic">
+            {{ formatDate(contextualResource.resourcedate) }}
+          </div>
+        </div>
+      </div>
+    </component>
+    <div v-if="contextualResource.context_comment && isOpen" class="text-xs italic p-1 mt-2 mb-3 bg-white dark:bg-transparent text-gray-900 dark:text-gray-100">
       <div>
         {{ contextualResource.context_comment }}
       </div>
@@ -19,46 +60,12 @@
         </div>
       </div>
     </div>
-    <component
-      :is="isDisabled ? 'span' : 'vue-router'"
-      v-if="contextualResource.resource"
-      :to="'/resources/' + contextualResource.resource.id + '?tab=ctnt'"
-    >
-      <div v-if="contextualResource.resource" class="border shadow-lg rounded p-4 md:w-96 bg-white">
-        <div class="flex">
-          <img
-            v-if="contextualResource.resource"
-            class="w-8 h-fit mr-4"
-            :src="contextualResource.resource.image_url"
-          />
-          <div>
-            <div>
-              {{ contextualResource.resource.title }}
-              {{ contextualResource.resource.subtitle }}
-            </div>
-            <div class="flex flex-wrap w-full" style="margin-top: -8px">
-              <router-link
-                v-if="resourceAuthor"
-                :to="'/users/' + resourceAuthor.id"
-                class="text-2xs underline"
-                >{{ resourceAuthor.first_name }} {{ resourceAuthor.last_name }}</router-link
-              >
-            </div>
-            <div class="text-2xs">{{ formatText(contextualResource.resource.comment) }}</div>
-          </div>
-        </div>
-        <div class="flex flex-wrap">
-          <div v-if="contextualResource.date" class="text-2xs italic">
-            {{ formatDate(contextualResource.resourcedate) }}
-          </div>
-        </div>
-      </div>
-    </component>
   </div>
 </template>
 
 <script setup lang="ts">
 import ProgressBar from '@/components/ProgressBar.vue'
+import { ArrowDownIcon, ArrowUpIcon } from '@heroicons/vue/24/outline'
 import { type ApiInteraction, type User, type ContextualResource } from '@/types/models'
 import { useUser } from '@/composables/useUser'
 import { useResource } from '@/composables/useResource'
@@ -68,9 +75,12 @@ const props = withDefaults(
   defineProps<{
     contextualResource: ContextualResource
     isDisabled: boolean
+    open: boolean
   }>(),
   { isDisabled: false }
 )
+
+const isOpen = ref(false)
 
 const { getUserById } = useUser()
 const { getAuthorInteractionForResource } = useResource()
@@ -80,6 +90,7 @@ const resourceAuthorInteraction = ref<Interaction | null>(null)
 const contextAuthor = ref<User | null>(null)
 
 onMounted(async () => {
+  isOpen.value = props.open
   if (props.contextualResource.user_id)
     contextAuthor.value = await getUserById(props.contextualResource.user_id)
   if (props.contextualResource.resource)

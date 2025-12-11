@@ -1,6 +1,6 @@
 <template>
   <div class="relative max-w-full">
-    <div v-if="!center" class="absolute md:border h-full start-1/2 -z-10" />
+    <div v-if="!center" class="absolute md:border h-full start-1/2 -z-10 border-gray-300 dark:border-gray-600" />
     <ThoughtInputCardWithPopup
       v-for="(contextualResource, index) in sortedThoughtInputs(contextualResources)"
       :key="contextualResource.id"
@@ -9,6 +9,7 @@
       :thought-input="contextualResource"
       @click="emitSelect(contextualResource)"
       :is-disabled="linksDisabled"
+      :open="open"
     />
   </div>
 </template>
@@ -22,10 +23,12 @@ const props = withDefaults(
     contextualResources: ContextualResource[]
     center?: boolean
     linksDisabled?: boolean
+    open?: boolean
   }>(),
   {
     center: false,
-    linksDisabled: false
+    linksDisabled: false,
+    open: false
   }
 )
 
