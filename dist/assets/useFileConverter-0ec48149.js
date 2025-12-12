@@ -1,1 +1,0 @@
-import{B as o}from"./index-6d773083.js";const s=async(e,r="ppdc",t=!1)=>(await o.post(`/file_conversion?target_format=${r}&remove_line_breaks=${t}`,e,"multipart/form-data")).data;function p(){return{postFileConversion:s}}export{p as u};
