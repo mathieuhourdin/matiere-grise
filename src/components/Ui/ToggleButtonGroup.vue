@@ -4,10 +4,9 @@
     <div v-for="choice in choices" class="relative" :key="choice.value">
       <ActionButton
         class="w-30 my-1 mx-1"
-        :text="choice.text"
         @click="updateTab(choice.value)"
         :type="choice.value == tab ? 'valid' : 'abort'"
-      />
+      >{{ choice.text }}</ActionButton>
       <div v-if="choice.count" class="absolute right-0 top-0 w-4 h-4 rounded-square text-2xs bg-green-400 text-center">{{ choice.count }}</div>
     </div>
     <div class="mr-auto" />

@@ -1,20 +1,12 @@
 <template>
   <div>
-  <a :href="link">
+  <router-link :to="'/me/home'">
     <slot />
-  </a>
+  </router-link>
   </div>
 </template>
 
 
 <script setup lang="ts">
-
-import { computed } from "vue";
-const props = defineProps<{
-  partialHref?: String
-}>()
-const link = computed(() => {
-  return import.meta.env.BASE_URL + (props.partialHref ? props.partialHref : "")
-})
 
 </script>

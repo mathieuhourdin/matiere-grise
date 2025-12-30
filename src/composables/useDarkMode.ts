@@ -2,6 +2,26 @@ import { ref, computed, watch, onMounted } from 'vue'
 
 const isDark = ref(false)
 
+// Initialize dark mode synchronously before Vue app mounts
+const initializeDarkModeSync = () => {
+  const savedTheme = localStorage.getItem('darkMode')
+  if (savedTheme !== null) {
+    isDark.value = savedTheme === 'true'
+  } else {
+    // Check system preference
+    isDark.value = window.matchMedia('(prefers-color-scheme: dark)').matches
+  }
+  // Apply immediately to avoid flash
+  if (isDark.value) {
+    document.documentElement.classList.add('dark')
+  } else {
+    document.documentElement.classList.remove('dark')
+  }
+}
+
+// Initialize immediately when module loads
+initializeDarkModeSync()
+
 export function useDarkMode() {
   // Initialize dark mode from localStorage or system preference
   const initializeDarkMode = () => {

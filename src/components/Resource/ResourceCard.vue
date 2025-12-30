@@ -9,7 +9,7 @@
       />
       <div class="flex">
         <ProgressBar v-if="resourceInteraction" :progress-value="resourceInteraction.interaction_progress" class="m-2 w-1/3 mr-auto" />
-        <router-link v-if="resourceAuthor" class="text-xs italic my-auto mr-2" :to="'/users/' + resourceAuthor.id"
+        <router-link v-if="resourceAuthor" class="text-xs italic my-auto mr-2" :to="'/social/users/' + resourceAuthor.id"
           >{{ resourceAuthor.first_name }} {{ resourceAuthor.last_name }}</router-link
         >
       </div>
@@ -45,6 +45,6 @@ onMounted(async () => {
 
 const articleLink = computed(() => {
   if (!props.uuid) return ''
-  return '/resources/' + props.uuid
+  return '/app/resources/' + props.uuid
 })
 </script>

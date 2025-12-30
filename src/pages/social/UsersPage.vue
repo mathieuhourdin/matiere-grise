@@ -22,7 +22,7 @@ const users = ref<User[]>([])
 
 const createDrafAuthorAndRedirect = async () => {
   const createdDraftAuthor = await createNewDraftUser()
-  router.push({ path: '/users/' + createdDraftAuthor.id, query: { editingUser: 'true' } })
+  router.push({ path: '/social/users/' + createdDraftAuthor.id, query: { editingUser: 'true' } })
 }
 
 onMounted(async () => (users.value = await getUsers()))

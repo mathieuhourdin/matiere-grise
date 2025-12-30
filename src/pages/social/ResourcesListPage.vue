@@ -33,7 +33,7 @@ const resources = ref<Resource[]>([])
 const createDraftResourceAndRedirect = async () => {
   const resource = newResource()
   const createdResource = await createResource(resource)
-  router.push({ path: '/resources/' + createdResource.id, query: { editing: 'true' } })
+  router.push({ path: '/app/resources/' + createdResource.id, query: { editing: 'true' } })
 }
 
 onMounted(async () => (resources.value = await getResources()))

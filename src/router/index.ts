@@ -4,89 +4,121 @@ import { useUser } from '@/composables/useUser'
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
-    { path: '/', redirect: '/feed' },
+    { path: '/', redirect: '/social/feed' },
     {
-      path: '/feed',
-      name: 'feed',
-      component: () => import('@/views/FeedView.vue'),
-      meta: { requiresAuth: true }
+      path: '/social',
+      name: 'social',
+      component: () => import('@/layouts/SocialLayout.vue'),
+      children: [
+        {
+          path: 'feed',
+          name: 'feed',
+          component: () => import('@/pages/social/FeedPage.vue'),
+          meta: { requiresAuth: true }
+        },
+        {
+          path: 'resources',
+          name: 'resourcesList',
+          component: () => import('@/pages/social/ResourcesListPage.vue'),
+          meta: { requiresAuth: true }
+        },
+        {
+          path: 'users',
+          name: 'usersList',
+          component: () => import('@/pages/social/UsersPage.vue'),
+          meta: { requiresAuth: true }
+        },
+        {
+          path: 'users/:pageUserId',
+          name: 'userFeed',
+          meta: { requiresRender: true, requiresAuth: true },
+          props: true,
+          component: () => import('@/pages/social/UserFeedPage.vue')
+        }
+      ]
     },
     {
-      path: '/create-resource',
-      name: 'createResource',
-      component: () => import('@/views/CreateResourceView.vue'),
-
-      meta: { requiresAuth: true }
+      path: '/me',
+      name: 'me',
+      component: () => import('@/layouts/MeLayout.vue'),
+      children: [
+        {
+          path: 'home',
+          name: 'home',
+          component: () => import('@/pages/me/HomePage.vue'),
+          meta: { requiresAuth: true }
+        },
+        {
+          path: 'create-resource',
+          name: 'createResource',
+          component: () => import('@/pages/me/CreateResourcePage.vue'),
+          meta: { requiresAuth: true }
+        },
+        {
+          path: 'platform-presentation',
+          name: 'platformPresentation',
+          component: () => import('@/pages/me/PlatformPresentationPage.vue')
+        },
+        {
+          path: 'mission-choice',
+          name: 'missionChoice',
+          component: () => import('@/pages/me/MissionChoicePage.vue'),
+          meta: { requiresAuth: true }
+        },
+        {
+          path: 'mentor-choice',
+          name: 'mentorChoice',
+          component: () => import('@/pages/me/MentorChoicePage.vue'),
+          meta: { requiresAuth: true }
+        },
+        {
+          path: 'resources/:id/feed',
+          name: 'resourceFeed',
+          props: true,
+          component: () => import('@/pages/me/ResourceFeedPage.vue'),
+          meta: { requiresAuth: true }
+        }
+      ]
     },
     {
-      path: '/create-resource/audio',
-      name: 'createResourceAudio',
-      component: () => import('@/views/AudioView.vue'),
-      meta: { requiresAuth: true }
+      path: '/app',
+      name: 'app',
+      component: () => import('@/layouts/AppLayout.vue'),
+      children: [
+        {
+          path: 'login',
+          name: 'login',
+          component: () => import('@/pages/app/LoginPage.vue')
+        },
+        {
+          path: 'writer',
+          name: 'writer',
+          component: () => import('@/pages/app/WriterPage.vue')
+        },
+        {
+          path: 'trace',
+          name: 'trace',
+          component: () => import('@/pages/app/TracePage.vue'),
+          meta: { requiresAuth: true }
+        },
+        {
+          path: 'resources/:id',
+          name: 'seeResource',
+          props: true,
+          component: () => import('@/pages/app/SeeResourcePage.vue')
+        }
+      ]
     },
     {
-      path: '/spip-conversion',
-      name: 'spipConversion',
-      component: () => import('@/views/SpipConversionView.vue')
-    },
-    {
-      path: '/platform-presentation',
-      name: 'platformPresentation',
-      component: () => import('@/views/PlatformPresentationView.vue')
-    },
-    {
-      path: '/mission-choice',
-      name: 'missionChoice',
-      component: () => import('@/views/MissionChoiceView.vue'),
-      meta: { requiresAuth: true }
-    },
-    {
-      path: '/mentor-choice',
-      name: 'mentorChoice',
-      component: () => import('@/views/MentorChoiceView.vue'),
-      meta: { requiresAuth: true }
-    },
-    {
-      path: '/resources/:id/feed',
-      name: 'resourceFeed',
-      props: true,
-      component: () => import('@/views/ResourceFeedView.vue'),
-      meta: { requiresAuth: true }
-    },
-    {
-      path: '/resources',
-      name: 'resourcesList',
-      component: () => import('@/views/ResourcesListView.vue'),
-      meta: { requiresAuth: true }
-    },
-    {
-      path: '/login',
-      name: 'login',
-      component: () => import('@/views/LoginView.vue')
-    },
-    {
-      path: '/resources/:id',
-      name: 'seeResource',
-      props: true,
-      component: () => import('@/views/SeeResourceView.vue')
-    },
-    {
-      path: '/users',
-      name: 'usersList',
-      component: () => import('@/views/UsersView.vue'),
-      meta: { requiresAuth: true }
-    },
-    {
-      path: '/users/:pageUserId',
-      name: 'userFeed',
-      meta: { requiresRender: true, requiresAuth: true },
-      props: true,
-      component: () => import('@/views/UserFeedView.vue')
-    },
-    {
-      path: '/writer',
-      name: 'writer',
-      component: () => import('@/views/WriterView.vue')
+      path: '/legacy',
+      name: 'legacy',
+      children: [
+        {
+          path: 'spip-conversion',
+          name: 'spipConversion',
+          component: () => import('@/pages/legacy/SpipConversionPage.vue')
+        }
+      ]
     }
   ]
 })

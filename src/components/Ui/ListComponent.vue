@@ -10,17 +10,17 @@
         </thead>
         <tbody>
             <tr class="py-1" v-for="item in items" :key="item.id">
-                <td class="bg-gray-700" :class="column.width" v-for="(column, i) in displayColumns" :key="item.id + '-' + column.field_name">
-                    <div v-if="column.field_name.length == 2" class="mx-2">
-                        <div class="md:text-lg text-xs font-bold"> {{ displayValue(item, column.field_name[0]) }}</div>
-                        <div class="md:text-xs text-2xs"> {{ displayValue(item, column.field_name[1]) }}</div>
+                <td class="bg-slate-800/80" :class="column.width" v-for="(column, i) in displayColumns" :key="item.id + '-' + column.field_name">
+                    <div v-if="column.field_name.length == 2" class="mx-2 py-1 color-slate-200">
+                        <div class="md:text-lg text-xs font-bold"> {{ displayValue(item, column.field_name[0], column.field_type) }}</div>
+                        <div v-if="!isMobile" class="md:text-xs text-2xs"> {{ displayValue(item, column.field_name[1], column.field_type) }}</div>
                     </div>
-                    <img class="rounded m-2 w-14 md:w-auto md:max-w-full max-h-12 shadow-sm shadow-slate-400" v-else-if="column.field_type == 'image'" :src="displayValue(item, column.field_name[0])" />
+                    <img class="rounded m-1 md:m-2 w-14 md:w-auto md:max-w-full max-h-12 shadow-sm shadow-slate-400" v-else-if="column.field_type == 'image'" :src="displayValue(item, column.field_name[0])" />
                     <div v-else-if="column.field_type == 'action'">
-                        <ActionButton type="valid" text="Choisir" class="m-2" />
+                        <ActionButton type="valid" class="m-2">Choisir</ActionButton>
                     </div>
                     <div v-else class="text-left md:text-lg text-sm font-bold" :class="{ 'text-xs': (i != 0), 'text-sm': (i == 0) }">
-                        {{ displayValue(item, column.field_name[0]) }}
+                        {{ displayValue(item, column.field_name[0], column.field_type) }}
                     </div>
                 </td>
             </tr>
@@ -46,8 +46,8 @@ const props = defineProps<{
 
 const { isMobile } = useMenu()
 
-const displayValue = (item: any, field_name: string) => {
-  return item[field_name]
+const displayValue = (item: any, field_name: string, field_type: string) => {
+  return !isMobile.value || field_type != 'text' ? item[field_name] : item[field_name].slice(0, 50) + '...'
 }
 
 const displayColumns = computed(() => {

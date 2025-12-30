@@ -4,6 +4,9 @@ module.exports = {
   darkMode: 'class',
   theme: {
     extend: {
+      colors: {
+        'elevated': 'rgb(32, 32, 32)',
+      },
       width: {
         '250px': '250px',
         '600px': '600px',

@@ -21,8 +21,8 @@
       v-model="interaction.interaction_comment"
     />
     <div class="flex flex-row-reverse">
-      <ActionButton @click="validate" class="m-4" text="Valider" type="valid" />
-      <ActionButton @click="emitClose" class="m-4" text="Annuler" type="abort" />
+      <ActionButton @click="validate" class="m-4" type="valid">Valider</ActionButton>
+      <ActionButton @click="emitClose" class="m-4" type="abort">Annuler</ActionButton>
     </div>
   </div>
 </template>

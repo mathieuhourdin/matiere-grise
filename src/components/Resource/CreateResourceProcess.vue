@@ -4,14 +4,12 @@
       <div>
         <ActionButton
           class="mb-2"
-          text="Resource Externe"
           type="valid"
           @click="chooseIsExternal(true)"
-        /><ActionButton
-          text="Production personnelle"
+        >Resource Externe</ActionButton><ActionButton
           type="valid"
           @click="chooseIsExternal(false)"
-        />
+        >Production personnelle</ActionButton>
       </div>
     </div>
     <div v-if="processStep === 1">
@@ -24,7 +22,7 @@
         @update:modelValue="(event) => (productionDate = event)"
         type="date"
       />
-      <ActionButton type="valid" text="Valider" @click="processStep = 2" />
+      <ActionButton type="valid" @click="processStep = 2">Valider</ActionButton>
     </div>
     <div v-if="processStep === 2">
       <div>
@@ -52,10 +50,9 @@
           </div>
           <ActionButton
             class="mb-4"
-            text="Créer"
             @click="createResourceAndInteractionAndRedirect"
             type="valid"
-          />
+          >Créer</ActionButton>
         </div>
       </div>
     </div>
@@ -159,7 +156,7 @@ const createResourceAndInteractionAndRedirect = async () => {
   }
   await createInteractionForResource(createdResource.id, interactionPayload)
   router.push({
-    path: '/resources/' + createdResource.id,
+    path: '/app/resources/' + createdResource.id,
     query: { editing: 'false' }
   })
 }

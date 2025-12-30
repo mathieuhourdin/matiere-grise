@@ -52,7 +52,7 @@
       class="mx-1.5 mb-0.5 h-96 border-1 border border-slate-600 rounded"
     />
     <div v-else>
-      <router-link :to="'/resources/' + interaction.resource.id">{{
+      <router-link :to="'/app/resources/' + interaction.resource.id">{{
         interaction.resource.title
       }}</router-link>
     </div>

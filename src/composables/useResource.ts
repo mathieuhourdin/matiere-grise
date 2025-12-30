@@ -33,7 +33,10 @@ const resourceTypeOptions = [
   { text: 'song', value: 'song' },
   { text: 'course', value: 'curs' },
   { text: 'idea', value: 'idea' },
-  { text: 'mission', value: 'miss' }
+  { text: 'mission', value: 'miss' },
+  { text: 'Journaling', value: 'jrnl' },
+  { text: 'Log Lecture', value: 'logl' },
+  { text: 'Log Production', value: 'logp' }
 ]
 
 const getResource = async (id: string): Promise<ApiResource> => {

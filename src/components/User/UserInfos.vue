@@ -45,7 +45,7 @@
         <div class="col-span-2"><TextAreaInput v-model="editableUser.biography" label="Bio" /></div>
       </div>
       <div class="mt-2 flex flex-row-reverse">
-        <ActionButton @click="editUser = false" text="Valider" type="valid" />
+        <ActionButton @click="editUser = false" type="valid">Valider</ActionButton>
       </div>
     </div>
   </div>

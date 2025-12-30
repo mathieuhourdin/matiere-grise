@@ -1,6 +1,6 @@
 <template>
   <div class="border shadow-lg rounded p-4">
-    <router-link :to="'/users/' + user.id">
+    <router-link :to="'/social/users/' + user.id">
       <div class="text-right">{{ user.is_platform_user ? '' : 'externe' }}</div>
       <div>
         <img

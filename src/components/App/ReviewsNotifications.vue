@@ -1,6 +1,6 @@
 <template>
   <RoundLinkButton
-    :to="user ? '/users/' + user.id + '?feed_filter=reviews' : ''"
+    :to="user ? '/social/users/' + user.id + '?feed_filter=reviews' : ''"
     color="slate-light"
     class="relative"
     ><template #chip

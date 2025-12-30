@@ -1,5 +1,5 @@
 <template>
-  <router-link class="flex mb-1.5 h-8 hover:bg-gray-100 dark:hover:bg-gray-700 rounded px-2 py-1 transition-colors duration-200" :to="user ? '/users/' + user.id : '/'">
+  <router-link class="flex mb-1.5 h-8 hover:bg-gray-100 dark:hover:bg-gray-700 rounded px-2 py-1 transition-colors duration-200" :to="user ? '/social/users/' + user.id : '/'">
     <UserAvatar class="my-auto" :user="user" />
     <div id="mycomponent" class="h-full flex flex-col w-full">
       <div v-if="user" id="mycomponent-2" class="flex w-auto my-auto shrink">

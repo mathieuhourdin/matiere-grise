@@ -5,8 +5,8 @@
     <UserPicker v-model="reviewUser" />
     <TextAreaInput class="mt-4" label="Message pour la review" v-model="interactionComment" />
       <div class="flex flex-row-reverse mt-4">
-        <ActionButton type="valid" @click="createReview" text="Ajouter" />
-        <ActionButton type="abort" @click="emit('close')" text="Annuler" class="mr-1" />
+        <ActionButton type="valid" @click="createReview">Ajouter</ActionButton>
+        <ActionButton type="abort" @click="emit('close')" class="mr-1">Annuler</ActionButton>
       </div>
   </div>
 </template>

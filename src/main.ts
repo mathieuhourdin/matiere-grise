@@ -1,5 +1,8 @@
 import './assets/main.css'
 
+// Initialize dark mode before app mounts to prevent flash
+import './composables/useDarkMode'
+
 import { createApp } from 'vue'
 import App from './App.vue'
 import i18n from './i18n'

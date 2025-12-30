@@ -3,9 +3,9 @@
     <component
       :is="isDisabled ? 'span' : 'vue-router'"
       v-if="contextualResource.resource"
-      :to="'/resources/' + contextualResource.resource.id + '?tab=ctnt'"
+      :to="'/app/resources/' + contextualResource.resource.id + '?tab=ctnt'"
     >
-      <div v-if="contextualResource.resource" class="border shadow-lg rounded p-4 pl-2 md:w-96 bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-600 text-gray-900 dark:text-gray-100">
+      <div v-if="contextualResource.resource" class="border shadow-lg rounded p-4 pl-2 md:w-96 bg-white dark:bg-elevated border-gray-200 dark:border-gray-600 text-gray-900 dark:text-gray-100">
         <div class="flex">
           <div class="flex flex-col mr-1">
           <img
@@ -26,7 +26,7 @@
             <div class="flex flex-wrap w-full mt-auto" >
               <router-link
                 v-if="resourceAuthor"
-                :to="'/users/' + resourceAuthor.id"
+                :to="'/social/users/' + resourceAuthor.id"
                 class="text-2xs underline"
                 >{{ resourceAuthor.first_name }} {{ resourceAuthor.last_name }}</router-link
               >

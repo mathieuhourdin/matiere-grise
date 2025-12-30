@@ -1,5 +1,5 @@
 <template>
-  <router-link :to="'/resources/' + problem.id + '/feed'" class="m-1">
+  <router-link :to="'/me/resources/' + problem.id + '/feed'" class="m-1">
     <div class="w-16 md:w-12 mx-auto">
       <img
         :src="problem.image_url"

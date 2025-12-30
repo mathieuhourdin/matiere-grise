@@ -60,7 +60,7 @@ async function debouncedUpdateUser(id: string, user: User) {
 function logOut() {
   localStorage.removeItem('userId')
   user.value = null
-  router.push({ path: '/login' })
+  router.push({ path: '/app/login' })
 }
 
 async function authUser(login: any, redirectPath: string = '/') {
@@ -100,7 +100,7 @@ async function createNewUser(userPayload: User) {
     const response = await fetchWrapper.post('/users', userPayload)
     authUser(
       { username: userPayload.email, password: userPayload.password },
-      '/platform-presentation'
+      '/me/platform-presentation'
     )
   } catch (error) {
     console.log('Error : ', error)

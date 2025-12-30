@@ -1,8 +1,8 @@
 <template>
-  <div class="w-full flex h-16 md:h-12 bg-slate-300 dark:bg-gray-800 rounded-t border-b border-b-slate-400 dark:border-gray-600 shadow transition-colors duration-200">
+  <div class="w-full flex h-16 md:h-12 bg-slate-300 dark:bg-elevated rounded-t border-b border-b-slate-400 dark:border-gray-600 shadow transition-colors duration-200">
     <div class="basis-1/2 md:basis-1/3 flex">
       <Bars3Icon @click="toggleMenuOpen" class="p-1 md:p-2 text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors duration-200" />
-      <FeedFilter v-if="isFeedRoute" class="my-auto bg-slate-300 dark:bg-gray-800" />
+      <FeedFilter v-if="isFeedRoute" class="my-auto bg-slate-300 dark:bg-elevated" />
       <BaseLink v-else class="md:ml-4 my-auto mr-auto text-xs md:text-base text-gray-800 dark:text-gray-200"
         >🫀 Matieres Grises</BaseLink
       >

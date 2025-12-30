@@ -258,7 +258,7 @@ async function uploadAudio(blob: Blob) {
           uploadStatus.value = '';
           
           // Redirect to the created resource page using Vue Router
-          router.push(`/resources/${resourceId}`);
+          router.push(`/app/resources/${resourceId}`);
         }, 2000);
       } else {
         // Fallback if no resource ID

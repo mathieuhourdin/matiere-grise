@@ -3,7 +3,9 @@
     <button
       :class="`${buttonClass} ${textSize(size)} ${roundedClass(rounded)}`"
       @click="clickOnButton()"
-        >{{ text }}</button>
+    >
+      <slot>{{ text }}</slot>
+    </button>
   </div>
 </template>
 
@@ -11,7 +13,7 @@
   import { computed } from 'vue';
   const emit = defineEmits(['click']);
   const props = withDefaults(defineProps<{
-    text: string,
+    text?: string,
     type: string,
     size?: string,
     rounded?: boolean,
@@ -39,8 +41,8 @@
     return "rounded";
   };
   const buttonClass = computed(() => {
-    if (props.type == "valid") return "w-full bg-blue-500 hover:bg-blue-700 dark:bg-blue-600 dark:hover:bg-blue-800 text-white font-bold transition-colors duration-200" ;
-    if (props.type == "abort") return "w-full bg-white dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 text-gray-800 dark:text-gray-200 font-semibold border border-gray-400 dark:border-gray-600 shadow transition-colors duration-200";
+    if (props.type == "valid") return "w-full bg-blue-500 hover:bg-blue-700 dark:bg-blue-800 dark:hover:bg-blue-800 text-white font-bold transition-colors duration-200" ;
+    if (props.type == "abort") return "w-full bg-white dark:bg-elevated hover:bg-gray-100 dark:hover:bg-gray-600 text-gray-800 dark:text-gray-200 font-semibold border border-gray-400 dark:border-gray-600 shadow transition-colors duration-200";
     return "";
   });
   const clickOnButton = () => {

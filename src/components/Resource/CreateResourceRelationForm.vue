@@ -33,8 +33,8 @@
       />
       <TextAreaInput class="m-4" label="Pourquoi ajouter cet élément ?" v-model="relation_comment" />
       <div class="flex flex-row-reverse">
-        <ActionButton type="valid" @click="localCreateResourceRelation" text="Ajouter" />
-        <ActionButton type="abort" @click="emit('close')" text="Annuler" class="mr-1" />
+        <ActionButton type="valid" @click="localCreateResourceRelation">Ajouter</ActionButton>
+        <ActionButton type="abort" @click="emit('close')" class="mr-1">Annuler</ActionButton>
       </div>
     </div>
   </div>

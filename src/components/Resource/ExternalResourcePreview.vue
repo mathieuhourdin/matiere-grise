@@ -6,9 +6,7 @@
       @keyup.enter="startPreview"
       label="Lien ressource externe"
     />
-    <ActionButton v-if="canLoadNewPreview" class="mb-4" text="Preview" @click="startPreview" type="valid"
-      >Générer</ActionButton
-    >
+    <ActionButton v-if="canLoadNewPreview" class="mb-4" @click="startPreview" type="valid">Générer</ActionButton>
   </div>
 </template>
 

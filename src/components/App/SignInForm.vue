@@ -19,8 +19,8 @@
     <TextInput class="mt-2" label="handle* (@comme_sur_insta)" v-model="newUser.handle" />
     <TextInput class="mt-2" label="Password*" v-model="newUser.password" type="password" />
     <div class="mt-2 flex">
-      <ActionButton class="ml-auto m-2" text="Valider" type="valid" @click="submit" />
-      <ActionButton class="m-2" text="Annuler" type="abort" @click="submit" />
+      <ActionButton class="ml-auto m-2" type="valid" @click="submit">Valider</ActionButton>
+      <ActionButton class="m-2" type="abort" @click="submit">Annuler</ActionButton>
     </div>
   </div>
 </template>

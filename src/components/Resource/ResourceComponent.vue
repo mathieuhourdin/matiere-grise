@@ -17,7 +17,7 @@
         <div class="md:text-center text-left">
           <router-link
             v-if="resourceUser"
-            :to="'/users/' + resourceUser.id"
+            :to="'/social/users/' + resourceUser.id"
             class="text-sm underline"
             >{{ resourceUser.first_name }} {{ resourceUser.last_name }}</router-link
           >
@@ -52,29 +52,24 @@
           @change="fetchAuthorInteraction"
         />
         <div class="flex flex-row-reverse mb-4">
-          <ActionButton class="ml-2" @click="setEditingMetaData(false)" type="valid" text="Preview"
-            >Ok</ActionButton
-          >
+          <ActionButton class="ml-2" @click="setEditingMetaData(false)" type="valid">Ok</ActionButton>
           <ActionButton
             class="ml-2"
             v-if="authorInteraction && !authorInteraction.interaction_is_public"
             @click="publishInteraction"
             type="valid"
-            text="Publier"
-          />
+          >Publier</ActionButton>
           <ActionButton
             class="ml-2"
             v-else-if="authorInteraction"
             @click="unpublishInteraction"
             type="abort"
-            text="Dépublier"
-          />
+          >Dépublier</ActionButton>
           <ActionButton
             class="ml-2"
             @click="isTextInterface = !isTextInterface"
             type="valid"
-            :text="isTextInterface ? 'Text brut' : 'Editeur'"
-          />
+          >{{ isTextInterface ? 'Text brut' : 'Editeur' }}</ActionButton>
         </div>
       </div>
       <div>

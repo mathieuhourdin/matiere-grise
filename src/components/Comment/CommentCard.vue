@@ -19,17 +19,15 @@
           class="text-sm"
           rounded
           size="2xs"
-          text="Commenter"
           type="valid"
-        />
+        >Commenter</ActionButton>
         <ActionButton
           @click="abortComment"
           class="text-sm"
           rounded
           size="2xs"
-          text="Annuler"
           type="abort"
-        />
+        >Annuler</ActionButton>
       </div>
     </div>
     <div v-else class="text-xs mt-0.5">

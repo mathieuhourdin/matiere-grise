@@ -7,7 +7,8 @@
     @click="emit('close')"
   >
     <div
-      class="max-w-xl overflow-y-scroll max-h-screen mb-10 bg-white dark:bg-gray-900 mx-auto mt-6 p-4 rounded shadow"
+      class="overflow-y-scroll bg-white dark:bg-elevated mx-auto mt-6 p-4 rounded shadow"
+      :class="props.maxWidth + ' ' + props.maxHeight"
       @click.stop=""
     >
       <div class="flex">
@@ -24,8 +25,10 @@ const emit = defineEmits(['close'])
 const props = withDefaults(
   defineProps<{
     open: boolean
+    maxWidth?: string
+    maxHeight?: string
   }>(),
-  { open: false }
+  { open: false, maxWidth: 'max-w-xl', maxHeight: 'max-h-screen' }
 )
 const modalOpen = ref(false)
 
@@ -34,9 +37,21 @@ onMounted(() => {
 })
 watchEffect(() => {
   const closeOnEscape = (event: any) => {
+    // Check if the event target is a form element (input, textarea, select, etc.)
+    const isFormElement = event.target && (
+      event.target.tagName === 'INPUT' ||
+      event.target.tagName === 'TEXTAREA' ||
+      event.target.tagName === 'SELECT' ||
+      event.target.isContentEditable
+    )
+
+    // Only close on Enter if it's not from a form element
+    if (event.key === 'Enter' && isFormElement) {
+      return // Don't close modal when Enter is pressed in form elements
+    }
+
     if (
       event.key === 'Escape' ||
-      event.key === 'Enter' ||
       event.key === 'Esc' ||
       event.keyCode === 27
     ) {

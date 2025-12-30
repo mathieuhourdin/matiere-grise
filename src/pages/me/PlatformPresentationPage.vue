@@ -1,7 +1,6 @@
 <template>
-  <div class="md:m-20 m-4">
-    <div class="text-xl font-bold mb-5" v-if="user">Bonjour {{ user.first_name }},</div>
-    <div class="text-xl font-bold mb-5 text-center">Bienvenue sur Matière Grise !</div>
+  <div class="w-10/12 md:w-9/12 mx-auto m-4">
+    <div class="text-xl font-bold mb-5" v-if="user">Bonjour {{ user.first_name }}, et bienvenue sur Matière Grise !</div>
     <div class="my-2">
       De plus en plus de voix s’élèvent pour dire que l’IA va détruire tout ce que nous aimons dans le travail humain : la maîtrise technique, l’artisanat, la recherche de la connaissance.
 Et, soyons honnêtes, cette peur est légitime. Personne ne sait vraiment où ces transformations vont nous mener.
@@ -11,7 +10,7 @@ Et, soyons honnêtes, cette peur est légitime. Personne ne sait vraiment où ce
 Sa réponse a été de mettre les “liberal arts” au cœur de ses produits. C’est comme ça que la calligraphie s’est retrouvée dans le premier Macintosh : pour rappeler que la technologie peut porter du style, du goût, de la culture.
     </div>
 
-    <iframe width="560" height="315" src="https://www.youtube.com/embed/ErwS24cBZPc?si=U-iLA8XdajF-bxEl" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+    <iframe class="my-8 max-w-full md:max-w-9/12 mx-auto" width="560" height="315" src="https://www.youtube.com/embed/ErwS24cBZPc?si=U-iLA8XdajF-bxEl" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 
     <div class="my-2">
       Aujourd’hui, la menace s’est déplacée : ce n’est plus seulement le monde extérieur qui risque de s’uniformiser, c’est ce qui fait notre humanité même – notre manière de travailler, de créer, d’apprendre.
@@ -20,7 +19,7 @@ Sa réponse a été de mettre les “liberal arts” au cœur de ses produits. C
       Donc nous devons faire la même chose que lui, mais à un autre niveau : faire appel à ce que nous avons de plus humain, à nos meilleures ressources – la culture, la littérature, la philosophie, les sciences humaines – pour que l’IA révèle le meilleur de nous, plutôt qu’elle ne l’efface.
     </div>
 
-    <iframe width="560" height="315" src="https://www.youtube.com/embed/YaKARJNQ9vA?si=d5-93FbRu3wnI4hA" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+    <iframe class="my-8 max-w-full md:max-w-9/12 mx-auto" width="560" height="315" src="https://www.youtube.com/embed/YaKARJNQ9vA?si=d5-93FbRu3wnI4hA" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 
     <div class="my-2">
       C’est pour cela que nous avons créé Matière Grise.
@@ -42,7 +41,7 @@ L’IA ne vous dit pas quoi faire. Elle lit vos rythmes, vos évolutions, mais a
       Êtes-vous prêt à choisir votre mission ? Si vous l'acceptez...
     </div>
     <div class="my-2">
-      <ActionButton class="my-2" @click="goToMissionChoice" text="Choisir une mission" type="valid" />
+      <ActionButton class="my-2" @click="goToMissionChoice" type="valid">Choisir une mission</ActionButton>
     </div>
   </div>
 </template>
@@ -54,6 +53,6 @@ import { useRouter } from 'vue-router'
 const { user } = useUser()
 const router = useRouter()
 const goToMissionChoice = () => {
-  router.push('/mission-choice')
+  router.push('/me/mission-choice')
 }
 </script>
