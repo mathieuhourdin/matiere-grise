@@ -1,1 +1,0 @@
-import{d as t,c as o,e as s,b as c,a2 as n}from"./index-75ffd805.js";const r={class:"p-4 md:p-6 max-w-4xl mx-auto"},l=t({__name:"TracePage",setup(_){const e=a=>{};return(a,d)=>(c(),o("div",r,[s(n,{"show-cancel":!1,"reset-on-mount":!0,onCreated:e})]))}});export{l as default};
