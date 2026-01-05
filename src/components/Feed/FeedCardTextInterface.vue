@@ -1,12 +1,12 @@
 <template>
   <div
     v-if="interaction.interaction_type != 'inpt' && interaction.interaction_type != 'bibl'"
-    class="overflow-auto relative w-full md:h-4/5 h-full min-h-60 mb-2 bg-gray-700"
+    class="relative w-full md:h-96 h-96 mb-2 bg-gray-700"
     ref="parentCard"
   >
     <img
       v-if="page == 0 && interaction.resource.image_url !== ''"
-      class="overflow-auto object-contain w-full h-full mt-auto mx-auto"
+      class="object-contain w-full h-full mt-auto mx-auto"
       :src="interaction.resource.image_url"
       @load="fixHeight"
     />
@@ -22,12 +22,12 @@
     </div>
     <div
       v-else
-      class="h-full overflow-scroll p-1 pb-16 border flex items-center justify-center"
+      class="h-full p-1 pb-16 border flex items-center justify-center"
       :class="getTextPropertiesFromPage(page).class"
     >
       <div
         :class="getTextPropertiesFromPage(page).class"
-        class="text-center text-sm my-auto text-white"
+        class="text-center text-sm text-white"
       >
         <div>
           <div class="text-bold mb-2">{{ getTextPropertiesFromPage(page).header }}</div>
@@ -137,11 +137,15 @@ onMounted(async () => {
     //parentCard.value.style.height = '500px'
     page.value = 1
   }
-  const authorInteraction = await getAuthorInteractionForResource(props.interaction.resource.id)
-  if (authorInteraction) {
-    authorInteraction.resource = props.interaction.resource
-    authorInteraction.user_id = authorInteraction.interaction_user_id
-    resourceAuthorInteraction.value = authorInteraction
+  try {
+    const authorInteraction = await getAuthorInteractionForResource(props.interaction.resource.id)
+    if (authorInteraction) {
+      authorInteraction.resource = props.interaction.resource
+      authorInteraction.user_id = authorInteraction.interaction_user_id
+      resourceAuthorInteraction.value = authorInteraction
+    }
+  } catch (error) {
+    console.error('Failed to fetch author interaction:', error)
   }
 })
-</script>u
+</script>

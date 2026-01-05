@@ -38,6 +38,6 @@ const { toggleMenuOpen, headerValue, isMobile } = useMenu()
 
 const route = useRoute()
 const isFeedRoute = computed(() => {
-  return route.name === 'resourceFeed' || route.name === 'feed' || route.name === 'userFeed'
+  return route.name === 'socialResourceFeed' || route.name === 'meResourceFeed' || route.name === 'feed' || route.name === 'userFeed'
 })
 </script>

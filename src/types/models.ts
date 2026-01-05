@@ -66,7 +66,7 @@ export interface Interaction {
 export type ApiInteraction = ApiObject &
   Interaction & {
     interaction_progress: number
-    resource: Resource
+    resource: ApiResource
   }
 
 export interface ResourceRelation {

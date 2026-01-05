@@ -36,7 +36,8 @@ const resourceTypeOptions = [
   { text: 'mission', value: 'miss' },
   { text: 'Journaling', value: 'jrnl' },
   { text: 'Log Lecture', value: 'logl' },
-  { text: 'Log Production', value: 'logp' }
+  { text: 'Log Production', value: 'logp' },
+  { text: 'Trace', value: 'trce' }
 ]
 
 const getResource = async (id: string): Promise<ApiResource> => {

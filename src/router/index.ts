@@ -4,7 +4,7 @@ import { useUser } from '@/composables/useUser'
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
-    { path: '/', redirect: '/social/feed' },
+    { path: '/', redirect: '/me/home' },
     {
       path: '/social',
       name: 'social',
@@ -14,12 +14,6 @@ const router = createRouter({
           path: 'feed',
           name: 'feed',
           component: () => import('@/pages/social/FeedPage.vue'),
-          meta: { requiresAuth: true }
-        },
-        {
-          path: 'resources',
-          name: 'resourcesList',
-          component: () => import('@/pages/social/ResourcesListPage.vue'),
           meta: { requiresAuth: true }
         },
         {
@@ -34,6 +28,19 @@ const router = createRouter({
           meta: { requiresRender: true, requiresAuth: true },
           props: true,
           component: () => import('@/pages/social/UserFeedPage.vue')
+        },
+        {
+          path: 'resources/:id/feed',
+          name: 'socialResourceFeed',
+          props: true,
+          component: () => import('@/pages/social/SocialResourceFeedPage.vue'),
+          meta: { requiresAuth: true }
+        },
+        {
+          path: 'resources',
+          name: 'resourcesList',
+          component: () => import('@/pages/social/ResourcesListPage.vue'),
+          meta: { requiresAuth: true }
         }
       ]
     },
@@ -73,7 +80,7 @@ const router = createRouter({
         },
         {
           path: 'resources/:id/feed',
-          name: 'resourceFeed',
+          name: 'meResourceFeed',
           props: true,
           component: () => import('@/pages/me/ResourceFeedPage.vue'),
           meta: { requiresAuth: true }

@@ -5,7 +5,7 @@
         v-if="isFetchedAuthor"
         class="flex mb-1.5 h-8"
         :user="interactionAuthor"
-        :secondText="formatDate(interaction.date)"
+        :secondText="formatDate(interaction.interaction_date)"
         :firstBottomText="getInteractionTypeName(interaction.interaction_type)"
         :secondBottomText="$t(getResourceTypeNameFromCode(interaction.resource.resource_type))"
       />
@@ -17,14 +17,14 @@
     <div v-if="interaction.interaction_type != 'inpt'" class="flex mx-1.5">
       <div title="Coming Soon ;)" class="w-6"><HeartIcon class="w-full my-auto" /></div>
       <div title="Coming Soon ;)" class="w-6"><PaperAirplaneIcon class="w-full my-auto" /></div>
-      <router-link :to="'/me/resources/' + interaction.resource.id + '/feed'" class="ml-auto"
+      <router-link :to="'/social/resources/' + interaction.resource.id + '/feed'" class="ml-auto"
         ><ArrowRightCircleIcon class="w-8"
       /></router-link>
     </div>
     <div v-if="interaction.interaction_type != 'inpt'" class="flex mx-1.5">
       <div class="text-2xs">{{ Math.floor(Math.random() * 100) }} likes</div>
       <router-link
-        :to="'/resources/' + interaction.resource.id + '/feed'"
+        :to="'/social/resources/' + interaction.resource.id + '/feed'"
         class="ml-auto text-2xs underline"
       >
         {{ thoughtInputs.length }} relations
@@ -70,7 +70,9 @@ const getInteractionTypeName = (typeCode: string) => {
 
 const { resourceTypeOptions, getAuthorInteractionForResource } = useResource()
 const getResourceTypeNameFromCode = (typeCode: string) => {
-  return resourceTypeOptions.find((option) => option.value === typeCode).text
+  const foundOption = resourceTypeOptions.find((option) => option.value === typeCode)
+  if (!foundOption) return typeCode
+  return foundOption.text
 }
 
 const interactionAuthorInteraction = ref<Interaction | null>(null)
