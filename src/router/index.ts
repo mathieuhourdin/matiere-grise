@@ -84,6 +84,12 @@ const router = createRouter({
           props: true,
           component: () => import('@/pages/me/ResourceFeedPage.vue'),
           meta: { requiresAuth: true }
+        },
+        {
+          path: 'user',
+          name: 'userProfile',
+          component: () => import('@/pages/me/UserPage.vue'),
+          meta: { requiresAuth: true }
         }
       ]
     },

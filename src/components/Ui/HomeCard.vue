@@ -1,7 +1,7 @@
 <template>
   <div
     :class="[
-      'flex-shrink-0 rounded-2xl border border-slate-800 dark:border-gray-700 bg-slate-900/60 dark:bg-elevated backdrop-blur-sm transition-colors duration-200 overflow-hidden',
+      'flex-shrink-0 rounded-2xl border border-slate-800 dark:border-gray-700 bg-slate-900/60 dark:bg-elevated backdrop-blur-sm transition-colors duration-200 overflow-auto',
       paddingClass,
       widthClass,
       heightClass
@@ -32,6 +32,7 @@
           :key="item.id || item.title || index" 
           :class="[itemClass, computedLineHeightClass]"
           :title="item.content"
+          @click="$emit('itemClick', item)"
         >
           <span class="text-xs md:text-sm">{{ item.title }}</span>
           <span v-if="showDate && item.date" class="text-2xs ml-1 text-slate-500 dark:text-gray-400">
@@ -49,7 +50,6 @@
 import { computed } from 'vue'
 import * as HeroIcons from '@heroicons/vue/24/outline'
 import AddIcon from '@/components/Ui/Icons/AddIcon.vue'
-
 interface ListItem {
   id?: string | number
   title: string
@@ -88,6 +88,7 @@ const props = withDefaults(
 
 defineEmits<{
   (e: 'action'): void
+  (e: 'itemClick', item: ListItem): void
 }>()
 
 const widthClass = computed(() => {

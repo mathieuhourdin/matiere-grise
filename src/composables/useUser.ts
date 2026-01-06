@@ -76,6 +76,36 @@ async function authUser(login: any, redirectPath: string = '/') {
   }
 }
 
+async function triggerAnalysis() {
+  try {
+    if (!user.value?.id) {
+      launchSnackbar('User not found', 'error')
+      return false
+    }
+    const payload = {
+      user_id: user.value?.id,
+      date: "2025-10-25"
+    }
+    const response = await fetchWrapper.post('/users/' + user.value?.id + '/analysis', payload)
+    return response.status
+  } catch (error) {
+    console.error('Error triggering analysis:', error)
+    launchSnackbar('Error triggering analysis', 'error')
+    return 500
+  }
+}
+
+async function deleteAnalysis(id: string) {
+  try {
+    const response = await fetchWrapper.delete('/analysis/' + id)
+    return response.status
+  } catch (error) {
+    console.error('Error deleting analysis:', error)
+    launchSnackbar('Error deleting analysis', 'error')
+    throw error
+  }
+}
+
 async function createNewDraftUser() {
   try {
     const draftAuthor = {
@@ -119,6 +149,8 @@ export function useUser() {
     updateUser,
     debouncedUpdateUser,
     createNewDraftUser,
-    isUserLoaded
+    isUserLoaded,
+    triggerAnalysis,
+    deleteAnalysis,
   }
 }

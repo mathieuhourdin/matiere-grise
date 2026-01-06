@@ -44,6 +44,12 @@
           :is-active="isActiveRoute('/me/home')"
         />
         <MenuItem
+          to="/me/user"
+          title="Mon profil"
+          icon="UserCircleIcon"
+          :is-active="isActiveRoute('/me/user')"
+        />
+        <MenuItem
           to="/me/create-resource"
           title="Créer une ressource"
           icon="PlusCircleIcon"
@@ -129,6 +135,7 @@ import {
   RssIcon,
   BookOpenIcon,
   HomeIcon,
+  UserCircleIcon,
   PlusCircleIcon,
   InformationCircleIcon,
   ClipboardDocumentCheckIcon,

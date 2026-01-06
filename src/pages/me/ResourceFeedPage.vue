@@ -5,16 +5,13 @@
     </div>
     <div v-else class="mt-10 mx-4 md:w-11/12 md:mx-auto">
       <div v-for="(resourceItem, index) in contextualResources" :key="index" class="mb-6">
-        <div v-if="resourceItem.resource">
-        <div class="text-lg font-bold mb-2">{{ formatDate(new Date(resourceItem.date)) }} - {{ resourceItem.resource.title }}</div>
-        <div class="text-sm dark:text-gray-300 text-gray-700 mb-2">{{ resourceItem.resource.subtitle }}</div>
-        <div class="text-sm dark:text-gray-300 text-gray-500 whitespace-pre-line">{{ resourceItem.resource.content }}</div>
-        </div>
+        <JournalItem :resourceItem="resourceItem" />
       </div>
     </div>
   </div></template>
 <script setup lang="ts">
 import FeedList from '@/components/Feed/FeedList.vue'
+import JournalItem from '@/components/Journal/JournalItem.vue'
 import { ref, onMounted, onUnmounted } from 'vue'
 import { useResourceRelations } from '@/composables/useResourceRelations'
 import { useResource } from '@/composables/useResource'
@@ -26,6 +23,7 @@ const props = defineProps<{
 }>()
 
 const { getResource, getAuthorInteractionForResource } = useResource()
+
 const { headerValue } = useMenu()
 
 const resource = ref<ApiResource | null>(null)
@@ -33,6 +31,8 @@ const resource = ref<ApiResource | null>(null)
 const { getAllRelationsForResource } = useResourceRelations()
 const relations = ref<any[]>([])
 const contextualResources = ref<ContextualResource[]>([])
+
+
 
 const processRelationsWithAuthorInteractions = async () => {
   const processedResources = await Promise.all(
