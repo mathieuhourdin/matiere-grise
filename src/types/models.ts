@@ -92,4 +92,30 @@ export interface Comment {
 
 export interface Trace {
   content: string
+  title?: string
+  created_at?: string | Date
+  updated_at?: string | Date
+  interaction_date?: string | Date
+  journal_id?: string
+}
+
+export type ApiTrace = Trace & ApiObject
+
+export interface LlmCall {
+  id: string
+  status: string
+  model: string
+  prompt: string
+  schema: string
+  request: string
+  request_url: string
+  response: string
+  output: string
+  input_tokens_used: number
+  reasoning_tokens_used: number
+  output_tokens_used: number
+  price: number
+  currency: string
+  created_at: string
+  updated_at: string
 }

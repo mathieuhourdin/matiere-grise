@@ -31,11 +31,11 @@ import HomeCard from '@/components/Ui/HomeCard.vue'
 import AddIcon from '@/components/Ui/Icons/AddIcon.vue'
 import CreateJournalModal from '@/components/Resource/CreateJournalModal.vue'
 import { useQuickCreateModal } from '@/composables/useQuickCreateModal'
-import { useMe } from '@/composables/useMe'
+import { useJournal } from '@/composables/useJournal'
 import JournalCard from '@/components/Journal/JournalCard.vue'
 
 const { openModal } = useQuickCreateModal()
-const { userJournals, loadUserJournal } = useMe()
+const { userJournals, loadUserJournal } = useJournal()
 
 const isCreateJournalModalOpen = ref(false)
 

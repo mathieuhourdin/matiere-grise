@@ -86,6 +86,13 @@ const router = createRouter({
           meta: { requiresAuth: true }
         },
         {
+          path: 'analysis/:id',
+          name: 'analysis',
+          props: true,
+          component: () => import('@/pages/me/AnalysisPage.vue'),
+          meta: { requiresAuth: true }
+        },
+        {
           path: 'user',
           name: 'userProfile',
           component: () => import('@/pages/me/UserPage.vue'),
@@ -119,6 +126,26 @@ const router = createRouter({
           name: 'seeResource',
           props: true,
           component: () => import('@/pages/app/SeeResourcePage.vue')
+        },
+        {
+          path: 'llm-calls',
+          name: 'llmCallsList',
+          component: () => import('@/pages/app/LlmCallsListPage.vue'),
+          meta: { requiresAuth: true }
+        },
+        {
+          path: 'llm-calls/:id',
+          name: 'seeLlmCall',
+          props: true,
+          component: () => import('@/pages/app/SeeLlmCallPage.vue'),
+          meta: { requiresAuth: true }
+        },
+        {
+          path: 'landmarks/:id',
+          name: 'seeLandmark',
+          props: true,
+          component: () => import('@/pages/app/SeeLandmarkPage.vue'),
+          meta: { requiresAuth: true }
         }
       ]
     },

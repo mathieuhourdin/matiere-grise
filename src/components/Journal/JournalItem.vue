@@ -1,7 +1,18 @@
 <template>
     <div>
         <div v-if="resourceItem.resource">
-        <div class="text-lg font-bold mb-2">{{ formatDate(new Date(resourceItem.date)) }} - {{ resourceItem.resource.title }}</div>
+            <div class="flex justify-between items-center">
+                <div class="text-lg font-bold mb-2">{{ formatDate(new Date(resourceItem.date)) }} - {{ resourceItem.resource.title }}</div>
+                <div>
+                    <ActionButton 
+                        type="valid" 
+                        size="sm" 
+                        :text="isAnalyzing ? 'Analyse en cours...' : 'Analyser'"
+                        :disabled="isAnalyzing"
+                        @click="analyzeItem"
+                    />
+                </div>
+        </div>
         <div v-if="validRelations.length > 0" class="flex flex-wrap gap-2 mb-2">
             <Chip
                 v-for="relation in validRelations"
@@ -21,6 +32,8 @@ import { useResourceRelations } from '@/composables/useResourceRelations'
 import { type ApiResource, type ContextualResource, type ResourceRelation } from '@/types/models'
 import { ref, computed, onMounted } from 'vue'
 import Chip from '@/components/Ui/Chip.vue'
+import ActionButton from '@/components/Ui/ActionButton.vue'
+import { fetchWrapper } from '@/helpers/fetch-wrapper'
 
 const props = defineProps<{
     resourceItem: any
@@ -28,6 +41,21 @@ const props = defineProps<{
 
 const { getAllRelationsForResource } = useResourceRelations()
 const relations = ref<any[]>([])
+const isAnalyzing = ref(false)
+
+const analyzeItem = async () => {
+    isAnalyzing.value = true
+    try {
+        const response = await fetchWrapper.post('/lens', {
+            current_trace_id: props.resourceItem.resource.id
+        })
+        console.log('Lens created:', response.data)
+    } catch (error) {
+        console.error('Error creating lens:', error)
+    } finally {
+        isAnalyzing.value = false
+    }
+}
 
 const validRelations = computed(() => {
     return relations.value.filter(relation => relation.origin_resource)

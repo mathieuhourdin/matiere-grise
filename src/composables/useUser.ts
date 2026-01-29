@@ -1,7 +1,7 @@
 import { ref } from 'vue'
 import router from '@/router'
 import { fetchWrapper } from '@/helpers'
-import { useSnackbar } from '@/composables/useSnackbar.ts'
+import { useSnackbar } from '@/composables/useSnackbar'
 import { type User } from '@/types/models'
 
 const { launchSnackbar } = useSnackbar()
@@ -76,7 +76,7 @@ async function authUser(login: any, redirectPath: string = '/') {
   }
 }
 
-async function triggerAnalysis() {
+async function triggerAnalysis(date: string) {
   try {
     if (!user.value?.id) {
       launchSnackbar('User not found', 'error')
@@ -84,7 +84,7 @@ async function triggerAnalysis() {
     }
     const payload = {
       user_id: user.value?.id,
-      date: "2025-10-25"
+      date: date
     }
     const response = await fetchWrapper.post('/users/' + user.value?.id + '/analysis', payload)
     return response.status
@@ -92,6 +92,21 @@ async function triggerAnalysis() {
     console.error('Error triggering analysis:', error)
     launchSnackbar('Error triggering analysis', 'error')
     return 500
+  }
+}
+
+async function getLastAnalysis() {
+  const response = await fetchWrapper.get('/users/' + user.value?.id + '/analysis')
+  return response.data
+}
+
+async function getUserLandmarks(userId: string) {
+  try {
+    const response = await fetchWrapper.get('/users/' + userId + '/landmarks')
+    return response.data
+  } catch (error) {
+    launchSnackbar(`Error getting landmarks: ${error}`, 'error')
+    throw error
   }
 }
 
@@ -152,5 +167,7 @@ export function useUser() {
     isUserLoaded,
     triggerAnalysis,
     deleteAnalysis,
+    getLastAnalysis,
+    getUserLandmarks,
   }
 }
