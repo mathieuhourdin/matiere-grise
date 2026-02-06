@@ -1,4 +1,4 @@
-import { ref, watch } from 'vue'
+import { ref, watch, nextTick } from 'vue'
 import { fetchWrapper } from '@/helpers'
 import { useSnackbar } from '@/composables/useSnackbar'
 import { useUser } from '@/composables/useUser'
@@ -44,15 +44,23 @@ const isLoadingAnalysis = ref(false)
 const isLoadingLandmarks = ref(false)
 const isLoadingParents = ref(false)
 
+type LoadUserLensesOptions = {
+  setLoading?: boolean
+  autoSelect?: boolean
+}
+
 // Fetch all lenses for the current user
-async function loadUserLenses() {
+async function loadUserLenses(options: LoadUserLensesOptions = {}) {
+  const { setLoading = true, autoSelect = true } = options
   console.log('[useLens] loadUserLenses called, user:', user.value)
   if (!user.value?.id) {
     console.warn('[useLens] User not found, skipping loadUserLenses')
-    return
+    return []
   }
   
-  isLoadingLenses.value = true
+  if (setLoading) {
+    isLoadingLenses.value = true
+  }
   try {
     console.log('[useLens] Fetching lenses for user:', user.value.id)
     const response = await fetchWrapper.get(`/users/${user.value.id}/lens`)
@@ -60,7 +68,7 @@ async function loadUserLenses() {
     console.log('[useLens] Lenses loaded:', lenses.value)
     
     // Auto-select the most recently updated lens
-    if (lenses.value.length > 0) {
+    if (autoSelect && lenses.value.length > 0) {
       const sortedByUpdatedAt = [...lenses.value].sort((a, b) => {
         const dateA = new Date(a.updated_at || a.created_at || 0).getTime()
         const dateB = new Date(b.updated_at || b.created_at || 0).getTime()
@@ -69,11 +77,15 @@ async function loadUserLenses() {
       console.log('[useLens] Auto-selecting most recently updated lens:', sortedByUpdatedAt[0])
       selectLens(sortedByUpdatedAt[0])
     }
+    return lenses.value
   } catch (error) {
     console.error('Error loading lenses:', error)
     launchSnackbar(`Error loading lenses: ${error}`, 'error')
+    return []
   } finally {
-    isLoadingLenses.value = false
+    if (setLoading) {
+      isLoadingLenses.value = false
+    }
   }
 }
 
@@ -111,6 +123,104 @@ function updateDisplayLandscapeAnalysis(analysisId: string) {
   // Just update the ID - the watch will handle fetching the new analysis
   displayLandscapeAnalysisId.value = analysisId
   console.log('[useLens] Updated display landscape analysis ID to:', analysisId)
+}
+
+// Update lens current trace on the API (PUT /lens/id with target_trace_id)
+async function updateLensCurrentTrace(traceId: string) {
+  if (!currentLens.value?.id) {
+    console.warn('[useLens] No current lens, cannot update current trace')
+    return
+  }
+  try {
+    await fetchWrapper.put(`/lens/${currentLens.value.id}`, {
+      target_trace_id: traceId
+    })
+    console.log('[useLens] Updated lens current trace to:', traceId)
+    await pollLensUntilFinished(currentLens.value.id)
+  } catch (error) {
+    console.error('Error updating lens current trace:', error)
+    launchSnackbar(`Error updating lens: ${error}`, 'error')
+  }
+}
+
+// Update lens processing_state on the API (PUT /lens/id with full lens + processing_state)
+async function updateLensProcessingState(processingState: string) {
+  const lens = currentLens.value
+  if (!lens?.id) {
+    console.warn('[useLens] No current lens, cannot update processing state')
+    return
+  }
+  try {
+    const payload = { ...lens, processing_state: processingState }
+    await fetchWrapper.put(`/lens/${lens.id}`, payload)
+    console.log('[useLens] Updated lens processing_state to:', processingState)
+    await pollLensUntilFinished(lens.id)
+  } catch (error) {
+    console.error('Error updating lens processing state:', error)
+    launchSnackbar(`Error updating lens: ${error}`, 'error')
+  }
+}
+
+// Create a new lens with target_trace_id (POST when user has no lens)
+async function createLens(traceId: string) {
+  if (!user.value?.id) {
+    console.warn('[useLens] User not found, cannot create lens')
+    return
+  }
+  try {
+    const response = await fetchWrapper.post(`/lens`, {
+      target_trace_id: traceId
+    })
+    const newLens = response.data as Lens
+    lenses.value = [...lenses.value, newLens]
+    selectLens(newLens)
+    console.log('[useLens] Created lens for trace:', traceId)
+  } catch (error) {
+    console.error('Error creating lens:', error)
+    launchSnackbar(`Error creating lens: ${error}`, 'error')
+  }
+}
+
+const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
+
+const refreshCurrentLens = async (lensId?: string) => {
+  const targetId = lensId ?? currentLens.value?.id
+  if (!targetId) return null
+  const list = await loadUserLenses({ setLoading: false, autoSelect: false })
+  const updated = list.find((l) => l.id === targetId) ?? null
+  if (updated) {
+    currentLens.value = updated
+  }
+  return updated
+}
+
+const refreshCurrentAnalyses = async () => {
+  const headId = headLandscapeAnalysisId.value
+  const displayId = displayLandscapeAnalysisId.value
+  const tasks: Promise<any>[] = []
+  if (headId) tasks.push(fetchLandscapeAnalysis(headId, 'head'))
+  if (displayId) tasks.push(fetchLandscapeAnalysis(displayId, 'display'))
+  if (tasks.length > 0) {
+    await Promise.all(tasks)
+  }
+}
+
+let activePollToken = 0
+const pollLensUntilFinished = async (lensId: string, intervalMs = 1000, maxAttempts = Number.POSITIVE_INFINITY) => {
+  const token = ++activePollToken
+  for (let attempt = 0; attempt < maxAttempts; attempt++) {
+    await sleep(intervalMs)
+    if (token !== activePollToken) {
+      return null
+    }
+    const updated = await refreshCurrentLens(lensId)
+    if (updated?.processing_state === 'fnsh') {
+      await nextTick()
+      await refreshCurrentAnalyses()
+      return updated
+    }
+  }
+  return null
 }
 
 // Delete a lens
@@ -248,7 +358,9 @@ export function useLens() {
     fetchLandscapeAnalysis,
     fetchLandmarksForAnalysis,
     fetchLandscapeAnalysisParents,
-    updateDisplayLandscapeAnalysis
+    updateDisplayLandscapeAnalysis,
+    updateLensCurrentTrace,
+    updateLensProcessingState,
+    createLens
   }
 }
-

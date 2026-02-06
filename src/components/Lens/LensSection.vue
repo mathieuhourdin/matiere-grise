@@ -47,10 +47,24 @@
         Chargement de l'analyse...
       </div>
       
-      <div v-else-if="displayLandscapeAnalysis" class="rounded-2xl border border-slate-800 bg-slate-900/60 p-4">
-        <h3 class="text-lg font-bold text-slate-200 mb-2">
-          {{ displayLandscapeAnalysis.title || 'Analyse' }}
-        </h3>
+      <router-link
+        v-else-if="displayLandscapeAnalysis"
+        :to="{ name: 'analysis', params: { id: displayLandscapeAnalysis.id } }"
+        :title="displayTrace?.id ?? displayLandscapeAnalysis.id"
+        class="relative block rounded-2xl border border-slate-800 bg-slate-900/60 p-4 cursor-pointer hover:border-slate-600 hover:bg-slate-800/60 transition-colors"
+      >
+        <div
+          v-if="isAnalysisProcessing"
+          class="absolute top-4 right-4 flex items-center gap-2 text-amber-400 text-sm"
+          title="Analyse en cours..."
+        >
+          <ArrowPathIcon class="w-5 h-5 animate-spin flex-shrink-0" />
+          <span>En cours</span>
+        </div>
+        <div v-if="displayTrace" class="text-sm text-slate-400 mb-2">
+          <h3 class="font-medium text-slate-300">{{ displayTrace.title || displayTrace.content || 'Trace' }}</h3>
+          <span class="text-slate-500"> · {{ formatDate(displayTrace.interaction_date || displayTrace.created_at) }}</span>
+        </div>
         <div v-if="displayLandscapeAnalysis.context" class="text-sm text-slate-400 whitespace-pre-line">
           {{ typeof displayLandscapeAnalysis.context === 'string' 
               ? displayLandscapeAnalysis.context 
@@ -59,7 +73,7 @@
         <div v-if="displayLandscapeAnalysis.content" class="text-sm text-slate-300 mt-2 whitespace-pre-line">
           {{ displayLandscapeAnalysis.content }}
         </div>
-      </div>
+      </router-link>
       
       <div v-else-if="!currentLens.current_landscape_id" class="text-slate-500 text-sm">
         Cette lens n'a pas encore d'analyse associée.
@@ -71,7 +85,8 @@
 <script setup lang="ts">
 import { computed, onMounted } from 'vue'
 import { useLens, type Lens } from '@/composables/useLens'
-import { XMarkIcon } from '@heroicons/vue/24/outline'
+import { useTrace } from '@/composables/useTrace'
+import { XMarkIcon, ArrowPathIcon } from '@heroicons/vue/24/outline'
 
 const {
   lenses,
@@ -83,6 +98,19 @@ const {
   selectLens,
   deleteLens
 } = useLens()
+
+const { traces, loadUserTraces } = useTrace()
+
+const displayTrace = computed(() => {
+  const analysis = displayLandscapeAnalysis.value
+  if (!analysis?.analyzed_trace_id) return null
+  return traces.value.find((t) => t.id === analysis.analyzed_trace_id) ?? null
+})
+
+const isAnalysisProcessing = computed(() => {
+  const analysis = displayLandscapeAnalysis.value
+  return analysis?.processing_state === 'drft'
+})
 
 const sortedLenses = computed(() => {
   return [...lenses.value].sort((a, b) => {
@@ -105,7 +133,7 @@ const formatDate = (date: string | Date | undefined) => {
 }
 
 onMounted(async () => {
-  await loadUserLenses()
+  await Promise.all([loadUserLenses(), loadUserTraces()])
 })
 </script>
 

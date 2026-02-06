@@ -78,6 +78,20 @@
         </div>
       </div>
 
+      <div class="mb-6" v-if="llmCall.user_prompt">
+        <div class="border border-slate-300 dark:border-zinc-700 rounded-lg p-4">
+          <div class="text-sm font-semibold text-gray-600 dark:text-gray-400 mb-2">User Prompt</div>
+          <pre class="whitespace-pre-wrap text-sm bg-gray-50 dark:bg-zinc-900 p-3 rounded overflow-x-auto">{{ llmCall.user_prompt }}</pre>
+        </div>
+      </div>
+
+      <div class="mb-6" v-if="llmCall.output">
+        <div class="border border-slate-300 dark:border-zinc-700 rounded-lg p-4">
+          <div class="text-sm font-semibold text-gray-600 dark:text-gray-400 mb-2">Output</div>
+          <pre class="whitespace-pre-wrap text-sm bg-gray-50 dark:bg-zinc-900 p-3 rounded overflow-x-auto">{{ formatJson(llmCall.output) }}</pre>
+        </div>
+      </div>
+
       <div class="mb-6">
         <div class="border border-slate-300 dark:border-zinc-700 rounded-lg p-4">
           <div class="text-sm font-semibold text-gray-600 dark:text-gray-400 mb-2">Prompt</div>
@@ -106,12 +120,6 @@
         </div>
       </div>
 
-      <div class="mb-6" v-if="llmCall.output">
-        <div class="border border-slate-300 dark:border-zinc-700 rounded-lg p-4">
-          <div class="text-sm font-semibold text-gray-600 dark:text-gray-400 mb-2">Output</div>
-          <pre class="whitespace-pre-wrap text-sm bg-gray-50 dark:bg-zinc-900 p-3 rounded overflow-x-auto">{{ formatJson(llmCall.output) }}</pre>
-        </div>
-      </div>
     </div>
     <div v-else class="text-center text-2xl pt-10 text-red-600">LLM Call not found</div>
   </div>
@@ -189,4 +197,3 @@ onMounted(async () => {
   }
 })
 </script>
-

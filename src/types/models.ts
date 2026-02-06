@@ -103,6 +103,8 @@ export type ApiTrace = Trace & ApiObject
 
 export interface LlmCall {
   id: string
+  display_name?: string
+  user_prompt?: string
   status: string
   model: string
   prompt: string

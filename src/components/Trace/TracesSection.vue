@@ -17,7 +17,7 @@
     
     <!-- Traces display - GitHub commit style -->
     <div v-else class="relative">
-      <div class="flex items-start gap-6 overflow-x-auto py-4 pt-8">
+      <div class="flex items-start gap-6 overflow-x-auto py-4 pt-10">
         <!-- Each trace as a commit-like item -->
         <div
           v-for="(trace, index) in sortedTraces"
@@ -36,28 +36,40 @@
           <!-- Connection line to the right (except for last item) -->
           <div
             v-if="index < sortedTraces.length - 1"
-            class="absolute top-6 left-12 h-0.5 bg-slate-700 z-0"
+            class="absolute top-12 left-12 h-0.5 bg-slate-700 z-0"
             style="width: calc(100% + 1.5rem);"
           ></div>
           
-          <!-- Rounded icon/circle -->
-          <div
-            :class="[
-              'w-12 h-12 rounded-full border-2 flex items-center justify-center text-white font-semibold text-sm shadow-lg hover:scale-110 transition-transform cursor-pointer relative z-10',
-              `bg-gradient-to-br ${getJournalColor(trace).from} ${getJournalColor(trace).to}`,
-              getJournalColor(trace).border,
-              getParentForTrace(trace) ? 'ring-2 ring-yellow-400 ring-offset-2 ring-offset-slate-900' : ''
-            ]"
-            :title="trace.content || getTraceTitle(trace)"
-            @click="handleTraceClick(trace)"
-          >
-            <span v-if="trace.title">
-              {{ trace.title.charAt(0).toUpperCase() }}
-            </span>
-            <span v-else-if="trace.content">
-              {{ trace.content.charAt(0).toUpperCase() }}
-            </span>
-            <span v-else>T</span>
+          <!-- Play + circle block: padding creates hoverable gap so hover is maintained between them -->
+          <div class="relative pt-6 flex flex-col items-center">
+            <!-- Play picto (visible on hover when trace not older than current analysis trace) -->
+            <button
+              v-if="canShowPlayButton(trace)"
+              type="button"
+              class="absolute top-0 left-1/2 -translate-x-1/2 z-20 flex items-center justify-center w-8 h-8 rounded-full bg-slate-700 text-slate-300 opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer hover:bg-slate-600 hover:text-white focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-offset-2 focus:ring-offset-slate-900"
+              :title="'Voir l\'analyse'"
+              @click.stop="handleTraceClick(trace)"
+            >
+              <PlayIcon class="w-4 h-4" />
+            </button>
+            <!-- Rounded icon/circle -->
+            <div
+              :class="[
+                'w-12 h-12 rounded-full border-2 flex items-center justify-center text-white font-semibold text-sm shadow-lg hover:scale-110 transition-transform relative z-10',
+                `bg-gradient-to-br ${getJournalColor(trace).from} ${getJournalColor(trace).to}`,
+                getJournalColor(trace).border,
+                hasFinishedAnalysis(trace) ? 'ring-2 ring-green-400 ring-offset-2 ring-offset-slate-900' : (getParentForTrace(trace) ? 'ring-2 ring-yellow-400 ring-offset-2 ring-offset-slate-900' : '')
+              ]"
+              :title="trace.content || getTraceTitle(trace)"
+            >
+              <span v-if="trace.title">
+                {{ trace.title.charAt(0).toUpperCase() }}
+              </span>
+              <span v-else-if="trace.content">
+                {{ trace.content.charAt(0).toUpperCase() }}
+              </span>
+              <span v-else>T</span>
+            </div>
           </div>
           
           <!-- Title below the circle -->
@@ -91,7 +103,7 @@ import { useTrace } from '@/composables/useTrace'
 import { useJournal } from '@/composables/useJournal'
 import { useLens } from '@/composables/useLens'
 import { type ApiTrace } from '@/types/models'
-import { ArrowDownIcon } from '@heroicons/vue/24/outline'
+import { ArrowDownIcon, PlayIcon } from '@heroicons/vue/24/outline'
 
 const {
   traces,
@@ -105,9 +117,15 @@ const {
 } = useJournal()
 
 const {
+  currentLens,
   displayLandscapeAnalysis,
+  headLandscapeAnalysis,
   headLandscapeAnalysisParents,
-  updateDisplayLandscapeAnalysis
+  updateDisplayLandscapeAnalysis,
+  updateLensCurrentTrace,
+  updateLensProcessingState,
+  createLens,
+  loadUserLenses
 } = useLens()
 
 const sortedTraces = computed(() => {
@@ -193,6 +211,23 @@ const getJournalColor = (trace: ApiTrace) => {
   return journalColors[colorIndex]
 }
 
+// Find the landscape analysis that has this trace as analyzed_trace_id
+const getLandscapeAnalysisForTrace = (trace: ApiTrace) => {
+  if (displayLandscapeAnalysis.value?.analyzed_trace_id === trace.id) {
+    return displayLandscapeAnalysis.value
+  }
+  if (headLandscapeAnalysis.value?.analyzed_trace_id === trace.id) {
+    return headLandscapeAnalysis.value
+  }
+  return headLandscapeAnalysisParents.value.find(
+    (parent) => parent.analyzed_trace_id === trace.id
+  ) ?? null
+}
+
+const hasFinishedAnalysis = (trace: ApiTrace): boolean => {
+  return getLandscapeAnalysisForTrace(trace)?.processing_state === 'fnsh'
+}
+
 // Find parent analysis that matches this trace
 const getParentForTrace = (trace: ApiTrace) => {
   return headLandscapeAnalysisParents.value.find(
@@ -200,14 +235,44 @@ const getParentForTrace = (trace: ApiTrace) => {
   )
 }
 
-// Handle trace click - update to parent analysis if it exists
-const handleTraceClick = (trace: ApiTrace) => {
+const getTraceDate = (trace: ApiTrace): number => {
+  const date = trace.interaction_date ?? trace.created_at
+  return date ? new Date(date).getTime() : 0
+}
+
+// Get the current trace (the one matching display analysis)
+const currentTrace = computed(() => {
+  const id = displayLandscapeAnalysis.value?.analyzed_trace_id
+  if (!id) return null
+  return sortedTraces.value.find((t) => t.id === id) ?? null
+})
+
+// Play button visible only when trace is not older than current landscape analysis trace
+const canShowPlayButton = (trace: ApiTrace): boolean => {
+  const current = currentTrace.value
+  if (!current) return true
+  return getTraceDate(trace) >= getTraceDate(current)
+}
+
+// Handle play click: for currently pointed trace, PUT lens with processing_state 'rply'; else PUT target_trace_id
+const handleTraceClick = async (trace: ApiTrace) => {
+  if (isCurrentHeadTrace(trace)) {
+    if (currentLens.value) {
+      await updateLensProcessingState('rply')
+    }
+    return
+  }
+
+  if (currentLens.value) {
+    await updateLensCurrentTrace(trace.id)
+  } else {
+    await createLens(trace.id)
+    await loadUserLenses()
+  }
+
   const parent = getParentForTrace(trace)
   if (parent) {
-    console.log('[TracesSection] Clicked trace with parent:', trace.id, parent.id)
     updateDisplayLandscapeAnalysis(parent.id)
-  } else {
-    console.log('[TracesSection] Clicked trace has no parent:', trace.id)
   }
 }
 

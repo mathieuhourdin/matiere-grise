@@ -18,6 +18,24 @@
         </h2>
       </template>
     </HomeCard>
+    <!-- Themes -->
+    <HomeCard width="30%" height="36" :items="landmarkThemes" @itemClick="openLandmarkPage">
+      <template #header>
+        <h2 class="flex items-center text-xs md:text-base font-bold">
+          <span class="mr-2">🌍</span>
+          Themes
+        </h2>
+      </template>
+    </HomeCard>
+    <!-- Authors -->
+    <HomeCard width="30%" height="36" :items="landmarkAuthors" @itemClick="openLandmarkPage">
+      <template #header>
+        <h2 class="flex items-center text-xs md:text-base font-bold">
+          <span class="mr-2">👑</span>
+          Authors
+        </h2>
+      </template>
+    </HomeCard>
     <!-- Tasks (from displayLandmarks) -->
     <HomeCard width="30%" height="36" :items="landmarkTasks">
       <template #header>
@@ -65,7 +83,7 @@ import { useUser } from '@/composables/useUser'
 import { useInteraction } from '@/composables/useInteraction'
 import { useLens, type Landmark } from '@/composables/useLens'
 import { useRouter } from 'vue-router'
-const { user, deleteAnalysis, getUserLandmarks } = useUser()
+const { user, deleteAnalysis } = useUser()
 const { getInteractions } = useInteraction()
 const { displayLandmarks, loadUserLenses } = useLens()
 const router = useRouter()
@@ -85,7 +103,6 @@ const analysis = ref({
   processes: [] as AnalysisItem[],
 })
 
-const landmarks = ref<ApiResource[]>([])
 
 const loadAnalysis = async () => {
   if (!user.value?.id) return
@@ -95,19 +112,15 @@ const loadAnalysis = async () => {
     const analysisData = await getInteractions({ interaction_type: 'outp', interaction_user_id: user.value.id, resource_type: 'anly' })
     
     // Use landmarks for other sections
-    const landmarks = await getUserLandmarks(user.value.id)
-    console.log('landmarks : ', landmarks)
-
-    landmarks.value = landmarks
-    
     // Filter and format resources by type
     analysis.value = {
       analysis: formatAnalysis(analysisData),
-      tasks: formatResources(landmarks.filter((r: ApiResource) => r.landmark_type === 'task')),
-      questions: formatResources(landmarks.filter((r: ApiResource) => r.landmark_type === 'qest')),
-      resources: formatResources(landmarks.filter((r: ApiResource) => r.landmark_type === 'rsrc')),
-      deliverables: formatResources(landmarks.filter((r: ApiResource) => r.landmark_type === 'dlvr')),
-      processes: formatResources(landmarks.filter((r: ApiResource) => r.landmark_type === 'proc')),
+      themes: formatLandmarks(displayLandmarks.value.filter(l => l.landmark_type === 'them')),
+      tasks: formatLandmarks(displayLandmarks.value.filter(l => l.landmark_type === 'task')),
+      questions: formatLandmarks(displayLandmarks.value.filter(l => l.landmark_type === 'qest')),
+      resources: formatLandmarks(displayLandmarks.value.filter(l => l.landmark_type === 'rsrc')),
+      deliverables: formatLandmarks(displayLandmarks.value.filter(l => l.landmark_type === 'dlvr')),
+      processes: formatLandmarks(displayLandmarks.value.filter(l => l.landmark_type === 'proc')),
     }
   } catch (error) {
     console.error('Error loading analysis:', error)
@@ -155,6 +168,14 @@ const landmarkTasks = computed(() => {
 
 const landmarkResources = computed(() => {
   return formatLandmarks(displayLandmarks.value.filter(l => l.landmark_type === 'rsrc'))
+})
+
+const landmarkThemes = computed(() => {
+  return formatLandmarks(displayLandmarks.value.filter(l => l.landmark_type === 'them'))
+})
+
+const landmarkAuthors = computed(() => {
+  return formatLandmarks(displayLandmarks.value.filter(l => l.landmark_type === 'autr'))
 })
 
 const deleteAnalysisItem = async (item: AnalysisItem) => {

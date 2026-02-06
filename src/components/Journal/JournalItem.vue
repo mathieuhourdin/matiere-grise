@@ -47,7 +47,7 @@ const analyzeItem = async () => {
     isAnalyzing.value = true
     try {
         const response = await fetchWrapper.post('/lens', {
-            current_trace_id: props.resourceItem.resource.id
+            target_trace_id: props.resourceItem.resource.id
         })
         console.log('Lens created:', response.data)
     } catch (error) {

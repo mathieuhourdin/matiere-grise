@@ -100,16 +100,6 @@ async function getLastAnalysis() {
   return response.data
 }
 
-async function getUserLandmarks(userId: string) {
-  try {
-    const response = await fetchWrapper.get('/users/' + userId + '/landmarks')
-    return response.data
-  } catch (error) {
-    launchSnackbar(`Error getting landmarks: ${error}`, 'error')
-    throw error
-  }
-}
-
 async function deleteAnalysis(id: string) {
   try {
     const response = await fetchWrapper.delete('/analysis/' + id)
@@ -168,6 +158,5 @@ export function useUser() {
     triggerAnalysis,
     deleteAnalysis,
     getLastAnalysis,
-    getUserLandmarks,
   }
 }
