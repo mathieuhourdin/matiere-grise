@@ -26,7 +26,7 @@
 		<!-- Row 1.6: Traces -->
 		<TracesSection />
     <!-- Row 1.7: Open Journal -->
-    <OpenJournalSection />
+    <OpenJournalSection class="mb-10" />
       <!-- Row 2: Achievements, Focus, Horizons -->
       <AnalysisSection />
       <!-- Row 3: Mentor image/message -->

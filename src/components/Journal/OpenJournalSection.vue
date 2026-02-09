@@ -1,62 +1,88 @@
 <template>
-  <div>
-    <h2 class="text-lg font-semibold mb-1 text-slate-200">Vos journaux</h2>
-    <span class="text-xs text-slate-500">Consultez ce que vous avez écrit et ajoutez de nouvelles traces</span>
+  <section class="ipad-shell">
+    <div class="ipad-screen">
+      <header class="mb-4">
+        <h2 class="text-xl font-semibold text-slate-800">Vos journaux</h2>
+        <p class="text-xs text-slate-500">Consultez ce que vous avez ecrit et ajoutez de nouvelles traces</p>
+      </header>
 
-    <div class="mt-3 flex gap-2 overflow-x-auto pb-1">
-      <button
-        v-for="journal in sortedJournals"
-        :key="journal.id"
-        type="button"
-        @click="selectJournal(journal)"
-        :class="[
-          'px-3 py-1.5 rounded-lg border text-xs whitespace-nowrap transition-colors',
-          currentJournalId === (journal.resource_id ?? journal.resource?.id)
-            ? 'border-blue-500 bg-blue-500/20 text-blue-200'
-            : 'border-slate-700 bg-slate-900/60 text-slate-300 hover:border-slate-500'
-        ]"
-      >
-        {{ journal.resource?.title || 'Sans titre' }}
-      </button>
-    </div>
+      <div class="journal-tabs flex gap-2 overflow-x-auto pb-1">
+        <button
+          v-for="journal in sortedJournals"
+          :key="journal.id"
+          type="button"
+          @click="selectJournal(journal)"
+          :class="[
+            'px-3 py-1.5 rounded-xl border text-xs whitespace-nowrap transition-all duration-200 shadow-sm',
+            currentJournalId === (journal.resource_id ?? journal.resource?.id)
+              ? 'border-sky-500 bg-sky-100 text-sky-900'
+              : 'border-slate-300 bg-white/80 text-slate-600 hover:border-slate-400'
+          ]"
+        >
+          {{ journal.resource?.title || 'Sans titre' }}
+        </button>
+      </div>
 
-    <div class="mt-4">
-      <div v-if="isLoading" class="text-sm text-slate-500">Chargement...</div>
-      <div v-else-if="!currentJournal" class="text-sm text-slate-500">Aucun journal trouvé</div>
-      <div v-else>
-        <textarea
-          v-model="newTraceContent"
-          rows="3"
-          placeholder="Écrire une nouvelle trace..."
-          class="w-full mb-4 rounded-lg border border-slate-700 bg-slate-900/60 text-slate-200 text-sm p-3 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
-        ></textarea>
-        <div v-if="journalTraces.length > 0" class="space-y-4 max-h-[360px] overflow-y-auto pr-1">
-          <div v-for="trace in journalTraces" :key="trace.id" class="text-sm text-slate-300 whitespace-pre-line">
-            <div class="text-xs text-slate-500 mb-1">
-              {{ formatDate(trace.interaction_date || trace.created_at) }}
+      <div class="mt-4 flex-1 min-h-0">
+        <div v-if="isLoading" class="text-sm text-slate-500">Chargement...</div>
+        <div v-else-if="!currentJournal" class="text-sm text-slate-500">Aucun journal trouve</div>
+        <div v-else class="journal-canvas h-full">
+          <div class="traces-scroll flex-1 min-h-0 overflow-y-auto pr-2">
+            <div class="paper-content space-y-6">
+              <textarea
+                v-model="newTraceContent"
+                rows="3"
+                placeholder="Ecrire une nouvelle trace..."
+                class="w-full rounded-xl border border-amber-200 bg-white/75 text-slate-700 text-base p-4 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-sky-300 font-handwritten"
+              ></textarea>
+
+              <div v-if="isLoadingJournalTraces" class="text-sm text-slate-500">
+                Chargement des traces...
+              </div>
+              <template v-else-if="journalTraces.length > 0">
+                <article
+                  v-for="trace in journalTraces"
+                  :key="trace.id"
+                  class="trace-entry text-[17px] text-slate-700 whitespace-pre-line leading-[2]"
+                >
+                  <div class="text-xs text-slate-500 mb-1">
+                    {{ formatDate(trace.interaction_date || trace.created_at) }}
+                  </div>
+                  <div class="font-handwritten text-4xl mb-2 leading-tight text-slate-800">
+                    {{ splitTraceText(trace).first }}
+                  </div>
+                  <div v-if="splitTraceText(trace).rest" class="font-georgia">
+                    {{ splitTraceText(trace).rest }}
+                  </div>
+                </article>
+              </template>
+              <div v-else class="text-sm text-slate-500">
+                Aucune trace pour ce journal
+              </div>
             </div>
-            <div>{{ trace.content || trace.title || 'Trace sans contenu' }}</div>
           </div>
-        </div>
-        <div v-else class="text-sm text-slate-500">
-          Aucune trace pour ce journal
         </div>
       </div>
     </div>
-  </div>
+    <div class="ipad-home-indicator"></div>
+  </section>
 </template>
 
 <script setup lang="ts">
 import { computed, onMounted, ref, watch } from 'vue'
 import { useJournal } from '@/composables/useJournal'
-import { useTrace } from '@/composables/useTrace'
+import { fetchWrapper } from '@/helpers'
+import { useSnackbar } from '@/composables/useSnackbar'
 import { type ApiInteraction, type ApiTrace } from '@/types/models'
 
 const { userJournals, loadUserJournal } = useJournal()
-const { traces, loadUserTraces } = useTrace()
+const { launchSnackbar } = useSnackbar()
 
 const isLoading = ref(false)
+const isLoadingJournalTraces = ref(false)
 const newTraceContent = ref('')
+const journalTraces = ref<ApiTrace[]>([])
+let tracesRequestToken = 0
 
 const sortedJournals = computed<ApiInteraction[]>(() => {
   if (!userJournals.value.length) return []
@@ -81,16 +107,24 @@ const selectJournal = (journal: ApiInteraction) => {
   currentJournal.value = journal
 }
 
-const journalTraces = computed<ApiTrace[]>(() => {
-  const journalId = currentJournalId.value
-  if (!journalId) return []
-  const filtered = traces.value.filter((t) => t.journal_id === journalId)
-  return [...filtered].sort((a, b) => {
-    const aDate = new Date(a.interaction_date || a.created_at || 0).getTime()
-    const bDate = new Date(b.interaction_date || b.created_at || 0).getTime()
-    return bDate - aDate
-  })
-})
+const loadTracesForJournal = async (journalId: string) => {
+  const token = ++tracesRequestToken
+  isLoadingJournalTraces.value = true
+  try {
+    const response = await fetchWrapper.get(`/journals/${journalId}/traces`)
+    if (token !== tracesRequestToken) return
+    const list = Array.isArray(response.data) ? response.data : []
+    journalTraces.value = list
+  } catch (error) {
+    if (token !== tracesRequestToken) return
+    console.error('Error loading traces for journal:', error)
+    launchSnackbar(`Error loading journal traces: ${error}`, 'error')
+    journalTraces.value = []
+  } finally {
+    if (token !== tracesRequestToken) return
+    isLoadingJournalTraces.value = false
+  }
+}
 
 const formatDate = (date: string | Date | undefined): string => {
   if (!date) return ''
@@ -98,9 +132,18 @@ const formatDate = (date: string | Date | undefined): string => {
   return dateObj.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', year: 'numeric' })
 }
 
+const splitTraceText = (trace: ApiTrace) => {
+  const raw = trace.content || trace.title || 'Trace sans contenu'
+  const lines = raw.split('\n')
+  const first = lines.shift() ?? ''
+  const rest = lines.join('\n').trim()
+  return { first, rest }
+}
+
 watch(sortedJournals, (list) => {
   if (!list.length) {
     currentJournal.value = null
+    journalTraces.value = []
     return
   }
   const currentId = currentJournalId.value
@@ -110,10 +153,19 @@ watch(sortedJournals, (list) => {
   }
 })
 
+watch(currentJournalId, async (journalId) => {
+  if (!journalId) {
+    journalTraces.value = []
+    return
+  }
+  journalTraces.value = []
+  await loadTracesForJournal(journalId)
+})
+
 onMounted(async () => {
   isLoading.value = true
   try {
-    await Promise.all([loadUserJournal(), loadUserTraces()])
+    await loadUserJournal()
     if (!currentJournal.value && sortedJournals.value.length > 0) {
       currentJournal.value = sortedJournals.value[0]
     }
@@ -122,3 +174,133 @@ onMounted(async () => {
   }
 })
 </script>
+
+<style scoped>
+.ipad-shell {
+  position: relative;
+  width: min(100%, 1100px);
+  margin-left: auto;
+  margin-right: auto;
+  height: 900px;
+  min-height: 900px;
+  overflow: hidden;
+  padding: 16px;
+  border-radius: 40px;
+  border: 1px solid rgba(148, 163, 184, 0.35);
+  background: linear-gradient(145deg, #1e293b 0%, #111827 100%);
+  box-shadow: 0 22px 40px rgba(2, 6, 23, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+.ipad-camera {
+  position: absolute;
+  top: 8px;
+  left: 50%;
+  width: 10px;
+  height: 10px;
+  transform: translateX(-50%);
+  border-radius: 9999px;
+  background: radial-gradient(circle at 30% 30%, #64748b, #0f172a 70%);
+  box-shadow: 0 0 0 3px rgba(15, 23, 42, 0.75);
+}
+
+.ipad-screen {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
+  border-radius: 32px;
+  border: 1px solid rgba(226, 232, 240, 0.8);
+  background: linear-gradient(180deg, #f8f5ed 0%, #efe8d9 100%);
+  padding: 20px;
+}
+
+.journal-tabs {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(148, 163, 184, 0.6) transparent;
+}
+
+.journal-canvas {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  overflow: hidden;
+  border: 1px solid rgba(217, 119, 6, 0.25);
+  border-radius: 20px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.74), rgba(248, 250, 252, 0.55));
+  padding: 16px;
+}
+
+.traces-scroll {
+  border-radius: 14px;
+}
+
+.paper-content {
+  background-color: rgba(255, 255, 255, 0.32);
+  background-image:
+    linear-gradient(to right, rgba(251, 113, 133, 0.32), rgba(251, 113, 133, 0.32)),
+    repeating-linear-gradient(
+      to bottom,
+      rgba(0, 0, 0, 0.06) 0,
+      rgba(0, 0, 0, 0.06) 1px,
+      transparent 1px,
+      transparent 36px
+    );
+  background-repeat: no-repeat, repeat;
+  background-size: 1px 100%, 100% 36px;
+  background-position: 44px 0, 0 0;
+  border-radius: 14px;
+  min-height: 100%;
+  padding: 8px 12px 8px 58px;
+}
+
+.trace-entry {
+  animation: fadeInUp 220ms ease-out both;
+}
+
+.ipad-home-indicator {
+  position: absolute;
+  bottom: 8px;
+  left: 50%;
+  width: 112px;
+  height: 4px;
+  transform: translateX(-50%);
+  border-radius: 9999px;
+  background: rgba(203, 213, 225, 0.8);
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 768px) {
+  .ipad-shell {
+    width: 100%;
+    height: min(86vh, 760px);
+    min-height: 620px;
+    padding: 10px;
+    border-radius: 28px;
+  }
+
+  .ipad-screen {
+    border-radius: 22px;
+    padding: 14px;
+  }
+
+  .traces-scroll {
+    border-radius: 12px;
+  }
+
+  .paper-content {
+    padding-left: 42px;
+    background-position: 30px 0, 0 0;
+  }
+}
+</style>
