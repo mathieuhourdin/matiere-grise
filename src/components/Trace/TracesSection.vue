@@ -1,7 +1,12 @@
 <template>
   <div>
-    <h2 class="text-lg font-semibold mb-2 text-slate-200">Dernières traces</h2>
-    <span class="text-xs text-slate-500">Toutes les traces que vous avez prise de votre travail</span>
+    <div class="flex items-start justify-between gap-3">
+      <div class="my-auto">
+        <h2 class="text-lg font-semibold text-slate-200">Dernières traces</h2>
+        <span class="text-xs text-slate-500">Toutes les traces que vous avez prise de votre travail</span>
+      </div>
+      <HeatmapSection compact />
+    </div>
     
     <!-- Loading state -->
     <div v-if="isLoadingTraces" class="text-slate-500 text-sm">
@@ -18,7 +23,7 @@
     
     <!-- Traces display - GitHub commit style -->
     <div v-else class="relative">
-      <div ref="scrollContainer" class="flex items-start gap-6 overflow-x-auto py-4 pt-10">
+      <div ref="scrollContainer" class="flex items-start gap-6 overflow-x-auto py-4 pt-2">
         <!-- Each trace as a commit-like item -->
         <div
           v-for="(trace, index) in sortedTraces"
@@ -27,14 +32,6 @@
           class="trace-item flex flex-col items-center flex-shrink-0 relative group"
           style="min-width: 120px;"
         >
-          <!-- Red arrow down icon above selected trace -->
-          <div
-            v-if="isCurrentHeadTrace(trace)"
-            class="absolute -top-8 left-1/2 transform -translate-x-1/2 z-20 flex items-center justify-center"
-          >
-            <ArrowDownIcon class="w-6 h-6 text-red-500 drop-shadow-lg" />
-          </div>
-          
           <!-- Connection line to the right (except for last item) -->
           <div
             v-if="index < sortedTraces.length - 1"
@@ -60,7 +57,11 @@
                 'w-12 h-12 rounded-full border-2 flex items-center justify-center text-white font-semibold text-sm shadow-lg hover:scale-110 transition-transform relative z-10',
                 `bg-gradient-to-br ${getJournalColor(trace).from} ${getJournalColor(trace).to}`,
                 getJournalColor(trace).border,
-                hasFinishedAnalysis(trace) ? 'ring-2 ring-green-400 ring-offset-2 ring-offset-slate-900' : (getParentForTrace(trace) ? 'ring-2 ring-yellow-400 ring-offset-2 ring-offset-slate-900' : '')
+                isCurrentHeadTrace(trace)
+                  ? 'ring-4 ring-amber-300 ring-offset-4 ring-offset-slate-900 shadow-[0_0_22px_rgba(251,191,36,0.95)]'
+                  : (hasFinishedAnalysis(trace)
+                    ? 'ring-2 ring-green-400 ring-offset-2 ring-offset-slate-900'
+                    : (getParentForTrace(trace) ? 'ring-2 ring-yellow-400 ring-offset-2 ring-offset-slate-900' : ''))
               ]"
               :title="trace.content || getTraceTitle(trace)"
             >
@@ -105,7 +106,8 @@ import { useTrace } from '@/composables/useTrace'
 import { useJournal } from '@/composables/useJournal'
 import { useLens } from '@/composables/useLens'
 import { type ApiTrace } from '@/types/models'
-import { ArrowDownIcon, PlayIcon } from '@heroicons/vue/24/outline'
+import { PlayIcon } from '@heroicons/vue/24/outline'
+import HeatmapSection from '@/components/Heatmap/HeatmapSection.vue'
 
 const {
   traces,

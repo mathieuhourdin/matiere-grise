@@ -21,12 +21,10 @@
     <div class="flex flex-col gap-4">
       <!-- Row 1: Lens Selection & Analysis -->
       <LensSection />
-		<!-- Row 1.5: Heatmap -->
-		<HeatmapSection />
-		<!-- Row 1.6: Traces -->
-		<TracesSection />
-    <!-- Row 1.7: Open Journal -->
-    <OpenJournalSection class="mb-10" />
+      <!-- Row 1.5: Traces -->
+      <TracesSection />
+      <!-- Row 1.6: Open Journal -->
+      <OpenJournalSection class="mb-10" />
       <!-- Row 2: Achievements, Focus, Horizons -->
       <AnalysisSection />
       <!-- Row 3: Mentor image/message -->
@@ -41,7 +39,6 @@
 import AnalysisSection from '@/components/Journal/AnalysisSection.vue'
 import JournalSection from '@/components/Journal/JournalSection.vue'
 import LensSection from '@/components/Lens/LensSection.vue'
-import HeatmapSection from '@/components/Heatmap/HeatmapSection.vue'
 import TracesSection from '@/components/Trace/TracesSection.vue'
 import OpenJournalSection from '@/components/Journal/OpenJournalSection.vue'
 import ActionButton from '@/components/Ui/ActionButton.vue'
