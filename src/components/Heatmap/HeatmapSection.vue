@@ -10,18 +10,36 @@
     <div v-if="loading" class="text-slate-500 text-sm">Chargement...</div>
     <div v-else>
       <div class="flex gap-2 overflow-x-auto">
-        <div
-          v-for="(week, wIdx) in weeks"
-          :key="`week-${wIdx}-${week.weekStart}`"
-          class="grid grid-rows-7 gap-1"
-        >
-          <div
-            v-for="day in week.days"
-            :key="day.dateStr"
-            class="w-3 h-3 rounded-sm border border-slate-700"
-            :class="getDayClass(day.value)"
-            :title="`${day.dateStr}: ${day.value}`"
-          ></div>
+        <div class="grid grid-rows-7 gap-1 pr-2 pt-5 text-[10px] text-slate-500">
+          <div v-for="label in weekdayLabels" :key="label" class="h-3 flex items-center justify-end leading-none">
+            {{ label }}
+          </div>
+        </div>
+        <div class="flex flex-col gap-2">
+          <div class="flex gap-2 h-3 text-xs text-slate-500">
+            <div
+              v-for="(week, wIdx) in weeks"
+              :key="`month-${wIdx}-${week.weekStart}`"
+              class="w-3"
+            >
+              {{ week.monthLabel }}
+            </div>
+          </div>
+          <div class="flex gap-2">
+            <div
+              v-for="(week, wIdx) in weeks"
+              :key="`week-${wIdx}-${week.weekStart}`"
+              class="grid grid-rows-7 gap-1"
+            >
+              <div
+                v-for="day in week.days"
+                :key="day.dateStr"
+                class="w-3 h-3 rounded-sm border border-slate-700"
+                :class="getDayClass(day.value)"
+                :title="`${day.dateStr}: ${day.value}`"
+              ></div>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -59,6 +77,7 @@ type HeatmapCell = {
 
 type HeatmapWeek = {
   weekStart: string
+  monthLabel: string
   days: HeatmapCell[]
 }
 
@@ -121,13 +140,17 @@ const weeks = computed<HeatmapWeek[]>(() => {
   const result: HeatmapWeek[] = []
   for (let i = 0; i < days.length; i += 7) {
     const chunk = days.slice(i, i + 7)
+    const firstOfMonth = chunk.find((d) => d.date.getUTCDate() === 1)
     result.push({
       weekStart: chunk[0]?.dateStr ?? `week-${i}`,
+      monthLabel: firstOfMonth ? firstOfMonth.date.toLocaleString('fr-FR', { month: 'short' }) : '',
       days: chunk
     })
   }
   return result
 })
+
+const weekdayLabels = ['Lu', 'Ma', 'Me', 'Je', 'Ve', 'Sa', 'Di']
 
 const getDayClass = (value: number): string => {
   if (!value || maxValue.value === 0) return 'bg-slate-800/50'

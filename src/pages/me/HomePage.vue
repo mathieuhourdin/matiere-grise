@@ -25,6 +25,8 @@
 		<HeatmapSection />
 		<!-- Row 1.6: Traces -->
 		<TracesSection />
+    <!-- Row 1.7: Open Journal -->
+    <OpenJournalSection />
       <!-- Row 2: Achievements, Focus, Horizons -->
       <AnalysisSection />
       <!-- Row 3: Mentor image/message -->
@@ -41,6 +43,7 @@ import JournalSection from '@/components/Journal/JournalSection.vue'
 import LensSection from '@/components/Lens/LensSection.vue'
 import HeatmapSection from '@/components/Heatmap/HeatmapSection.vue'
 import TracesSection from '@/components/Trace/TracesSection.vue'
+import OpenJournalSection from '@/components/Journal/OpenJournalSection.vue'
 import ActionButton from '@/components/Ui/ActionButton.vue'
 import TextInput from '@/components/Ui/TextInput.vue'
 import MentorSection from '@/components/Mentor/MentorSection.vue'

@@ -1,6 +1,7 @@
 <template>
   <div>
-    <h2 class="text-lg font-semibold mb-4 text-slate-200">Dernières traces</h2>
+    <h2 class="text-lg font-semibold mb-2 text-slate-200">Dernières traces</h2>
+    <span class="text-xs text-slate-500">Toutes les traces que vous avez prise de votre travail</span>
     
     <!-- Loading state -->
     <div v-if="isLoadingTraces" class="text-slate-500 text-sm">
@@ -17,11 +18,12 @@
     
     <!-- Traces display - GitHub commit style -->
     <div v-else class="relative">
-      <div class="flex items-start gap-6 overflow-x-auto py-4 pt-10">
+      <div ref="scrollContainer" class="flex items-start gap-6 overflow-x-auto py-4 pt-10">
         <!-- Each trace as a commit-like item -->
         <div
           v-for="(trace, index) in sortedTraces"
           :key="trace.id"
+          :ref="(el) => setTraceEl(trace.id, el)"
           class="trace-item flex flex-col items-center flex-shrink-0 relative group"
           style="min-width: 120px;"
         >
@@ -98,7 +100,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted } from 'vue'
+import { computed, onMounted, ref, watch, nextTick } from 'vue'
 import { useTrace } from '@/composables/useTrace'
 import { useJournal } from '@/composables/useJournal'
 import { useLens } from '@/composables/useLens'
@@ -132,7 +134,7 @@ const sortedTraces = computed(() => {
   return [...traces.value].sort((a, b) => {
     const dateA = new Date(a.interaction_date || a.created_at || 0).getTime()
     const dateB = new Date(b.interaction_date || b.created_at || 0).getTime()
-    return dateB - dateA // Descending order (most recent first)
+    return dateA - dateB // Ascending order (oldest first)
   })
 })
 
@@ -240,6 +242,13 @@ const getTraceDate = (trace: ApiTrace): number => {
   return date ? new Date(date).getTime() : 0
 }
 
+const scrollContainer = ref<HTMLElement | null>(null)
+const traceEls = ref<Record<string, HTMLElement | null>>({})
+
+const setTraceEl = (id: string, el: Element | null) => {
+  traceEls.value[id] = el as HTMLElement | null
+}
+
 // Get the current trace (the one matching display analysis)
 const currentTrace = computed(() => {
   const id = displayLandscapeAnalysis.value?.analyzed_trace_id
@@ -252,6 +261,15 @@ const canShowPlayButton = (trace: ApiTrace): boolean => {
   const current = currentTrace.value
   if (!current) return true
   return getTraceDate(trace) >= getTraceDate(current)
+}
+
+const centerOnCurrentTrace = async () => {
+  const current = currentTrace.value
+  if (!current) return
+  await nextTick()
+  const el = traceEls.value[current.id]
+  if (!el) return
+  el.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' })
 }
 
 // Handle play click: for currently pointed trace, PUT lens with processing_state 'rply'; else PUT target_trace_id
@@ -290,6 +308,13 @@ onMounted(async () => {
     loadUserTraces(),
     loadUserJournal()
   ])
+  await centerOnCurrentTrace()
+})
+
+watch(currentTrace, async (newTrace, oldTrace) => {
+  if (newTrace?.id && newTrace.id !== oldTrace?.id) {
+    await centerOnCurrentTrace()
+  }
 })
 </script>
 

@@ -58,46 +58,62 @@
         </div>
       </div>
 
-      <!-- Resources from GET analysis/:id/landmarks -->
-      <div class="mt-8">
-        <h3 class="text-xl font-bold mb-4">Resources</h3>
-        <div
-          v-for="(item, index) in landmarks"
-          :key="item.id ?? index"
-          class="mb-6 p-4 rounded-xl border border-slate-700 bg-slate-800/40"
-        >
-          <div class="text-lg font-bold text-slate-200">{{ item.title ?? '' }}</div>
-          <div v-if="item.subtitle" class="text-sm text-slate-400 mt-1">{{ item.subtitle }}</div>
-          <div v-if="item.content" class="text-sm text-slate-300 mt-2 whitespace-pre-line">{{ item.content }}</div>
-        </div>
-      </div>
-
       <!-- Elements from GET landscape_analysis/:id/elements -->
       <div class="mt-8">
         <h3 class="text-xl font-bold mb-4">Elements simples</h3>
-        <div
+        <AnalysisItemCard
           v-for="(item, index) in simpleElements"
           :key="item.id ?? index"
-          class="mb-6 p-4 rounded-xl border border-slate-700 bg-slate-800/40"
-        >
-          <div class="text-lg font-bold text-slate-200">{{ itemTitle(item) }}</div>
-          <div v-if="itemSubtitle(item)" class="text-sm text-slate-400 mt-1">{{ itemSubtitle(item) }}</div>
-          <div v-if="itemContent(item)" class="text-sm text-slate-300 mt-2 whitespace-pre-line">{{ itemContent(item) }}</div>
+          :title="itemTitle(item)"
+          :subtitle="itemSubtitle(item)"
+          :content="itemContent(item)"
+        />
+      </div>
+
+      <!-- Mentioned landmarks from GET analysis/:id/landmarks?kind=mentioned -->
+      <div class="mt-8">
+        <h3 class="text-xl font-bold mb-4">Resources (Mentionnés)</h3>
+        <AnalysisItemCard
+          v-for="(item, index) in mentionedLandmarks"
+          :key="item.id ?? index"
+          :title="item.title ?? ''"
+          :subtitle="item.subtitle"
+          :content="item.content"
+          :badge="landmarkTypeLabel(item.landmark_type)"
+          :link-to="item.id ? `/app/landmarks/${item.id}` : null"
+        />
+        <div v-if="mentionedLandmarks.length === 0" class="text-sm text-slate-500">
+          Aucun landmark mentionné
+        </div>
+      </div>
+
+      <!-- Context landmarks from GET analysis/:id/landmarks?kind=context -->
+      <div class="mt-8">
+        <h3 class="text-xl font-bold mb-4">Resources (Contexte)</h3>
+        <AnalysisItemCard
+          v-for="(item, index) in contextLandmarks"
+          :key="item.id ?? index"
+          :title="item.title ?? ''"
+          :subtitle="item.subtitle"
+          :content="item.content"
+          :badge="landmarkTypeLabel(item.landmark_type)"
+          :link-to="item.id ? `/app/landmarks/${item.id}` : null"
+        />
+        <div v-if="contextLandmarks.length === 0" class="text-sm text-slate-500">
+          Aucun landmark de contexte
         </div>
       </div>
 
       <!-- Traces from elements (type trce) -->
       <div class="mt-8">
         <h3 class="text-xl font-bold mb-4">Traces</h3>
-        <div
+        <AnalysisItemCard
           v-for="(item, index) in filterElementsByType(elements, 'trce')"
           :key="item.id ?? index"
-          class="mb-6 p-4 rounded-xl border border-slate-700 bg-slate-800/40"
-        >
-          <div class="text-lg font-bold text-slate-200">{{ itemTitle(item) }}</div>
-          <div v-if="itemSubtitle(item)" class="text-sm text-slate-400 mt-1">{{ itemSubtitle(item) }}</div>
-          <div v-if="itemContent(item)" class="text-sm text-slate-300 mt-2 whitespace-pre-line">{{ itemContent(item) }}</div>
-        </div>
+          :title="itemTitle(item)"
+          :subtitle="itemSubtitle(item)"
+          :content="itemContent(item)"
+        />
       </div>
 
       <!-- LLM Calls from GET analysis/:id/llm_calls -->
@@ -130,6 +146,7 @@ import { useLens } from '@/composables/useLens'
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/vue/24/outline'
 import { type LlmCall } from '@/types/models'
 import LlmCallCard from '@/components/LlmCall/LlmCallCard.vue'
+import AnalysisItemCard from '@/components/Analysis/AnalysisItemCard.vue'
 const props = defineProps<{
   id: string
 }>()
@@ -167,7 +184,8 @@ const nextAnalysisId = computed(() => {
 
 const analysis = ref<any>(null)
 const trace = ref<any>(null)
-const landmarks = ref<any[]>([])
+const mentionedLandmarks = ref<any[]>([])
+const contextLandmarks = ref<any[]>([])
 const elements = ref<any[]>([])
 const llmCalls = ref<LlmCall[]>([])
 const isDeleting = ref(false)
@@ -200,13 +218,22 @@ const loadTrace = async (traceId: string) => {
   }
 }
 
-const loadLandmarks = async () => {
+const loadLandmarks = async (kind: 'mentioned' | 'context') => {
   try {
-    const response = await fetchWrapper.get(`/analysis/${props.id}/landmarks`)
-    landmarks.value = Array.isArray(response.data) ? response.data : []
+    const response = await fetchWrapper.get(`/analysis/${props.id}/landmarks?kind=${kind}`)
+    const list = Array.isArray(response.data) ? response.data : []
+    if (kind === 'mentioned') {
+      mentionedLandmarks.value = list
+    } else {
+      contextLandmarks.value = list
+    }
   } catch (error) {
     console.error('Error fetching analysis landmarks:', error)
-    landmarks.value = []
+    if (kind === 'mentioned') {
+      mentionedLandmarks.value = []
+    } else {
+      contextLandmarks.value = []
+    }
   }
 }
 
@@ -261,6 +288,14 @@ const itemTitle = (item: any): string => item?.title ?? item?.resource?.title ??
 const itemSubtitle = (item: any): string => item?.subtitle ?? item?.resource?.subtitle ?? ''
 const itemContent = (item: any): string => item?.content ?? item?.resource?.content ?? ''
 
+const landmarkTypeLabel = (type: string | undefined): string => {
+  if (!type) return ''
+  if (type === 'rsrc') return 'Ressource'
+  if (type === 'autr') return 'Auteur'
+  if (type === 'them') return 'Thème'
+  return ''
+}
+
 
 const formatDate = (date: Date | string | undefined) => {
   if (!date) return ''
@@ -306,7 +341,7 @@ onMounted(async () => {
   }
 
   await loadUserLenses()
-  await loadLandmarks()
+  await Promise.all([loadLandmarks('mentioned'), loadLandmarks('context')])
   await loadAnalysisElements()
   await loadLlmCalls()
 })
