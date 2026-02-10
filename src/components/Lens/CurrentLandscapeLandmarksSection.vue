@@ -25,37 +25,20 @@
         v-for="landmark in visibleLandmarks"
         :key="landmark.id"
         :to="`/app/landmarks/${landmark.id}`"
-        class="block w-48 h-36 overflow-hidden flex-shrink-0 rounded-xl border border-slate-700 bg-slate-900/60 p-2.5 hover:border-slate-500 hover:bg-slate-800/70 transition-colors"
+        class="block w-44 h-24 overflow-hidden flex-shrink-0 rounded-xl border border-slate-700 bg-slate-900/60 p-2 hover:border-slate-500 hover:bg-slate-800/70 transition-colors"
       >
-        <div class="h-full flex flex-col min-h-0">
-          <div class="text-xs font-semibold text-slate-200 mb-1 leading-4 line-clamp-2">
-            {{ landmark.title || 'Sans titre' }}
+        <div class="h-full min-h-0 overflow-hidden">
+          <div class="h-full text-sm leading-5 text-slate-200 line-clamp-4">
+            <template v-if="relatedElementsLoadingById[landmark.id]">
+              <div class="text-slate-400 text-xs leading-4">Chargement...</div>
+            </template>
+            <template v-else-if="latestRelatedElement(landmark.id)">
+              {{ latestElementDisplayText(landmark) }}
+            </template>
+            <template v-else>
+              <div class="text-slate-500 text-xs leading-4">Aucun element</div>
+            </template>
           </div>
-          <div v-if="subtitleWithType(landmark.landmark_type, landmark.subtitle)" class="text-[10px] text-slate-400 mb-1 truncate">
-            {{ subtitleWithType(landmark.landmark_type, landmark.subtitle) }}
-          </div>
-          <ul class="text-[10px] text-slate-300 space-y-0.5 flex-1 min-h-0 overflow-y-auto pr-1">
-            <li
-              v-for="element in relatedElements(landmark.id)"
-              :key="element.id"
-              class="overflow-hidden text-ellipsis whitespace-nowrap"
-              :title="elementHoverTitle(element)"
-            >
-              {{ formatShortDate(element.created_at) }} - {{ element.title || 'Sans titre' }}
-            </li>
-            <li
-              v-if="relatedElementsLoadingById[landmark.id]"
-              class="text-slate-400 overflow-hidden text-ellipsis whitespace-nowrap"
-            >
-              Chargement...
-            </li>
-            <li
-              v-if="!relatedElementsLoadingById[landmark.id] && relatedElements(landmark.id).length === 0"
-              class="text-slate-500 overflow-hidden text-ellipsis whitespace-nowrap"
-            >
-              Aucun element
-            </li>
-          </ul>
         </div>
       </router-link>
     </div>
@@ -69,11 +52,23 @@ import { useLens, type Landmark } from '@/composables/useLens'
 
 const { displayLandmarks, displayLandscapeAnalysis, isLoadingLandmarks } = useLens()
 const relatedElementsLoadingById = ref<Record<string, boolean>>({})
-type RelatedElement = { id: string; title?: string; subtitle?: string; content?: string; created_at?: string | Date }
+type RelatedElement = {
+  id: string
+  title?: string
+  subtitle?: string
+  content?: string
+  verb?: string
+  created_at?: string | Date
+}
+type ThemeLandmark = { id?: string; title?: string; landmark_type?: string }
 const relatedElementsByLandmarkId = ref<Record<string, RelatedElement[]>>({})
+const themeTitleByElementId = ref<Record<string, string>>({})
+const themeLoadingByElementId = ref<Record<string, boolean>>({})
 
 const sortedLandmarks = computed<Landmark[]>(() => {
-  return [...displayLandmarks.value].sort((a, b) => {
+  return displayLandmarks.value
+    .filter((landmark) => isResourceLandmark(landmark.landmark_type))
+    .sort((a, b) => {
     const dateA = new Date((a as any).created_at || 0).getTime()
     const dateB = new Date((b as any).created_at || 0).getTime()
     return dateB - dateA
@@ -102,49 +97,91 @@ const loadRelatedElements = async (landmarkId: string) => {
   }
 }
 
+const loadThemeForElement = async (elementId: string) => {
+  if (!elementId) return
+  if (themeTitleByElementId.value[elementId] != null) return
+  if (themeLoadingByElementId.value[elementId]) return
+
+  themeLoadingByElementId.value[elementId] = true
+  try {
+    const response = await fetchWrapper.get(`/elements/${elementId}/landmarks`)
+    const landmarks = Array.isArray(response.data) ? (response.data as ThemeLandmark[]) : []
+    const themeLandmark = landmarks.find((landmark) => {
+      const type = (landmark.landmark_type || '').toLowerCase()
+      return type === 'them' || type === 'theme'
+    })
+    themeTitleByElementId.value[elementId] = themeLandmark?.title || 'ce thème'
+  } catch (error) {
+    console.error(`Error loading themes for element ${elementId}:`, error)
+    themeTitleByElementId.value[elementId] = 'ce thème'
+  } finally {
+    themeLoadingByElementId.value[elementId] = false
+  }
+}
+
 watch(
   () => visibleLandmarks.value.map((l) => l.id).join(','),
   async () => {
     await Promise.all(visibleLandmarks.value.map((l) => loadRelatedElements(l.id)))
+    await Promise.all(
+      visibleLandmarks.value.map(async (landmark) => {
+        const elementId = latestRelatedElement(landmark.id)?.id
+        if (!elementId) return
+        await loadThemeForElement(elementId)
+      })
+    )
   },
   { immediate: true }
 )
 
-const relatedElements = (landmarkId: string): RelatedElement[] => {
-  return relatedElementsByLandmarkId.value[landmarkId] ?? []
+const latestRelatedElement = (landmarkId: string): RelatedElement | null => {
+  const elements = relatedElementsByLandmarkId.value[landmarkId] ?? []
+  if (elements.length === 0) return null
+  return elements[0]
 }
 
-const formatShortDate = (date: string | Date | undefined): string => {
-  if (!date) return '--/--/--'
-  const dateObj = typeof date === 'string' ? new Date(date) : date
-  if (Number.isNaN(dateObj.getTime())) return '--/--/--'
-  const day = String(dateObj.getDate()).padStart(2, '0')
-  const month = String(dateObj.getMonth() + 1).padStart(2, '0')
-  const year = String(dateObj.getFullYear()).slice(-2)
-  return `${day}/${month}/${year}`
+const isResourceLandmark = (landmarkType: string | undefined): boolean => {
+  if (!landmarkType) return false
+  const normalized = landmarkType.toLowerCase()
+  return normalized === 'rsrc' || normalized === 'resource'
 }
 
-const landmarkTypeLabel = (type: string | undefined): string => {
-  if (!type) return 'Landmark'
-  if (type === 'rsrc') return 'Ressource'
-  if (type === 'autr') return 'Auteur'
-  if (type === 'them') return 'Theme'
-  if (type === 'task') return 'Task'
-  if (type === 'qest') return 'Question'
-  return type
+const elementVerbPrefix = (verb: string): string => {
+  const normalized = verb.trim().toUpperCase()
+  if (normalized.startsWith('DONE')) return "j'ai "
+  if (normalized.startsWith('IN_PROGRESS')) return 'Je suis en train de '
+  if (normalized.startsWith('INTENDED')) return 'Je voudrais '
+  return ''
 }
 
-const subtitleWithType = (type: string | undefined, subtitle?: string): string => {
-  const label = landmarkTypeLabel(type).toUpperCase()
-  if (!subtitle) return label
-  return `${label} - ${subtitle}`
+const elementVerbRest = (verb: string): string => {
+  return verb
+    .trim()
+    .replace(/^(DONE|IN_PROGRESS|INTENDED)[\s:_-]*/i, '')
+    .trim()
 }
 
-const elementHoverTitle = (element: RelatedElement): string => {
-  const base = `${formatShortDate(element.created_at)} - ${element.title || 'Sans titre'}`
-  const content = element.content?.trim()
-  if (!content) return base
-  return `${base}\n${content}`
+const extractElementVerb = (element: RelatedElement): string => {
+  const candidates = [element.verb, element.subtitle, element.content, element.title]
+  for (const candidate of candidates) {
+    if (typeof candidate === 'string' && candidate.trim().length > 0) return candidate.trim()
+  }
+  return ''
+}
+
+const latestElementDisplayText = (landmark: Landmark): string => {
+  const element = latestRelatedElement(landmark.id)
+  if (!element) return 'Aucun element'
+  const rawVerb = extractElementVerb(element)
+  const prefix = elementVerbPrefix(rawVerb)
+  const rest = elementVerbRest(rawVerb)
+  const fallbackVerb = 'explorer'
+  const verb = rest || fallbackVerb
+  const resourceTitle = (landmark.title || element.title || 'cette ressource').trim()
+  const themeTitle = element.id
+    ? (themeTitleByElementId.value[element.id] || (themeLoadingByElementId.value[element.id] ? '...' : 'ce thème'))
+    : 'ce thème'
+  return `${prefix}${verb} ${resourceTitle} à propos de ${themeTitle}`.replace(/\s+/g, ' ').trim()
 }
 
 </script>

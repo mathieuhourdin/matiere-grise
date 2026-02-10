@@ -3,6 +3,12 @@
     <div class="flex items-start justify-between gap-3">
       <div class="flex mt-auto min-w-0">
         <LensSelectorBar />
+        <router-link
+          to="/app/llm-calls"
+          class="ml-4 text-sm underline text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300"
+        >
+          LLM Calls
+        </router-link>
       </div>
       <HeatmapSection compact />
     </div>
