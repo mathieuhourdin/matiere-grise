@@ -83,7 +83,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-import { useLandmark, type LandmarkDetail } from '@/composables/useLandmark'
+import { useLandmark, type LandmarkDetail } from '@/composables/useLandmark.ts'
 
 const { getLandmark } = useLandmark()
 

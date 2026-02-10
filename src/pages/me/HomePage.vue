@@ -9,20 +9,11 @@
         LLM Calls
       </router-link>
     </div>
-    <div class="mb-6 flex items-end gap-4">
-      <TextInput
-        label="Date d'analyse"
-        v-model="analysisDate"
-        type="date"
-        class="flex-1 max-w-xs"
-      />
-      <ActionButton @click="triggerAnalysisAction" type="valid" class="mb-0">Valider</ActionButton>
-    </div>
     <div class="flex flex-col gap-4">
-      <!-- Row 1: Lens Selection & Analysis -->
-      <LensSection />
-      <!-- Row 1.5: Traces -->
+      <!-- Row 1: Traces + Lenses + Heatmap -->
       <TracesSection />
+      <!-- Row 1.5: Current Landscape Landmarks -->
+      <CurrentLandscapeLandmarksSection />
       <!-- Row 1.6: Open Journal -->
       <OpenJournalSection class="mb-10" />
       <!-- Row 2: Achievements, Focus, Horizons -->
@@ -38,7 +29,7 @@
 <script setup lang="ts">
 import AnalysisSection from '@/components/Journal/AnalysisSection.vue'
 import JournalSection from '@/components/Journal/JournalSection.vue'
-import LensSection from '@/components/Lens/LensSection.vue'
+import CurrentLandscapeLandmarksSection from '@/components/Lens/CurrentLandscapeLandmarksSection.vue'
 import TracesSection from '@/components/Trace/TracesSection.vue'
 import OpenJournalSection from '@/components/Journal/OpenJournalSection.vue'
 import ActionButton from '@/components/Ui/ActionButton.vue'
@@ -48,22 +39,6 @@ import { ref } from 'vue'
 import { useUser } from '@/composables/useUser'
 import { useSnackbar } from '@/composables/useSnackbar'
 
-const { triggerAnalysis } = useUser()
-const { launchSnackbar } = useSnackbar()
-
-// Set default date to today in YYYY-MM-DD format
-const today = new Date()
-const defaultDate = today.toISOString().split('T')[0]
-const analysisDate = ref<string>(defaultDate)
-
-const triggerAnalysisAction = async () => {
-  if (!analysisDate.value) {
-    launchSnackbar('Please select a date', 'error')
-    return
-  }
-  console.log('Trigger analysis action with date:', analysisDate.value)
-  await triggerAnalysis(analysisDate.value)
-}
 </script>
 
 <style scoped>

@@ -2,24 +2,35 @@
   <div v-if="compact" class="flex items-center">
     <button
       type="button"
-      class="rounded-lg border border-slate-700 bg-slate-900/60 p-2 hover:border-slate-500 transition-colors"
+      class="rounded-lg border border-slate-700 bg-slate-900/60 p-2.5 hover:border-slate-500 transition-colors"
       :title="'Voir la heatmap'"
       @click="openModal"
     >
-      <div class="text-xs text-slate-300">Activité par jour</div>
+      <div class="text-2xs text-left leading-4 text-slate-300">Activité</div>
       <div v-if="loading" class="text-[10px] text-slate-500">...</div>
-      <div v-else class="flex gap-[2px]">
-        <div
-          v-for="(week, wIdx) in compactWeeks"
-          :key="`compact-week-${wIdx}-${week.weekStart}`"
-          class="grid grid-rows-7 gap-[2px]"
-        >
+      <div v-else class="mt-1 flex flex-col gap-[2px]">
+        <div class="flex gap-[1px] h-3 text-[10px] leading-none text-slate-500">
           <div
-            v-for="day in week.days"
-            :key="`compact-day-${day.dateStr}`"
-            class="w-[15px] h-[15px] rounded-[4px] border border-slate-700"
-            :class="getDayClass(day.value)"
-          ></div>
+            v-for="(week, wIdx) in compactWeeks"
+            :key="`compact-month-${wIdx}-${week.weekStart}`"
+            class="w-[18px] overflow-hidden text-ellipsis whitespace-nowrap"
+          >
+            {{ wIdx === 0 ? '' : compactMonthLabel(week.monthLabel) }}
+          </div>
+        </div>
+        <div class="flex gap-[2px]">
+          <div
+            v-for="(week, wIdx) in compactWeeks"
+            :key="`compact-week-${wIdx}-${week.weekStart}`"
+            class="grid grid-rows-7 gap-[2px]"
+          >
+            <div
+              v-for="day in week.days"
+              :key="`compact-day-${day.dateStr}`"
+              class="w-[17px] h-[17px] rounded-[4px] border border-slate-700"
+              :class="getDayClass(day.value)"
+            ></div>
+          </div>
         </div>
       </div>
     </button>
@@ -271,6 +282,11 @@ const openModal = () => {
 
 const closeModal = () => {
   isModalOpen.value = false
+}
+
+const compactMonthLabel = (label: string): string => {
+  if (!label) return ''
+  return label.replace('.', '').slice(0, 3)
 }
 
 const getDayClass = (value: number): string => {

@@ -1,5 +1,5 @@
-import { fetchWrapper } from '@/helpers'
-import { useSnackbar } from '@/composables/useSnackbar'
+import { fetchWrapper } from '@/helpers/index.ts'
+import { useSnackbar } from '@/composables/useSnackbar.ts'
 
 const { launchSnackbar } = useSnackbar()
 

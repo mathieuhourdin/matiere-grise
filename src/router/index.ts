@@ -146,7 +146,7 @@ const router = createRouter({
           props: true,
           component: () => import('@/pages/app/SeeLandmarkPage.vue'),
           meta: { requiresAuth: true }
-        }
+        },
       ]
     },
     {

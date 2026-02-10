@@ -1,9 +1,8 @@
 <template>
   <div>
     <div class="flex items-start justify-between gap-3">
-      <div class="my-auto">
-        <h2 class="text-lg font-semibold text-slate-200">Dernières traces</h2>
-        <span class="text-xs text-slate-500">Toutes les traces que vous avez prise de votre travail</span>
+      <div class="flex-1 min-w-0">
+        <LensSelectorBar />
       </div>
       <HeatmapSection compact />
     </div>
@@ -47,7 +46,7 @@
               type="button"
               class="absolute top-0 left-1/2 -translate-x-1/2 z-20 flex items-center justify-center w-8 h-8 rounded-full bg-slate-700 text-slate-300 opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer hover:bg-slate-600 hover:text-white focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-offset-2 focus:ring-offset-slate-900"
               :title="'Voir l\'analyse'"
-              @click.stop="handleTraceClick(trace)"
+              @click.stop="handlePlayTraceAnalysisClick(trace)"
             >
               <PlayIcon class="w-4 h-4" />
             </button>
@@ -108,6 +107,7 @@ import { useLens } from '@/composables/useLens'
 import { type ApiTrace } from '@/types/models'
 import { PlayIcon } from '@heroicons/vue/24/outline'
 import HeatmapSection from '@/components/Heatmap/HeatmapSection.vue'
+import LensSelectorBar from '@/components/Lens/LensSelectorBar.vue'
 
 const {
   traces,
@@ -275,7 +275,7 @@ const centerOnCurrentTrace = async () => {
 }
 
 // Handle play click: for currently pointed trace, PUT lens with processing_state 'rply'; else PUT target_trace_id
-const handleTraceClick = async (trace: ApiTrace) => {
+const handlePlayTraceAnalysisClick = async (trace: ApiTrace) => {
   if (isCurrentHeadTrace(trace)) {
     if (currentLens.value) {
       await updateLensProcessingState('rply')
