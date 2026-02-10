@@ -61,27 +61,47 @@
       <!-- Elements from GET landscape_analysis/:id/elements -->
       <div class="mt-8">
         <h3 class="text-xl font-bold mb-4">Elements simples</h3>
-        <AnalysisItemCard
-          v-for="(item, index) in simpleElements"
-          :key="item.id ?? index"
-          :title="itemTitle(item)"
-          :subtitle="itemSubtitle(item)"
-          :content="itemContent(item)"
-        />
+        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-3">
+          <AnalysisItemCard
+            v-for="(item, index) in visibleSimpleElements"
+            :key="item.id ?? index"
+            :title="itemTitle(item)"
+            :subtitle="itemSubtitle(item)"
+            :content="shortText(itemContent(item))"
+          />
+        </div>
+        <button
+          v-if="showSeeMoreSimpleElements"
+          type="button"
+          class="mt-3 text-sm underline text-slate-400 hover:text-slate-200 transition-colors"
+          @click="expandSimpleElements = true"
+        >
+          voir plus
+        </button>
       </div>
 
       <!-- Mentioned landmarks from GET analysis/:id/landmarks?kind=mentioned -->
       <div class="mt-8">
         <h3 class="text-xl font-bold mb-4">Resources (Mentionnés)</h3>
-        <AnalysisItemCard
-          v-for="(item, index) in mentionedLandmarks"
-          :key="item.id ?? index"
-          :title="item.title ?? ''"
-          :subtitle="item.subtitle"
-          :content="item.content"
-          :badge="landmarkTypeLabel(item.landmark_type)"
-          :link-to="item.id ? `/app/landmarks/${item.id}` : null"
-        />
+        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-3">
+          <AnalysisItemCard
+            v-for="(item, index) in visibleMentionedLandmarks"
+            :key="item.id ?? index"
+            :title="item.title ?? ''"
+            :subtitle="item.subtitle"
+            :content="shortText(item.content)"
+            :badge="landmarkTypeLabel(item.landmark_type)"
+            :link-to="item.id ? `/app/landmarks/${item.id}` : null"
+          />
+        </div>
+        <button
+          v-if="showSeeMoreMentionedLandmarks"
+          type="button"
+          class="mt-3 text-sm underline text-slate-400 hover:text-slate-200 transition-colors"
+          @click="expandMentionedLandmarks = true"
+        >
+          voir plus
+        </button>
         <div v-if="mentionedLandmarks.length === 0" class="text-sm text-slate-500">
           Aucun landmark mentionné
         </div>
@@ -90,15 +110,25 @@
       <!-- Context landmarks from GET analysis/:id/landmarks?kind=context -->
       <div class="mt-8">
         <h3 class="text-xl font-bold mb-4">Resources (Contexte)</h3>
-        <AnalysisItemCard
-          v-for="(item, index) in contextLandmarks"
-          :key="item.id ?? index"
-          :title="item.title ?? ''"
-          :subtitle="item.subtitle"
-          :content="item.content"
-          :badge="landmarkTypeLabel(item.landmark_type)"
-          :link-to="item.id ? `/app/landmarks/${item.id}` : null"
-        />
+        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-3">
+          <AnalysisItemCard
+            v-for="(item, index) in visibleContextLandmarks"
+            :key="item.id ?? index"
+            :title="item.title ?? ''"
+            :subtitle="item.subtitle"
+            :content="shortText(item.content)"
+            :badge="landmarkTypeLabel(item.landmark_type)"
+            :link-to="item.id ? `/app/landmarks/${item.id}` : null"
+          />
+        </div>
+        <button
+          v-if="showSeeMoreContextLandmarks"
+          type="button"
+          class="mt-3 text-sm underline text-slate-400 hover:text-slate-200 transition-colors"
+          @click="expandContextLandmarks = true"
+        >
+          voir plus
+        </button>
         <div v-if="contextLandmarks.length === 0" class="text-sm text-slate-500">
           Aucun landmark de contexte
         </div>
@@ -107,13 +137,23 @@
       <!-- Traces from elements (type trce) -->
       <div class="mt-8">
         <h3 class="text-xl font-bold mb-4">Traces</h3>
-        <AnalysisItemCard
-          v-for="(item, index) in filterElementsByType(elements, 'trce')"
-          :key="item.id ?? index"
-          :title="itemTitle(item)"
-          :subtitle="itemSubtitle(item)"
-          :content="itemContent(item)"
-        />
+        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-3">
+          <AnalysisItemCard
+            v-for="(item, index) in visibleTraceElements"
+            :key="item.id ?? index"
+            :title="itemTitle(item)"
+            :subtitle="itemSubtitle(item)"
+            :content="shortText(itemContent(item))"
+          />
+        </div>
+        <button
+          v-if="showSeeMoreTraceElements"
+          type="button"
+          class="mt-3 text-sm underline text-slate-400 hover:text-slate-200 transition-colors"
+          @click="expandTraceElements = true"
+        >
+          voir plus
+        </button>
       </div>
 
       <!-- LLM Calls from GET analysis/:id/llm_calls -->
@@ -189,6 +229,11 @@ const contextLandmarks = ref<any[]>([])
 const elements = ref<any[]>([])
 const llmCalls = ref<LlmCall[]>([])
 const isDeleting = ref(false)
+const expandSimpleElements = ref(false)
+const expandMentionedLandmarks = ref(false)
+const expandContextLandmarks = ref(false)
+const expandTraceElements = ref(false)
+const viewportWidth = ref(typeof window !== 'undefined' ? window.innerWidth : 1280)
 
 const replayedFromId = computed(() => {
   const id = analysis.value?.replayed_from_id ?? analysis.value?.replayedFromId
@@ -267,6 +312,8 @@ const filterElementsByType = (items: any[], type: string, aliases: string[] = []
   return items.filter((item: any) => matchTypes.includes(getElementType(item)))
 }
 
+const traceElements = computed(() => filterElementsByType(elements.value, 'trce'))
+
 // Simple elements: evnt/event, or any element that is not rsrc and not trce (fallback if API uses different type keys)
 const simpleElements = computed(() => {
   const evnt = filterElementsByType(elements.value, 'evnt', ['event'])
@@ -276,6 +323,29 @@ const simpleElements = computed(() => {
   const knownIds = new Set([...rsrc.map((i: any) => i?.id), ...trce.map((i: any) => i?.id)].filter(Boolean))
   return elements.value.filter((item: any) => !item?.id || !knownIds.has(item.id))
 })
+
+const cardsPerRow = computed(() => {
+  if (viewportWidth.value >= 1280) return 4
+  if (viewportWidth.value >= 768) return 2
+  return 1
+})
+
+const hasMoreThanOneRow = (itemsLength: number) => itemsLength > cardsPerRow.value
+
+const firstRowSlice = <T>(items: T[], expanded: boolean): T[] => {
+  if (expanded) return items
+  return items.slice(0, cardsPerRow.value)
+}
+
+const visibleSimpleElements = computed(() => firstRowSlice(simpleElements.value, expandSimpleElements.value))
+const visibleMentionedLandmarks = computed(() => firstRowSlice(mentionedLandmarks.value, expandMentionedLandmarks.value))
+const visibleContextLandmarks = computed(() => firstRowSlice(contextLandmarks.value, expandContextLandmarks.value))
+const visibleTraceElements = computed(() => firstRowSlice(traceElements.value, expandTraceElements.value))
+
+const showSeeMoreSimpleElements = computed(() => !expandSimpleElements.value && hasMoreThanOneRow(simpleElements.value.length))
+const showSeeMoreMentionedLandmarks = computed(() => !expandMentionedLandmarks.value && hasMoreThanOneRow(mentionedLandmarks.value.length))
+const showSeeMoreContextLandmarks = computed(() => !expandContextLandmarks.value && hasMoreThanOneRow(contextLandmarks.value.length))
+const showSeeMoreTraceElements = computed(() => !expandTraceElements.value && hasMoreThanOneRow(traceElements.value.length))
 
 // Trace display: support snake_case and camelCase for interaction_date
 const traceInteractionDate = computed(() => {
@@ -287,6 +357,12 @@ const traceInteractionDate = computed(() => {
 const itemTitle = (item: any): string => item?.title ?? item?.resource?.title ?? ''
 const itemSubtitle = (item: any): string => item?.subtitle ?? item?.resource?.subtitle ?? ''
 const itemContent = (item: any): string => item?.content ?? item?.resource?.content ?? ''
+const shortText = (text: string | undefined, max = 140): string => {
+  if (!text) return ''
+  const normalized = text.replace(/\s+/g, ' ').trim()
+  if (normalized.length <= max) return normalized
+  return `${normalized.slice(0, max)}...`
+}
 
 const landmarkTypeLabel = (type: string | undefined): string => {
   if (!type) return ''
@@ -329,7 +405,19 @@ const getAnalyzedTraceId = (a: any): string | null => {
   return s.length > 0 ? s : null
 }
 
+const updateViewportWidth = () => {
+  if (typeof window === 'undefined') return
+  viewportWidth.value = window.innerWidth
+}
+
 onMounted(async () => {
+  expandSimpleElements.value = false
+  expandMentionedLandmarks.value = false
+  expandContextLandmarks.value = false
+  expandTraceElements.value = false
+  updateViewportWidth()
+  window.addEventListener('resize', updateViewportWidth)
+
   await loadAnalysis()
   const a = analysis.value
   if (a) {
@@ -347,6 +435,7 @@ onMounted(async () => {
 })
 
 onUnmounted(() => {
+  window.removeEventListener('resize', updateViewportWidth)
   headerValue.value = null
 })
 </script>

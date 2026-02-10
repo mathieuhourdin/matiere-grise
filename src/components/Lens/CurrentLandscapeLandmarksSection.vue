@@ -25,7 +25,7 @@
         v-for="landmark in visibleLandmarks"
         :key="landmark.id"
         :to="`/app/landmarks/${landmark.id}`"
-        class="block w-48 h-30 flex-shrink-0 rounded-xl border border-slate-700 bg-slate-900/60 p-2.5 hover:border-slate-500 hover:bg-slate-800/70 transition-colors"
+        class="block w-48 h-36 overflow-hidden flex-shrink-0 rounded-xl border border-slate-700 bg-slate-900/60 p-2.5 hover:border-slate-500 hover:bg-slate-800/70 transition-colors"
       >
         <div class="h-full flex flex-col min-h-0">
           <div class="text-xs font-semibold text-slate-200 mb-1 leading-4 line-clamp-2">
@@ -73,9 +73,7 @@ type RelatedElement = { id: string; title?: string; subtitle?: string; content?:
 const relatedElementsByLandmarkId = ref<Record<string, RelatedElement[]>>({})
 
 const sortedLandmarks = computed<Landmark[]>(() => {
-  return displayLandmarks.value
-    .filter((landmark) => landmark.landmark_type === 'rsrc')
-    .sort((a, b) => {
+  return [...displayLandmarks.value].sort((a, b) => {
     const dateA = new Date((a as any).created_at || 0).getTime()
     const dateB = new Date((b as any).created_at || 0).getTime()
     return dateB - dateA

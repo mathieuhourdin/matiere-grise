@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="flex items-start justify-between gap-3">
-      <div class="flex-1 min-w-0">
+      <div class="flex mt-auto min-w-0">
         <LensSelectorBar />
       </div>
       <HeatmapSection compact />
@@ -22,7 +22,61 @@
     
     <!-- Traces display - GitHub commit style -->
     <div v-else class="relative">
-      <div ref="scrollContainer" class="flex items-start gap-6 overflow-x-auto py-4 pt-2">
+
+      <div class="relative">
+        <div class="mt-2 flex items-center justify-between px-1">
+          <button
+            v-if="canScrollLeft"
+            type="button"
+            class="h-5 w-5 flex items-center justify-center text-slate-500 hover:text-slate-300"
+            title="Défiler à gauche"
+            @click="scrollTimelineBy(-1)"
+          >
+            <ChevronLeftIcon class="w-5 h-5" />
+          </button>
+
+          <div v-else class="h-5 w-5"></div>
+        <div class="ml-auto mr-2 flex items-center justify-end gap-2">
+          <button
+            type="button"
+            class="text-xs ml-4 px-2 py-1 rounded border border-slate-700 text-slate-300 hover:bg-slate-800 disabled:opacity-40 disabled:cursor-not-allowed"
+            :disabled="!currentTrace"
+            @click="scrollToFocus"
+          >
+            Focus
+          </button>
+          <button
+            type="button"
+            class="text-xs px-2 py-1 rounded border border-slate-700 text-slate-300 hover:bg-slate-800 disabled:opacity-40 disabled:cursor-not-allowed"
+            :disabled="!todayTrace"
+            @click="scrollToToday"
+          >
+            Aujourd'hui
+          </button>
+        </div>
+          <button
+            v-if="canScrollRight"
+            type="button"
+            class="h-5 w-5 flex items-center justify-center text-slate-500 hover:text-slate-300"
+            title="Défiler à droite"
+            @click="scrollTimelineBy(1)"
+          >
+            <ChevronRightIcon class="w-5 h-5" />
+          </button>
+          <div v-else class="h-5 w-5"></div>
+        </div>
+
+        <div class="relative">
+          <div
+            v-if="canScrollLeft"
+            class="pointer-events-none absolute left-0 top-0 bottom-0 z-20 w-12 bg-gradient-to-r from-white/95 to-transparent dark:from-gray-900/90"
+          ></div>
+          <div
+            v-if="canScrollRight"
+            class="pointer-events-none absolute right-0 top-0 bottom-0 z-20 w-12 bg-gradient-to-l from-white/95 to-transparent dark:from-gray-900/90"
+          ></div>
+
+      <div ref="scrollContainer" class="flex items-start gap-6 overflow-x-auto pb-4" @scroll="updateScrollAffordances">
         <!-- Each trace as a commit-like item -->
         <div
           v-for="(trace, index) in sortedTraces"
@@ -94,18 +148,25 @@
             </div>
           </div>
         </div>
+        <div
+          v-if="trailingSpacerWidth > 0"
+          class="flex-shrink-0"
+          :style="{ width: `${trailingSpacerWidth}px` }"
+        ></div>
+        </div>
+      </div>
       </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, ref, watch, nextTick } from 'vue'
+import { computed, onBeforeUnmount, onMounted, ref, watch, nextTick } from 'vue'
 import { useTrace } from '@/composables/useTrace'
 import { useJournal } from '@/composables/useJournal'
 import { useLens } from '@/composables/useLens'
 import { type ApiTrace } from '@/types/models'
-import { PlayIcon } from '@heroicons/vue/24/outline'
+import { ChevronLeftIcon, ChevronRightIcon, PlayIcon } from '@heroicons/vue/24/outline'
 import HeatmapSection from '@/components/Heatmap/HeatmapSection.vue'
 import LensSelectorBar from '@/components/Lens/LensSelectorBar.vue'
 
@@ -246,9 +307,44 @@ const getTraceDate = (trace: ApiTrace): number => {
 
 const scrollContainer = ref<HTMLElement | null>(null)
 const traceEls = ref<Record<string, HTMLElement | null>>({})
+const canScrollLeft = ref(false)
+const canScrollRight = ref(false)
+const trailingSpacerWidth = ref(0)
+const traceCardMinWidth = 120
 
 const setTraceEl = (id: string, el: Element | null) => {
   traceEls.value[id] = el as HTMLElement | null
+}
+
+const updateTrailingSpacerWidth = () => {
+  const container = scrollContainer.value
+  if (!container) {
+    trailingSpacerWidth.value = 0
+    return
+  }
+  trailingSpacerWidth.value = Math.max(
+    0,
+    Math.round(container.clientWidth / 2 - traceCardMinWidth / 2)
+  )
+}
+
+const updateScrollAffordances = () => {
+  const container = scrollContainer.value
+  if (!container) {
+    canScrollLeft.value = false
+    canScrollRight.value = false
+    trailingSpacerWidth.value = 0
+    return
+  }
+  updateTrailingSpacerWidth()
+  const hasOverflow = container.scrollWidth - container.clientWidth > 1
+  if (!hasOverflow) {
+    canScrollLeft.value = false
+    canScrollRight.value = false
+    return
+  }
+  canScrollLeft.value = container.scrollLeft > 1
+  canScrollRight.value = container.scrollLeft + container.clientWidth < container.scrollWidth - 1
 }
 
 // Get the current trace (the one matching display analysis)
@@ -256,6 +352,10 @@ const currentTrace = computed(() => {
   const id = displayLandscapeAnalysis.value?.analyzed_trace_id
   if (!id) return null
   return sortedTraces.value.find((t) => t.id === id) ?? null
+})
+const todayTrace = computed(() => {
+  if (sortedTraces.value.length === 0) return null
+  return sortedTraces.value[sortedTraces.value.length - 1] ?? null
 })
 
 // Play button visible only when trace is not older than current landscape analysis trace
@@ -265,13 +365,38 @@ const canShowPlayButton = (trace: ApiTrace): boolean => {
   return getTraceDate(trace) >= getTraceDate(current)
 }
 
-const centerOnCurrentTrace = async () => {
-  const current = currentTrace.value
-  if (!current) return
+const scrollToTrace = async (traceId: string | null | undefined) => {
+  if (!traceId) return
   await nextTick()
-  const el = traceEls.value[current.id]
+  const el = traceEls.value[traceId]
   if (!el) return
   el.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' })
+  requestAnimationFrame(updateScrollAffordances)
+}
+
+const centerOnCurrentTrace = async () => {
+  await scrollToTrace(currentTrace.value?.id)
+}
+
+const scrollToFocus = async () => {
+  await scrollToTrace(currentTrace.value?.id)
+}
+
+const scrollToToday = async () => {
+  await nextTick()
+  const container = scrollContainer.value
+  if (!container) return
+  updateTrailingSpacerWidth()
+  container.scrollTo({ left: container.scrollWidth, behavior: 'smooth' })
+  requestAnimationFrame(updateScrollAffordances)
+}
+
+const scrollTimelineBy = (direction: -1 | 1) => {
+  const container = scrollContainer.value
+  if (!container) return
+  const amount = Math.max(220, Math.round(container.clientWidth * 0.7))
+  container.scrollBy({ left: amount * direction, behavior: 'smooth' })
+  requestAnimationFrame(updateScrollAffordances)
 }
 
 // Handle play click: for currently pointed trace, PUT lens with processing_state 'rply'; else PUT target_trace_id
@@ -310,12 +435,28 @@ onMounted(async () => {
     loadUserTraces(),
     loadUserJournal()
   ])
+  await nextTick()
+  updateScrollAffordances()
   await centerOnCurrentTrace()
+  window.addEventListener('resize', updateScrollAffordances)
 })
+
+onBeforeUnmount(() => {
+  window.removeEventListener('resize', updateScrollAffordances)
+})
+
+watch(
+  () => sortedTraces.value.map((trace) => trace.id).join(','),
+  async () => {
+    await nextTick()
+    updateScrollAffordances()
+  }
+)
 
 watch(currentTrace, async (newTrace, oldTrace) => {
   if (newTrace?.id && newTrace.id !== oldTrace?.id) {
     await centerOnCurrentTrace()
+    updateScrollAffordances()
   }
 })
 </script>
