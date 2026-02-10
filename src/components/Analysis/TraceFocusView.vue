@@ -13,11 +13,25 @@
                   {{ formatDate(traceInteractionDate) }}
                 </div>
                 <article class="trace-entry text-[17px] text-slate-700 whitespace-pre-line leading-[2]">
-                  <div class="font-handwritten text-4xl mb-2 leading-tight text-slate-800">
-                    {{ splitTraceText(trace).first }}
+                  <div class="font-handwritten text-4xl mb-2 leading-tight text-slate-800 whitespace-pre-wrap">
+                    <span
+                      v-for="(segment, segmentIndex) in highlightedFirstSegments"
+                      :key="`first-${segmentIndex}`"
+                      :style="segment.color ? { backgroundColor: segment.color } : undefined"
+                      class="rounded-[3px] px-[1px]"
+                    >
+                      {{ segment.text }}
+                    </span>
                   </div>
-                  <div v-if="splitTraceText(trace).rest" class="font-georgia">
-                    {{ splitTraceText(trace).rest }}
+                  <div v-if="traceSplit.rest" class="font-georgia whitespace-pre-wrap">
+                    <span
+                      v-for="(segment, segmentIndex) in highlightedRestSegments"
+                      :key="`rest-${segmentIndex}`"
+                      :style="segment.color ? { backgroundColor: segment.color } : undefined"
+                      class="rounded-[3px] px-[1px]"
+                    >
+                      {{ segment.text }}
+                    </span>
                   </div>
                 </article>
               </template>
@@ -37,8 +51,13 @@
               v-for="(item, index) in visibleSimpleElements"
               :key="item.id ?? index"
               class="h-full p-3 rounded-lg border border-slate-700 bg-slate-800/40"
+              :style="{ borderColor: colorForElement(item, index).accent }"
             >
-              <div class="text-sm font-semibold text-slate-200 line-clamp-2">
+              <div class="text-sm font-semibold text-slate-200 line-clamp-2 flex items-start gap-2">
+                <span
+                  class="w-2 h-2 rounded-full mt-1.5 flex-none"
+                  :style="{ backgroundColor: colorForElement(item, index).accent }"
+                ></span>
                 {{ itemTitle(item) || 'Sans titre' }}
               </div>
               <div class="mt-2 flex flex-wrap gap-1.5">
@@ -92,8 +111,32 @@ type ElementLandmark = {
   id?: string
   title?: string
 }
+type ElementColor = {
+  accent: string
+  highlight: string
+}
+type HighlightRange = {
+  start: number
+  end: number
+  color: string
+}
+type HighlightSegment = {
+  text: string
+  color: string | null
+}
 const elementLandmarksById = ref<Record<string, ElementLandmark[]>>({})
 const elementLandmarksLoadingById = ref<Record<string, boolean>>({})
+
+const elementPalette: ElementColor[] = [
+  { accent: '#f97316', highlight: 'rgba(249, 115, 22, 0.32)' },
+  { accent: '#22c55e', highlight: 'rgba(34, 197, 94, 0.30)' },
+  { accent: '#0ea5e9', highlight: 'rgba(14, 165, 233, 0.30)' },
+  { accent: '#a855f7', highlight: 'rgba(168, 85, 247, 0.30)' },
+  { accent: '#eab308', highlight: 'rgba(234, 179, 8, 0.30)' },
+  { accent: '#ef4444', highlight: 'rgba(239, 68, 68, 0.28)' },
+  { accent: '#14b8a6', highlight: 'rgba(20, 184, 166, 0.30)' },
+  { accent: '#f43f5e', highlight: 'rgba(244, 63, 94, 0.28)' }
+]
 
 const loadAnalysis = async () => {
   try {
@@ -167,19 +210,189 @@ const traceInteractionDate = computed(() => {
 })
 
 const itemTitle = (item: any): string => item?.title ?? item?.resource?.title ?? ''
+const traceRawText = computed(() => {
+  const t = trace.value
+  return String(t?.content || t?.title || 'Trace sans contenu')
+})
+const traceSplit = computed(() => {
+  const raw = traceRawText.value
+  const firstBreak = raw.indexOf('\n')
+  if (firstBreak < 0) {
+    return { first: raw, rest: '', restOffset: raw.length }
+  }
+  return {
+    first: raw.slice(0, firstBreak),
+    rest: raw.slice(firstBreak + 1),
+    restOffset: firstBreak + 1
+  }
+})
+
+const toExtractionText = (value: any): string => {
+  if (typeof value === 'string') return value
+  if (value == null || typeof value !== 'object') return ''
+  const candidates = [value.extraction, value.text, value.value, value.content, value.title]
+  for (const candidate of candidates) {
+    if (typeof candidate === 'string') return candidate
+  }
+  return ''
+}
+
+const parseExtractionsFromContent = (content: string): string[] => {
+  if (!content) return []
+  const match = content.match(/Extractions\s*:\s*(\[[\s\S]*?\])/i)
+  if (!match || !match[1]) return []
+
+  const rawArrayBlock = match[1].trim()
+  if (!rawArrayBlock.startsWith('[') || !rawArrayBlock.endsWith(']')) return []
+
+  // 1) Try strict JSON parse first.
+  try {
+    const parsed = JSON.parse(rawArrayBlock)
+    if (Array.isArray(parsed)) {
+      return parsed
+        .map((value) => (typeof value === 'string' ? value.trim() : ''))
+        .filter((value) => value.length > 0)
+    }
+  } catch (_error) {
+    // Ignore and fallback to a looser quoted-string extraction below.
+  }
+
+  // 2) Fallback: extract quoted strings inside the bracket block.
+  const phrases: string[] = []
+  const quotedStringRegex = /"((?:\\.|[^"\\])*)"/g
+  let hit: RegExpExecArray | null = null
+  while ((hit = quotedStringRegex.exec(rawArrayBlock)) !== null) {
+    const normalized = hit[1].replace(/\\"/g, '"').trim()
+    if (normalized.length > 0) phrases.push(normalized)
+  }
+  return phrases
+}
+
+const extractionPhrasesForElement = (item: any): string[] => {
+  const seen = new Set<string>()
+  const phrases: string[] = []
+
+  const content = String(item?.content ?? item?.resource?.content ?? '')
+  const contentExtractions = parseExtractionsFromContent(content)
+  for (const phrase of contentExtractions) {
+    const lowered = phrase.toLowerCase()
+    if (seen.has(lowered)) continue
+    seen.add(lowered)
+    phrases.push(phrase)
+  }
+
+  // Fallback for older payloads with direct extractions arrays.
+  if (phrases.length > 0) return phrases
+
+  const raw = item?.extractions ?? item?.resource?.extractions ?? []
+  const source = Array.isArray(raw) ? raw : [raw]
+  for (const value of source) {
+    const phrase = toExtractionText(value).trim()
+    if (phrase.length < 2) continue
+    const lowered = phrase.toLowerCase()
+    if (seen.has(lowered)) continue
+    seen.add(lowered)
+    phrases.push(phrase)
+  }
+  return phrases
+}
+
+const elementColorById = computed<Record<string, ElementColor>>(() => {
+  const map: Record<string, ElementColor> = {}
+  simpleElements.value.forEach((item, index) => {
+    const id = getElementId(item)
+    if (!id) return
+    map[id] = elementPalette[index % elementPalette.length]
+  })
+  return map
+})
+
+const colorForElement = (item: any, fallbackIndex = 0): ElementColor => {
+  const id = getElementId(item)
+  if (id && elementColorById.value[id]) return elementColorById.value[id]
+  return elementPalette[fallbackIndex % elementPalette.length]
+}
+
+const highlightRanges = computed<HighlightRange[]>(() => {
+  const text = traceRawText.value
+  if (!text) return []
+  const loweredTrace = text.toLowerCase()
+  const foundRanges: Array<HighlightRange & { length: number }> = []
+  const dedupe = new Set<string>()
+
+  simpleElements.value.forEach((item, index) => {
+    const phrases = extractionPhrasesForElement(item)
+    if (phrases.length === 0) return
+    const color = colorForElement(item, index).highlight
+    for (const phrase of phrases) {
+      const loweredPhrase = phrase.toLowerCase()
+      let cursor = 0
+      while (cursor < loweredTrace.length) {
+        const hit = loweredTrace.indexOf(loweredPhrase, cursor)
+        if (hit === -1) break
+        const end = hit + loweredPhrase.length
+        const key = `${hit}-${end}-${color}`
+        if (!dedupe.has(key)) {
+          foundRanges.push({ start: hit, end, color, length: loweredPhrase.length })
+          dedupe.add(key)
+        }
+        cursor = end
+      }
+    }
+  })
+
+  foundRanges.sort((a, b) => {
+    if (a.start !== b.start) return a.start - b.start
+    return b.length - a.length
+  })
+
+  const accepted: HighlightRange[] = []
+  for (const candidate of foundRanges) {
+    const overlaps = accepted.some((range) => !(candidate.end <= range.start || candidate.start >= range.end))
+    if (!overlaps) {
+      accepted.push({ start: candidate.start, end: candidate.end, color: candidate.color })
+    }
+  }
+  return accepted.sort((a, b) => a.start - b.start)
+})
+
+const buildSegments = (text: string, globalOffset: number): HighlightSegment[] => {
+  if (!text) return []
+  const localStart = globalOffset
+  const localEnd = globalOffset + text.length
+  const ranges = highlightRanges.value
+    .filter((range) => range.end > localStart && range.start < localEnd)
+    .map((range) => ({
+      start: Math.max(range.start, localStart) - localStart,
+      end: Math.min(range.end, localEnd) - localStart,
+      color: range.color
+    }))
+    .sort((a, b) => a.start - b.start)
+
+  if (ranges.length === 0) return [{ text, color: null }]
+
+  const segments: HighlightSegment[] = []
+  let cursor = 0
+  for (const range of ranges) {
+    if (range.start > cursor) {
+      segments.push({ text: text.slice(cursor, range.start), color: null })
+    }
+    segments.push({ text: text.slice(range.start, range.end), color: range.color })
+    cursor = range.end
+  }
+  if (cursor < text.length) {
+    segments.push({ text: text.slice(cursor), color: null })
+  }
+  return segments
+}
+
+const highlightedFirstSegments = computed(() => buildSegments(traceSplit.value.first, 0))
+const highlightedRestSegments = computed(() => buildSegments(traceSplit.value.rest, traceSplit.value.restOffset))
 
 const formatDate = (date: Date | string | undefined) => {
   if (!date) return ''
   const dateObj = date instanceof Date ? date : new Date(date)
   return dateObj.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })
-}
-
-const splitTraceText = (rawTrace: any) => {
-  const raw = rawTrace?.content || rawTrace?.title || 'Trace sans contenu'
-  const lines = String(raw).split('\n')
-  const first = lines.shift() ?? ''
-  const rest = lines.join('\n').trim()
-  return { first, rest }
 }
 
 const getElementId = (item: any): string | null => {

@@ -2,13 +2,6 @@
   <section>
     <div class="mb-2 flex items-center justify-between gap-3">
       <h2 class="text-lg font-semibold text-slate-200">Derniers landmarks</h2>
-      <router-link
-        v-if="displayLandscapeAnalysis?.id"
-        :to="{ name: 'analysis', params: { id: displayLandscapeAnalysis.id } }"
-        class="text-sm text-slate-400 underline hover:text-slate-200 transition-colors"
-      >
-        voir plus
-      </router-link>
     </div>
 
     <div v-if="!displayLandscapeAnalysis" class="text-sm text-slate-500 mt-3">
@@ -20,12 +13,12 @@
     <div v-else-if="visibleLandmarks.length === 0" class="text-sm text-slate-500 mt-3">
       Aucun landmark
     </div>
-    <div v-else class="flex gap-3 overflow-x-auto pb-2 mt-3">
+    <div v-else class="flex flex-col gap-3 overflow-x-auto pb-2 mt-3">
       <router-link
         v-for="landmark in visibleLandmarks"
         :key="landmark.id"
         :to="`/app/landmarks/${landmark.id}`"
-        class="block w-44 h-24 overflow-hidden flex-shrink-0 rounded-xl border border-slate-700 bg-slate-900/60 p-2 hover:border-slate-500 hover:bg-slate-800/70 transition-colors"
+        class="block w-full h-20 overflow-hidden flex-shrink-0 rounded-xl border border-slate-700 bg-slate-900/60 p-2 hover:border-slate-500 hover:bg-slate-800/70 transition-colors"
       >
         <div class="h-full min-h-0 overflow-hidden">
           <div class="h-full text-sm leading-5 text-slate-200 line-clamp-4">
@@ -40,6 +33,13 @@
             </template>
           </div>
         </div>
+      </router-link>
+      <router-link
+        v-if="displayLandscapeAnalysis?.id"
+        :to="{ name: 'analysis', params: { id: displayLandscapeAnalysis.id } }"
+        class="text-sm text-slate-400 underline hover:text-slate-200 transition-colors"
+      >
+        voir plus
       </router-link>
     </div>
   </section>
@@ -140,7 +140,7 @@ const latestRelatedElement = (landmarkId: string): RelatedElement | null => {
   return elements[0]
 }
 
-const isResourceLandmark = (landmarkType: string | undefined): boolean => {
+function isResourceLandmark(landmarkType: string | undefined): boolean {
   if (!landmarkType) return false
   const normalized = landmarkType.toLowerCase()
   return normalized === 'rsrc' || normalized === 'resource'

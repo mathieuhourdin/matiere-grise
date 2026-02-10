@@ -1,5 +1,6 @@
 <template>
   <div class="mt-2">
+    <TracesSection class="mb-8" />
     <h3 class="text-xl font-bold mb-4">Entités de l'analyse</h3>
     <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3">
       <AnalysisItemCard
@@ -30,6 +31,7 @@
 import { computed, onMounted, onUnmounted, ref } from 'vue'
 import { fetchWrapper } from '@/helpers'
 import AnalysisItemCard from '@/components/Analysis/AnalysisItemCard.vue'
+import TracesSection from '@/components/Trace/TracesSection.vue'
 
 const props = defineProps<{
   id: string

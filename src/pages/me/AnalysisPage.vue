@@ -63,6 +63,7 @@
 
 <script setup lang="ts">
 import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
+import { useRoute } from 'vue-router'
 import TraceFocusView from '@/components/Analysis/TraceFocusView.vue'
 import AnalysisFocusView from '@/components/Analysis/AnalysisFocusView.vue'
 import LandscapeFocusView from '@/components/Analysis/LandscapeFocusView.vue'
@@ -75,6 +76,7 @@ const props = defineProps<{
   id: string
 }>()
 
+const route = useRoute()
 const { headLandscapeAnalysis, headLandscapeAnalysisParents, loadUserLenses } = useLens()
 const { headerValue } = useMenu()
 const analysis = ref<any>(null)
@@ -112,6 +114,7 @@ const viewOptions = [
 ] as const
 
 const activeView = ref<(typeof viewOptions)[number]['id']>('current')
+const validViewIds = new Set(viewOptions.map((option) => option.id))
 
 const loadAnalysis = async () => {
   try {
@@ -140,6 +143,13 @@ watch(() => props.id, async () => {
   await Promise.all([loadUserLenses(), loadAnalysis()])
   if (analysis.value?.id && analysis.value?.title) {
     headerValue.value = { text: analysis.value.title, link: `/me/analysis/${analysis.value.id}` }
+  }
+}, { immediate: true })
+
+watch(() => route.query.view, (value) => {
+  const view = Array.isArray(value) ? value[0] : value
+  if (typeof view === 'string' && validViewIds.has(view as (typeof viewOptions)[number]['id'])) {
+    activeView.value = view as (typeof viewOptions)[number]['id']
   }
 }, { immediate: true })
 

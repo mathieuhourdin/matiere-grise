@@ -1,9 +1,20 @@
 <template>
-  <section class="ipad-shell">
+  <section :class="['ipad-shell', { 'ipad-shell-fullscreen': fullscreen }]">
     <div class="ipad-screen">
-      <header class="mb-4">
-        <h2 class="text-xl font-semibold text-slate-800">Vos journaux</h2>
-        <p class="text-xs text-slate-500">Consultez ce que vous avez ecrit et ajoutez de nouvelles traces</p>
+      <header class="mb-4 flex items-start justify-between gap-3">
+        <div>
+          <h2 class="text-xl font-semibold text-slate-800">Vos journaux</h2>
+          <p class="text-xs text-slate-500">Consultez ce que vous avez ecrit et ajoutez de nouvelles traces</p>
+        </div>
+        <router-link
+          v-if="!fullscreen"
+          to="/me/journal-pad"
+          class="inline-flex items-center justify-center w-8 h-8 rounded-lg border border-slate-300 bg-white/80 text-slate-600 hover:border-slate-400 hover:text-slate-800 transition-colors"
+          title="Ouvrir en plein écran"
+          aria-label="Ouvrir le journal en plein écran"
+        >
+          <ArrowTopRightOnSquareIcon class="w-4 h-4" />
+        </router-link>
       </header>
 
       <div class="journal-tabs flex gap-2 overflow-x-auto pb-1">
@@ -74,6 +85,13 @@ import { useJournal } from '@/composables/useJournal'
 import { fetchWrapper } from '@/helpers'
 import { useSnackbar } from '@/composables/useSnackbar'
 import { type ApiInteraction, type ApiTrace } from '@/types/models'
+import { ArrowTopRightOnSquareIcon } from '@heroicons/vue/24/outline'
+
+withDefaults(defineProps<{
+  fullscreen?: boolean
+}>(), {
+  fullscreen: false
+})
 
 const { userJournals, loadUserJournal } = useJournal()
 const { launchSnackbar } = useSnackbar()
@@ -191,6 +209,12 @@ onMounted(async () => {
   box-shadow: 0 22px 40px rgba(2, 6, 23, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.08);
 }
 
+.ipad-shell-fullscreen {
+  width: 100%;
+  height: calc(100vh - 3rem);
+  min-height: calc(100vh - 3rem);
+}
+
 .ipad-camera {
   position: absolute;
   top: 8px;
@@ -287,6 +311,11 @@ onMounted(async () => {
     min-height: 620px;
     padding: 10px;
     border-radius: 28px;
+  }
+
+  .ipad-shell-fullscreen {
+    height: calc(100vh - 1rem);
+    min-height: calc(100vh - 1rem);
   }
 
   .ipad-screen {

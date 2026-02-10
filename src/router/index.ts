@@ -93,6 +93,12 @@ const router = createRouter({
           meta: { requiresAuth: true }
         },
         {
+          path: 'journal-pad',
+          name: 'journalPad',
+          component: () => import('@/pages/me/JournalPadPage.vue'),
+          meta: { requiresAuth: true }
+        },
+        {
           path: 'user',
           name: 'userProfile',
           component: () => import('@/pages/me/UserPage.vue'),

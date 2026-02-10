@@ -44,6 +44,12 @@
           :is-active="isActiveRoute('/me/home')"
         />
         <MenuItem
+          to="/me/journal-pad"
+          title="Journal"
+          icon="BookOpenIcon"
+          :is-active="isActiveRoute('/me/journal-pad')"
+        />
+        <MenuItem
           to="/me/user"
           title="Mon profil"
           icon="UserCircleIcon"
