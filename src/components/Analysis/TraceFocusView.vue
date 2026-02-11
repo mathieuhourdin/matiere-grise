@@ -45,7 +45,7 @@
       <section class="xl:col-span-1 space-y-8">
 
         <div>
-          <h3 class="text-xl font-bold mb-4">Elements simples</h3>
+          <h3 class="text-xl font-bold mb-4">Elements détectés</h3>
           <div class="grid grid-cols-1 gap-3">
             <div
               v-for="(item, index) in visibleSimpleElements"

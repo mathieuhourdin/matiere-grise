@@ -1,18 +1,5 @@
 <template>
   <div>
-    <div class="flex items-start justify-between gap-3">
-      <div class="flex mt-auto min-w-0">
-        <LensSelectorBar />
-        <router-link
-          to="/app/llm-calls"
-          class="ml-4 text-sm underline text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300"
-        >
-          LLM Calls
-        </router-link>
-      </div>
-      <HeatmapSection compact />
-    </div>
-    
     <!-- Loading state -->
     <div v-if="isLoadingTraces" class="text-slate-500 text-sm">
       Chargement...
@@ -42,24 +29,7 @@
           </button>
 
           <div v-else class="h-5 w-5"></div>
-        <div class="ml-auto mr-2 flex items-center justify-end gap-2">
-          <button
-            type="button"
-            class="text-xs ml-4 px-2 py-1 rounded border border-slate-700 text-slate-300 hover:bg-slate-800 disabled:opacity-40 disabled:cursor-not-allowed"
-            :disabled="!currentTrace"
-            @click="scrollToFocus"
-          >
-            Focus
-          </button>
-          <button
-            type="button"
-            class="text-xs px-2 py-1 rounded border border-slate-700 text-slate-300 hover:bg-slate-800 disabled:opacity-40 disabled:cursor-not-allowed"
-            :disabled="!todayTrace"
-            @click="scrollToToday"
-          >
-            Aujourd'hui
-          </button>
-        </div>
+          <div class="flex-1"></div>
           <button
             v-if="canScrollRight"
             type="button"
@@ -173,8 +143,6 @@ import { useJournal } from '@/composables/useJournal'
 import { useLens } from '@/composables/useLens'
 import { type ApiTrace } from '@/types/models'
 import { ChevronLeftIcon, ChevronRightIcon, PlayIcon } from '@heroicons/vue/24/outline'
-import HeatmapSection from '@/components/Heatmap/HeatmapSection.vue'
-import LensSelectorBar from '@/components/Lens/LensSelectorBar.vue'
 
 const {
   traces,
@@ -464,6 +432,16 @@ watch(currentTrace, async (newTrace, oldTrace) => {
     await centerOnCurrentTrace()
     updateScrollAffordances()
   }
+})
+
+const hasFocusTarget = () => Boolean(currentTrace.value)
+const hasTodayTarget = () => Boolean(todayTrace.value)
+
+defineExpose({
+  scrollToFocus,
+  scrollToToday,
+  hasFocusTarget,
+  hasTodayTarget
 })
 </script>
 

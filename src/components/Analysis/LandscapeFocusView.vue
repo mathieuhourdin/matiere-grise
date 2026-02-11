@@ -1,37 +1,90 @@
 <template>
   <div class="mt-2">
-    <TracesSection class="mb-8" />
-    <h3 class="text-xl font-bold mb-4">Entités de l'analyse</h3>
-    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3">
-      <AnalysisItemCard
-        v-for="(item, index) in visibleContextLandmarks"
-        :key="item.id ?? index"
-        :title="item.title ?? ''"
-        :subtitle="item.subtitle"
-        :content="shortText(item.content)"
-        :badge="landmarkTypeLabel(item.landmark_type)"
-        :link-to="item.id ? `/app/landmarks/${item.id}` : null"
-      />
+    <div class="mb-4 flex items-center justify-end gap-2">
+      <button
+        type="button"
+        class="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg border border-slate-700 bg-slate-900/60 text-slate-200 hover:bg-slate-800/70 transition-colors"
+        @click="atelierMode = !atelierMode"
+      >
+        <span>Atelier</span>
+        <span v-if="atelierMode" aria-hidden="true">✓</span>
+      </button>
+      <button
+        v-if="atelierMode"
+        type="button"
+        class="px-3 py-1.5 rounded-lg border border-slate-700 bg-slate-900/60 text-slate-300 hover:bg-slate-800/70 hover:text-slate-100 transition-colors"
+        @click="atelierMode = false"
+      >
+        Fermer
+      </button>
     </div>
-    <button
-      v-if="showSeeMoreContextLandmarks"
-      type="button"
-      class="mt-3 text-sm underline text-slate-400 hover:text-slate-200 transition-colors"
-      @click="expandContextLandmarks = true"
-    >
-      voir plus
-    </button>
-    <div v-if="contextLandmarks.length === 0" class="text-sm text-slate-500">
-      Aucune entité
+
+    <div class="relative overflow-hidden">
+      <div
+        :class="[
+          'transition-[padding] duration-300',
+          atelierMode ? 'lg:pr-[15rem]' : ''
+        ]"
+      >
+        <TracesSection
+          v-if="atelierMode"
+          ref="traceSectionRef"
+          class="mb-8"
+        />
+
+        <h3 class="text-xl font-bold mb-4">Entités de l'analyse</h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3">
+          <AnalysisItemCard
+            v-for="(item, index) in visibleContextLandmarks"
+            :key="item.id ?? index"
+            :title="item.title ?? ''"
+            :subtitle="item.subtitle"
+            :content="shortText(item.content)"
+            :badge="landmarkTypeLabel(item.landmark_type)"
+            :link-to="item.id ? `/app/landmarks/${item.id}` : null"
+          />
+        </div>
+        <button
+          v-if="showSeeMoreContextLandmarks"
+          type="button"
+          class="mt-3 text-sm underline text-slate-400 hover:text-slate-200 transition-colors"
+          @click="expandContextLandmarks = true"
+        >
+          voir plus
+        </button>
+        <div v-if="contextLandmarks.length === 0" class="text-sm text-slate-500">
+          Aucune entité
+        </div>
+      </div>
+
+      <transition
+        enter-active-class="transition-transform duration-300 ease-out"
+        enter-from-class="translate-x-full"
+        enter-to-class="translate-x-0"
+        leave-active-class="transition-transform duration-200 ease-in"
+        leave-from-class="translate-x-0"
+        leave-to-class="translate-x-full"
+      >
+        <AtelierDrawer
+          v-if="atelierMode"
+          class="fixed inset-y-0 right-0 z-40 w-full max-w-[15rem] lg:absolute"
+          :can-focus="canFocusTimeline"
+          :can-today="canTodayTimeline"
+          @focus="handleFocusTimeline"
+          @today="handleTodayTimeline"
+          @close="atelierMode = false"
+        />
+      </transition>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, onUnmounted, ref } from 'vue'
+import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
 import { fetchWrapper } from '@/helpers'
 import AnalysisItemCard from '@/components/Analysis/AnalysisItemCard.vue'
 import TracesSection from '@/components/Trace/TracesSection.vue'
+import AtelierDrawer from '@/components/Analysis/AtelierDrawer.vue'
 
 const props = defineProps<{
   id: string
@@ -39,6 +92,13 @@ const props = defineProps<{
 
 const contextLandmarks = ref<any[]>([])
 const expandContextLandmarks = ref(false)
+const atelierMode = ref(false)
+const traceSectionRef = ref<{
+  scrollToFocus: () => Promise<void> | void
+  scrollToToday: () => Promise<void> | void
+  hasFocusTarget: () => boolean
+  hasTodayTarget: () => boolean
+} | null>(null)
 const viewportWidth = ref(typeof window !== 'undefined' ? window.innerWidth : 1280)
 
 const cardsPerRow = computed(() => {
@@ -56,6 +116,8 @@ const firstRowSlice = <T>(items: T[], expanded: boolean): T[] => {
 
 const visibleContextLandmarks = computed(() => firstRowSlice(contextLandmarks.value, expandContextLandmarks.value))
 const showSeeMoreContextLandmarks = computed(() => !expandContextLandmarks.value && hasMoreThanOneRow(contextLandmarks.value.length))
+const canFocusTimeline = computed(() => traceSectionRef.value?.hasFocusTarget?.() ?? false)
+const canTodayTimeline = computed(() => traceSectionRef.value?.hasTodayTarget?.() ?? false)
 
 const landmarkTypeLabel = (type: string | undefined): string => {
   if (!type) return ''
@@ -70,6 +132,14 @@ const shortText = (text: string | undefined, max = 140): string => {
   const normalized = text.replace(/\s+/g, ' ').trim()
   if (normalized.length <= max) return normalized
   return `${normalized.slice(0, max)}...`
+}
+
+const handleFocusTimeline = async () => {
+  await traceSectionRef.value?.scrollToFocus?.()
+}
+
+const handleTodayTimeline = async () => {
+  await traceSectionRef.value?.scrollToToday?.()
 }
 
 const loadContextLandmarks = async () => {
@@ -97,4 +167,12 @@ onMounted(async () => {
 onUnmounted(() => {
   window.removeEventListener('resize', updateViewportWidth)
 })
+
+watch(
+  () => props.id,
+  async () => {
+    expandContextLandmarks.value = false
+    await loadContextLandmarks()
+  }
+)
 </script>

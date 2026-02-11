@@ -4,6 +4,12 @@
       <h1 class="text-2xl font-bold">Mon studio</h1>
       <div class="flex items-center gap-3">
         <router-link
+          :to="{ name: 'journalPad' }"
+          class="text-sm underline text-slate-300 hover:text-slate-100 transition-colors"
+        >
+          Continuer le journal
+        </router-link>
+        <router-link
           v-if="analysisLinkTo"
           :to="analysisLinkTo"
           class="text-sm underline text-slate-300 hover:text-slate-100 transition-colors"

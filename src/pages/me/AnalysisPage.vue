@@ -58,6 +58,7 @@
     <TraceFocusView v-if="activeView === 'current'" :id="id" />
     <AnalysisFocusView v-if="activeView === 'summary'" :id="id" />
     <LandscapeFocusView v-if="activeView === 'compare'" :id="id" />
+    <StatisticsFocusView v-if="activeView === 'timeline'" :id="id" />
   </div>
 </template>
 
@@ -67,6 +68,7 @@ import { useRoute } from 'vue-router'
 import TraceFocusView from '@/components/Analysis/TraceFocusView.vue'
 import AnalysisFocusView from '@/components/Analysis/AnalysisFocusView.vue'
 import LandscapeFocusView from '@/components/Analysis/LandscapeFocusView.vue'
+import StatisticsFocusView from '@/components/Analysis/StatisticsFocusView.vue'
 import { useLens } from '@/composables/useLens'
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/vue/24/outline'
 import { fetchWrapper } from '@/helpers'
@@ -110,7 +112,7 @@ const viewOptions = [
   { id: 'current', label: 'Focus Trace' },
   { id: 'summary', label: 'Analyse' },
   { id: 'compare', label: 'Paysage global' },
-  { id: 'timeline', label: 'Analytique' }
+  { id: 'timeline', label: 'Statistiques' }
 ] as const
 
 const activeView = ref<(typeof viewOptions)[number]['id']>('current')
