@@ -1,34 +1,7 @@
 <template>
   <div class="min-h-screen text-slate-100 p-2 md:p-10 md:w-11/12 mx-auto">
-    <div class="flex items-center justify-between mb-6">
-      <router-link
-        v-if="previousAnalysisId"
-        :to="`/me/analysis/${previousAnalysisId}`"
-        class="flex items-center gap-2 px-4 py-2 rounded-lg border border-slate-600 bg-slate-800/60 text-slate-300 hover:bg-slate-700/60 hover:text-white transition-colors"
-      >
-        <ChevronLeftIcon class="w-5 h-5" />
-        <span>Précédent</span>
-      </router-link>
-      <span v-else class="invisible flex items-center gap-2 px-4 py-2">
-        <ChevronLeftIcon class="w-5 h-5" />
-        <span>Précédent</span>
-      </span>
-      <router-link
-        v-if="nextAnalysisId"
-        :to="`/me/analysis/${nextAnalysisId}`"
-        class="flex items-center gap-2 px-4 py-2 rounded-lg border border-slate-600 bg-slate-800/60 text-slate-300 hover:bg-slate-700/60 hover:text-white transition-colors"
-      >
-        <span>Suivant</span>
-        <ChevronRightIcon class="w-5 h-5" />
-      </router-link>
-      <span v-else class="invisible flex items-center gap-2 px-4 py-2">
-        <span>Suivant</span>
-        <ChevronRightIcon class="w-5 h-5" />
-      </span>
-    </div>
-
     <div v-if="analysis" class="mb-6">
-      <div class="flex justify-between items-start mb-2 gap-3">
+      <div class="flex justify-between items-start mb-1 gap-3">
         <div class="text-lg font-bold">{{ formatDate(analyzedTrace?.interaction_date ?? analyzedTrace?.created_at) }} - {{ traceMirror?.title ?? analysis.title }}</div>
         <router-link
           v-if="replayedFromId"
@@ -36,6 +9,24 @@
           class="flex items-center gap-2 px-3 py-1.5 rounded-lg border border-slate-600 bg-slate-800/60 text-slate-300 hover:bg-slate-700/60 hover:text-white transition-colors text-sm"
         >
           Analyse source
+        </router-link>
+      </div>
+      <div class="flex items-center gap-4 text-sm">
+        <router-link
+          v-if="previousAnalysisId"
+          :to="`/me/analysis/${previousAnalysisId}`"
+          class="inline-flex items-center gap-1 text-slate-400 hover:text-slate-200 underline transition-colors"
+        >
+          <ChevronLeftIcon class="w-4 h-4" />
+          <span>Précédent</span>
+        </router-link>
+        <router-link
+          v-if="nextAnalysisId"
+          :to="`/me/analysis/${nextAnalysisId}`"
+          class="inline-flex items-center gap-1 text-slate-400 hover:text-slate-200 underline transition-colors"
+        >
+          <span>Suivant</span>
+          <ChevronRightIcon class="w-4 h-4" />
         </router-link>
       </div>
     </div>
@@ -146,7 +137,12 @@ const replayedFromId = computed(() => {
 const formatDate = (date: Date | string | undefined) => {
   if (!date) return ''
   const dateObj = date instanceof Date ? date : new Date(date)
-  return dateObj.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })
+  return dateObj.toLocaleDateString('fr-FR', {
+    weekday: 'long',
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric'
+  })
 }
 
 watch(() => props.id, async () => {

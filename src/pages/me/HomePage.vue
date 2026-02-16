@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen text-slate-100 p-2 md:p-10 md:w-11/12 mx-auto">
+  <div class="min-h-screen text-slate-100 p-2 md:p-6 md:w-11/12 mx-auto">
     <div class="flex justify-between items-center mb-4">
       <h1 class="text-2xl font-bold">Mon studio</h1>
       <div class="flex items-center gap-3">
@@ -23,7 +23,7 @@
     </div>
     <div class="flex flex-col gap-4">
       <!-- Row 1: High-level journal analysis -->
-      <section class="rounded-2xl border border-slate-800" style="background-color: rgb(32, 32, 32);">
+      <section class="rounded-xl border border-slate-800" style="background-color: rgb(32, 32, 32);">
         <div class="flex flex-col xl:flex-row">
           <article class="flex-1 p-3 md:p-4 xl:min-h-[170px]">
             <div class="text-lg font-semibold text-slate-200 mb-2">
@@ -61,11 +61,11 @@
         </div>
       </section>
       <!-- Row 1.5: Current Landscape Landmarks -->
-      <div class="grid grid-cols-1 xl:grid-cols-3 gap-8">
+      <div class="grid grid-cols-1 xl:grid-cols-3 gap-8 px-3">
         <div class="col-span-1">
           <section class="mb-4 font-inter">
             <div class="mb-1 flex items-center justify-between gap-3">
-              <h2 class="text-lg font-semibold text-slate-300">Activité par semaine</h2>
+              <h2 class="text-lg font-semibold text-slate-300">Métriques</h2>
             </div>
             <div class="mt-1 w-fit">
               <HeatmapSection compact :compact-weeks-limit="22" :frameless="true" :title="null" />
@@ -74,13 +74,13 @@
               <router-link
                 v-if="metricsLinkTo"
                 :to="metricsLinkTo"
-                class="text-sm text-slate-400 underline hover:text-slate-200 transition-colors"
+                class="text-xs text-slate-400 underline hover:text-slate-200 transition-colors"
               >
                 voir plus
               </router-link>
               <span
                 v-else
-                class="text-sm text-slate-500"
+                class="text-xs text-slate-500"
               >
                 voir plus
               </span>

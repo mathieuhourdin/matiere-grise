@@ -29,7 +29,7 @@
         <router-link
           v-if="displayLandscapeAnalysis?.id"
           :to="{ name: 'analysis', params: { id: displayLandscapeAnalysis.id }, query: { view: 'compare' } }"
-          class="text-sm text-slate-400 underline hover:text-slate-200 transition-colors"
+          class="text-xs text-slate-400 underline hover:text-slate-200 transition-colors"
         >
           voir plus
         </router-link>
