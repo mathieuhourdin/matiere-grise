@@ -1,9 +1,5 @@
 <template>
-  <section>
-    <div class="mb-2 flex items-center justify-between gap-3">
-      <h2 class="text-lg font-semibold text-slate-200">Derniers landmarks</h2>
-    </div>
-
+  <section class="font-inter">
     <div v-if="!displayLandscapeAnalysis" class="text-sm text-slate-500 mt-3">
       Aucune analyse courante
     </div>
@@ -13,34 +9,38 @@
     <div v-else-if="visibleLandmarks.length === 0" class="text-sm text-slate-500 mt-3">
       Aucun landmark
     </div>
-    <div v-else class="flex flex-col gap-3 overflow-x-auto pb-2 mt-3">
-      <router-link
-        v-for="landmark in visibleLandmarks"
-        :key="landmark.id"
-        :to="`/app/landmarks/${landmark.id}`"
-        class="block w-full h-20 overflow-hidden flex-shrink-0 rounded-xl border border-slate-700 bg-slate-900/60 p-2 hover:border-slate-500 hover:bg-slate-800/70 transition-colors"
-      >
-        <div class="h-full min-h-0 overflow-hidden">
-          <div class="h-full text-sm leading-5 text-slate-200 line-clamp-4">
+    <div v-else class="mt-3">
+      <ul class="list-disc list-outside pl-4 space-y-1">
+        <li
+          v-for="landmark in visibleLandmarks"
+          :key="landmark.id"
+          class="text-slate-300 marker:text-slate-500"
+        >
+          <router-link
+            :to="`/app/landmarks/${landmark.id}`"
+            class="text-xs leading-[0.95rem] text-slate-200 hover:text-slate-100 transition-colors whitespace-normal break-words"
+          >
             <template v-if="relatedElementsLoadingById[landmark.id]">
-              <div class="text-slate-400 text-xs leading-4">Chargement...</div>
+              <span class="text-slate-400 text-xs leading-4">Chargement...</span>
             </template>
             <template v-else-if="latestRelatedElement(landmark.id)">
               {{ latestElementDisplayText(landmark) }}
             </template>
             <template v-else>
-              <div class="text-slate-500 text-xs leading-4">Aucun element</div>
+              <span class="text-slate-500 text-xs leading-4">Aucun element</span>
             </template>
-          </div>
-        </div>
-      </router-link>
-      <router-link
-        v-if="displayLandscapeAnalysis?.id"
-        :to="{ name: 'analysis', params: { id: displayLandscapeAnalysis.id } }"
-        class="text-sm text-slate-400 underline hover:text-slate-200 transition-colors"
-      >
-        voir plus
-      </router-link>
+          </router-link>
+        </li>
+      </ul>
+      <div class="mt-2 flex justify-end">
+        <router-link
+          v-if="displayLandscapeAnalysis?.id"
+          :to="{ name: 'analysis', params: { id: displayLandscapeAnalysis.id } }"
+          class="text-sm text-slate-400 underline hover:text-slate-200 transition-colors"
+        >
+          voir plus
+        </router-link>
+      </div>
     </div>
   </section>
 </template>

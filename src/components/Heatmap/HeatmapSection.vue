@@ -2,15 +2,20 @@
   <div v-if="compact" class="flex items-center">
     <button
       type="button"
-      class="rounded-lg border border-slate-700 bg-slate-900/60 p-2.5 hover:border-slate-500 transition-colors"
-      :title="'Voir la heatmap'"
+      :class="[
+        'transition-colors',
+        props.frameless
+          ? 'p-0 border-0 bg-transparent rounded-none hover:bg-transparent'
+          : 'rounded-lg border border-slate-700 bg-slate-900/60 p-2.5 hover:border-slate-500'
+      ]"
+      :title="props.title ? `Voir la heatmap ${props.title}` : 'Voir la heatmap'"
       @click="openModal"
     >
       <HeatmapDisplay
         compact
         :days="heatmap"
         :loading="loading"
-        title="Activité"
+        :title="props.title"
         empty-text="Aucune donnée"
         month-locale="fr-FR"
         :hide-first-compact-month-label="true"
@@ -26,8 +31,8 @@
         <div class="absolute inset-0 bg-slate-950/70" @click="closeModal"></div>
         <div class="relative z-10 w-[min(98vw,1600px)] max-h-[95vh] overflow-auto">
           <div class="rounded-2xl border border-slate-700 bg-slate-900 p-4 shadow-2xl">
-            <div class="flex items-center justify-between mb-3">
-              <h2 class="text-lg font-semibold text-slate-200">Activité</h2>
+            <div :class="['flex items-center mb-3', props.title ? 'justify-between' : 'justify-end']">
+              <h2 v-if="props.title" class="text-lg font-semibold text-slate-200">{{ props.title }}</h2>
               <div class="flex items-center gap-3">
                 <div class="text-xs text-slate-500" v-if="maxValue > 0">Max: {{ maxValue }}</div>
                 <button
@@ -43,6 +48,7 @@
             <HeatmapDisplay
               :days="heatmap"
               :loading="loading"
+              :title="props.title"
               :show-max="false"
               empty-text="Aucune donnée"
               month-locale="fr-FR"
@@ -53,11 +59,11 @@
     </Teleport>
   </div>
 
-  <div v-else class="rounded-2xl border border-slate-800 bg-slate-900/60 p-4">
+  <div v-else :class="props.frameless ? '' : 'rounded-2xl border border-slate-800 bg-slate-900/60 p-4'">
     <HeatmapDisplay
       :days="heatmap"
       :loading="loading"
-      title="Activité"
+      :title="props.title"
       empty-text="Aucune donnée"
       month-locale="fr-FR"
     />
@@ -81,9 +87,13 @@ const { launchSnackbar } = useSnackbar()
 const props = withDefaults(defineProps<{
   compact?: boolean
   compactWeeksLimit?: number | null
+  frameless?: boolean
+  title?: string | null
 }>(), {
   compact: false,
-  compactWeeksLimit: 25
+  compactWeeksLimit: 25,
+  frameless: false,
+  title: 'Activité'
 })
 
 const loading = ref(false)

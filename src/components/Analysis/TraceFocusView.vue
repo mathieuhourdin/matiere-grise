@@ -42,7 +42,7 @@
       </section>
 
       <!-- Right: analysis output -->
-      <section class="xl:col-span-1 space-y-8">
+      <section class="xl:col-span-1 space-y-8 font-inter">
 
         <div>
           <h3 class="text-xl font-bold mb-4">Elements détectés</h3>

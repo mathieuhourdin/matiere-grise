@@ -29,7 +29,7 @@
 
     <div v-if="analysis" class="mb-6">
       <div class="flex justify-between items-start mb-2 gap-3">
-        <div class="text-lg font-bold">{{ formatDate(analysis.created_at) }} - {{ analysis.title }}</div>
+        <div class="text-lg font-bold">{{ formatDate(analyzedTrace?.interaction_date ?? analyzedTrace?.created_at) }} - {{ traceMirror?.title ?? analysis.title }}</div>
         <router-link
           v-if="replayedFromId"
           :to="`/me/analysis/${replayedFromId}`"
@@ -82,6 +82,8 @@ const route = useRoute()
 const { headLandscapeAnalysis, headLandscapeAnalysisParents, loadUserLenses } = useLens()
 const { headerValue } = useMenu()
 const analysis = ref<any>(null)
+const traceMirror = ref<any>(null)
+const analyzedTrace = ref<any>(null)
 
 // Ordered list: head first, then parents (so "next" = parent = older, "previous" = child = newer)
 const analysisNavigationIds = computed(() => {
@@ -122,6 +124,12 @@ const loadAnalysis = async () => {
   try {
     const response = await fetchWrapper.get(`/analysis/${props.id}`)
     analysis.value = response.data?.analysis ?? response.data ?? null
+
+    const traceMirrorResponse = await fetchWrapper.get(`/trace_mirrors/${analysis.value?.trace_mirror_id}`)
+    traceMirror.value = traceMirrorResponse.data ?? null
+
+    const analyzedTraceResponse = await fetchWrapper.get(`/traces/${analysis.value?.analyzed_trace_id}`)
+    analyzedTrace.value = analyzedTraceResponse.data ?? null
   } catch (error) {
     console.error('Error fetching analysis:', error)
     analysis.value = null

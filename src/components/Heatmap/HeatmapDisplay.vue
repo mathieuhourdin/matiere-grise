@@ -149,7 +149,7 @@ const props = withDefaults(defineProps<{
   days: HeatmapDay[]
   compact?: boolean
   loading?: boolean
-  title?: string
+  title?: string | null
   emptyText?: string
   monthLocale?: string
   weekdayLabels?: string[]
