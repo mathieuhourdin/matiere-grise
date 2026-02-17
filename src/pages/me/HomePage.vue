@@ -99,12 +99,13 @@
           <JournalPadComponent class="mb-10" />
         </div>
       </div>
+      
       <!-- Row 2: Achievements, Focus, Horizons -->
-      <AnalysisSection />
+      <!--<AnalysisSection />-->
       <!-- Row 3: Mentor image/message -->
-      <MentorSection />
+      <!--<MentorSection />-->
       <!-- Row 4: Journaling, Log Lecture, Log Production -->
-      <JournalSection />
+      <!--<JournalSection />-->
     </div>
   </div>
 </template>

@@ -1,34 +1,6 @@
 <template>
   <div class="bg-slate-50 dark:bg-elevated z-10 border-r border-slate-200 dark:border-gray-700 transition-colors duration-200 w-full md:w-64">
     <nav class="py-2">
-      <!-- Social Section -->
-      <MenuSection
-        title="Social"
-        icon="UsersIcon"
-        :is-expanded="isSectionExpanded('social')"
-        :is-active="isActiveSection('social')"
-        @toggle="toggleSection('social')"
-      >
-        <MenuItem
-          to="/social/feed"
-          title="Fil d'actu"
-          icon="RssIcon"
-          :is-active="isActiveRoute('/social/feed')"
-        />
-        <MenuItem
-          to="/social/resources"
-          title="Ressources"
-          icon="BookOpenIcon"
-          :is-active="isActiveRoute('/social/resources')"
-        />
-        <MenuItem
-          to="/social/users"
-          title="Utilisateurs"
-          icon="UserGroupIcon"
-          :is-active="isActiveRoute('/social/users')"
-        />
-      </MenuSection>
-
       <!-- Me Section -->
       <MenuSection
         title="Moi"
@@ -78,6 +50,34 @@
           title="Choix de mentor"
           icon="AcademicCapIcon"
           :is-active="isActiveRoute('/me/mentor-choice')"
+        />
+      </MenuSection>
+
+      <!-- Social Section -->
+      <MenuSection
+        title="Social"
+        icon="UsersIcon"
+        :is-expanded="isSectionExpanded('social')"
+        :is-active="isActiveSection('social')"
+        @toggle="toggleSection('social')"
+      >
+        <MenuItem
+          to="/social/feed"
+          title="Fil d'actu"
+          icon="RssIcon"
+          :is-active="isActiveRoute('/social/feed')"
+        />
+        <MenuItem
+          to="/social/resources"
+          title="Ressources"
+          icon="BookOpenIcon"
+          :is-active="isActiveRoute('/social/resources')"
+        />
+        <MenuItem
+          to="/social/users"
+          title="Utilisateurs"
+          icon="UserGroupIcon"
+          :is-active="isActiveRoute('/social/users')"
         />
       </MenuSection>
 

@@ -7,13 +7,13 @@
           <p class="text-xs text-slate-500">Consultez ce que vous avez ecrit et ajoutez de nouvelles traces</p>
         </div>
         <router-link
-          v-if="!fullscreen"
-          to="/me/journal-pad"
+          :to="fullscreen ? '/me/home' : '/me/journal-pad'"
           class="inline-flex items-center justify-center w-8 h-8 rounded-lg border border-slate-300 bg-white/80 text-slate-600 hover:border-slate-400 hover:text-slate-800 transition-colors"
-          title="Ouvrir en plein écran"
-          aria-label="Ouvrir le journal en plein écran"
+          :title='fullscreen ? "Fermer et revenir vers accueil" : "Ouvrir en plein écran"'
+          :aria-label='fullscreen ? "Fermer et revenir vers accueil" : "Ouvrir le journal en plein écran"'
         >
-          <ArrowTopRightOnSquareIcon class="w-4 h-4" />
+          <ArrowsPointingInIcon v-if="fullscreen" class="w-4 h-4" />
+          <ArrowTopRightOnSquareIcon v-else class="w-4 h-4" />
         </router-link>
       </header>
 
@@ -85,7 +85,7 @@ import { useJournal } from '@/composables/useJournal'
 import { fetchWrapper } from '@/helpers'
 import { useSnackbar } from '@/composables/useSnackbar'
 import { type ApiInteraction, type ApiTrace } from '@/types/models'
-import { ArrowTopRightOnSquareIcon } from '@heroicons/vue/24/outline'
+import { ArrowTopRightOnSquareIcon, ArrowsPointingInIcon } from '@heroicons/vue/24/outline'
 
 withDefaults(defineProps<{
   fullscreen?: boolean

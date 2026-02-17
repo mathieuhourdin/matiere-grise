@@ -18,7 +18,7 @@
         >
           <router-link
             :to="`/app/landmarks/${landmark.id}`"
-            class="text-xs leading-[0.95rem] text-slate-200 hover:text-slate-100 transition-colors whitespace-normal break-words"
+            class="group text-xs leading-[0.95rem] text-slate-200 hover:text-slate-100 transition-colors whitespace-normal break-words"
           >
             <template v-if="relatedElementsLoadingById[landmark.id]">
               <span class="text-slate-400 text-xs leading-4">Chargement...</span>
@@ -29,6 +29,7 @@
             <template v-else>
               <span class="text-slate-500 text-xs leading-4">Aucun element</span>
             </template>
+            <ShareIcon class="inline-block w-3.5 h-3.5 ml-1 text-slate-500 group-hover:text-slate-300 transition-colors align-[-2px]" />
           </router-link>
         </li>
       </ul>
@@ -47,6 +48,7 @@
 
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue'
+import { ShareIcon } from '@heroicons/vue/24/outline'
 import { fetchWrapper } from '@/helpers'
 import { useLens, type Landmark } from '@/composables/useLens'
 

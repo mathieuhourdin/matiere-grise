@@ -107,10 +107,6 @@
               <div class="text-sm font-semibold text-gray-600 dark:text-gray-400 mb-1">Title</div>
               <div class="text-lg font-medium">{{ element.title }}</div>
             </div>
-            <div v-if="element.subtitle" class="mb-2">
-              <div class="text-sm font-semibold text-gray-600 dark:text-gray-400 mb-1">Subtitle</div>
-              <div class="text-base">{{ element.subtitle }}</div>
-            </div>
             <div v-if="element.content">
               <div class="text-sm font-semibold text-gray-600 dark:text-gray-400 mb-1">Content</div>
               <div class="whitespace-pre-wrap text-sm">{{ element.content }}</div>
