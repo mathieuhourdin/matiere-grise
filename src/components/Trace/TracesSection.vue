@@ -52,7 +52,7 @@
             class="pointer-events-none absolute right-0 top-0 bottom-0 z-20 w-12 bg-gradient-to-l from-white/95 to-transparent dark:from-gray-900/90"
           ></div>
 
-      <div ref="scrollContainer" class="flex items-start gap-6 overflow-x-auto pb-4" @scroll="updateScrollAffordances">
+      <div ref="scrollContainer" class="flex items-start gap-6 overflow-x-auto pb-4" @scroll="handleTimelineScroll">
         <!-- Each trace as a commit-like item -->
         <div
           v-for="(trace, index) in sortedTraces"
@@ -93,6 +93,7 @@
                     : (getParentForTrace(trace) ? 'ring-2 ring-yellow-400 ring-offset-2 ring-offset-slate-900' : ''))
               ]"
               :title="trace.content || getTraceTitle(trace)"
+              @contextmenu.prevent.stop="openTraceContextMenu($event, trace)"
             >
               <span v-if="trace.title">
                 {{ trace.title.charAt(0).toUpperCase() }}
@@ -133,6 +134,22 @@
       </div>
       </div>
     </div>
+    <Teleport to="body">
+      <div
+        v-if="isTraceContextMenuOpen"
+        ref="contextMenuRef"
+        class="fixed z-[120] min-w-[170px] rounded-md border border-slate-700 bg-slate-900/95 shadow-xl backdrop-blur-sm p-1"
+        :style="{ left: `${traceContextMenuPosition.x}px`, top: `${traceContextMenuPosition.y}px` }"
+      >
+        <button
+          type="button"
+          class="w-full text-left rounded px-2 py-1.5 text-xs text-slate-200 hover:bg-slate-800 transition-colors"
+          @click.stop="handleLaunchNewLensFromContextMenu"
+        >
+          Launch new lens
+        </button>
+      </div>
+    </Teleport>
   </div>
 </template>
 
@@ -285,6 +302,10 @@ const canScrollLeft = ref(false)
 const canScrollRight = ref(false)
 const trailingSpacerWidth = ref(0)
 const traceCardMinWidth = 120
+const isTraceContextMenuOpen = ref(false)
+const traceContextMenuTrace = ref<ApiTrace | null>(null)
+const traceContextMenuPosition = ref({ x: 0, y: 0 })
+const contextMenuRef = ref<HTMLElement | null>(null)
 
 const setTraceEl = (id: string, el: Element | null) => {
   traceEls.value[id] = el as HTMLElement | null
@@ -319,6 +340,53 @@ const updateScrollAffordances = () => {
   }
   canScrollLeft.value = container.scrollLeft > 1
   canScrollRight.value = container.scrollLeft + container.clientWidth < container.scrollWidth - 1
+}
+
+const closeTraceContextMenu = () => {
+  isTraceContextMenuOpen.value = false
+  traceContextMenuTrace.value = null
+}
+
+const openTraceContextMenu = (event: MouseEvent, trace: ApiTrace) => {
+  event.preventDefault()
+  event.stopPropagation()
+  const menuWidth = 170
+  const menuHeight = 40
+  const viewportPadding = 8
+  const maxX = window.innerWidth - menuWidth - viewportPadding
+  const maxY = window.innerHeight - menuHeight - viewportPadding
+  traceContextMenuPosition.value = {
+    x: Math.max(viewportPadding, Math.min(event.clientX, maxX)),
+    y: Math.max(viewportPadding, Math.min(event.clientY, maxY))
+  }
+  traceContextMenuTrace.value = trace
+  isTraceContextMenuOpen.value = true
+}
+
+const handleLaunchNewLensFromContextMenu = async () => {
+  const trace = traceContextMenuTrace.value
+  closeTraceContextMenu()
+  if (!trace?.id) return
+  await createLens(trace.id)
+}
+
+const handleWindowPointerDown = (event: PointerEvent) => {
+  if (!isTraceContextMenuOpen.value) return
+  const target = event.target as Node | null
+  if (contextMenuRef.value && target && contextMenuRef.value.contains(target)) return
+  closeTraceContextMenu()
+}
+
+const handleWindowKeydown = (event: KeyboardEvent) => {
+  if (event.key !== 'Escape') return
+  closeTraceContextMenu()
+}
+
+const handleTimelineScroll = () => {
+  updateScrollAffordances()
+  if (isTraceContextMenuOpen.value) {
+    closeTraceContextMenu()
+  }
 }
 
 // Get the current trace (the one matching display analysis)
@@ -413,10 +481,14 @@ onMounted(async () => {
   updateScrollAffordances()
   await centerOnCurrentTrace()
   window.addEventListener('resize', updateScrollAffordances)
+  window.addEventListener('pointerdown', handleWindowPointerDown)
+  window.addEventListener('keydown', handleWindowKeydown)
 })
 
 onBeforeUnmount(() => {
   window.removeEventListener('resize', updateScrollAffordances)
+  window.removeEventListener('pointerdown', handleWindowPointerDown)
+  window.removeEventListener('keydown', handleWindowKeydown)
 })
 
 watch(
