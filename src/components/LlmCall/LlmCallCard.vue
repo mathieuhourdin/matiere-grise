@@ -7,7 +7,17 @@
   >
     <div class="flex justify-between items-start">
       <div class="flex-1">
-        <div class="font-semibold text-lg">{{ llmCall.display_name || llmCall.model }}</div>
+        <div class="flex items-center gap-2 flex-wrap">
+          <div class="font-semibold text-lg">{{ llmCall.display_name || llmCall.model }}</div>
+          <button
+            type="button"
+            class="inline-flex items-center gap-1 px-2 py-0.5 text-xs rounded border border-slate-300 dark:border-zinc-700 text-gray-600 dark:text-gray-300 hover:bg-slate-100 dark:hover:bg-zinc-700 transition-colors"
+            @click.stop.prevent="copySummaryText"
+          >
+            <span v-if="copySummaryFeedback">{{ copySummaryFeedback }}</span>
+            <span v-else>Copy summary</span>
+          </button>
+        </div>
         <div class="text-xs text-gray-500 mt-0.5">{{ llmCall.model }}</div>
         <div class="text-sm text-gray-600 dark:text-gray-400 mt-1">
           Status: <span :class="getStatusClass(llmCall.status)">{{ llmCall.status }}</span>
@@ -38,10 +48,11 @@
 </template>
 
 <script setup lang="ts">
+import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { type LlmCall } from '@/types/models'
 
-withDefaults(defineProps<{
+const props = withDefaults(defineProps<{
   llmCall: LlmCall
   showPrompt?: boolean
 }>(), {
@@ -49,6 +60,7 @@ withDefaults(defineProps<{
 })
 
 const router = useRouter()
+const copySummaryFeedback = ref('')
 
 const handleClick = (event: MouseEvent, id: string) => {
   // Allow default behavior for Ctrl/Cmd + click (opens in new tab)
@@ -94,5 +106,34 @@ const getStatusClass = (status: string): string => {
     return 'text-yellow-600 dark:text-yellow-400'
   }
   return 'text-gray-600 dark:text-gray-400'
+}
+
+const summaryText = (): string => {
+  const call = props.llmCall as any
+  const displayName = call.display_name ?? call.displayName ?? ''
+  const analysisId = call.analysis_id ?? call.analysisId ?? ''
+  const systemPrompt = call.prompt ?? ''
+  const userPrompt = call.user_prompt ?? call.userPrompt ?? ''
+  const output = call.output ?? ''
+
+  return [
+    `display_name: ${displayName}`,
+    `analysis_id: ${analysisId}`,
+    `System prompt: ${systemPrompt}`,
+    `User prompt: ${userPrompt}`,
+    `Output: ${output}`
+  ].join('\n')
+}
+
+const copySummaryText = async () => {
+  try {
+    await navigator.clipboard.writeText(summaryText())
+    copySummaryFeedback.value = 'Copied!'
+    setTimeout(() => { copySummaryFeedback.value = '' }, 2000)
+  } catch (err) {
+    console.error('Failed to copy summary:', err)
+    copySummaryFeedback.value = 'Copy failed'
+    setTimeout(() => { copySummaryFeedback.value = '' }, 2000)
+  }
 }
 </script>

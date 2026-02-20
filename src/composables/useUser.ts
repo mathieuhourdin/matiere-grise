@@ -120,7 +120,8 @@ async function createNewDraftUser() {
       handle: '',
       profile_picture_url: '',
       is_platform_user: false,
-      biography: ''
+      biography: '',
+      high_level_projects_definition: ''
     }
     const response = await fetchWrapper.post('/users', draftAuthor)
     return response.data

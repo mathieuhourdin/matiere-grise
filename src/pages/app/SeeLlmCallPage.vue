@@ -3,12 +3,13 @@
     <div v-if="loading" class="text-center text-2xl pt-10">Loading...</div>
     <div v-else-if="llmCall">
       <div class="mb-6">
-        <router-link
-          to="/app/llm-calls"
+        <button
+          type="button"
+          @click="goBack"
           class="text-sm underline text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200"
         >
-          ← Back to LLM Calls
-        </router-link>
+          ← Back
+        </button>
       </div>
 
       <div class="flex flex-wrap items-center gap-4 mb-6">
@@ -20,6 +21,14 @@
         >
           <span v-if="copyFeedback">{{ copyFeedback }}</span>
           <span v-else>Copy raw JSON</span>
+        </button>
+        <button
+          type="button"
+          @click="copySummaryText"
+          class="inline-flex items-center gap-2 px-3 py-1.5 text-sm font-medium rounded-lg border border-slate-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-zinc-700 transition-colors"
+        >
+          <span v-if="copySummaryFeedback">{{ copySummaryFeedback }}</span>
+          <span v-else>Copy summary</span>
         </button>
       </div>
 
@@ -127,11 +136,11 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRouter } from 'vue-router'
 import { useLlmCall } from '@/composables/useLlmCall'
 import { type LlmCall } from '@/types/models'
 
-const route = useRoute()
+const router = useRouter()
 const { getLlmCall } = useLlmCall()
 
 const props = defineProps<{
@@ -141,6 +150,15 @@ const props = defineProps<{
 const llmCall = ref<LlmCall | null>(null)
 const loading = ref(true)
 const copyFeedback = ref('')
+const copySummaryFeedback = ref('')
+
+const goBack = () => {
+  if (window.history.length > 1) {
+    router.back()
+    return
+  }
+  router.push('/app/llm-calls')
+}
 
 const formatDate = (dateString: string): string => {
   if (!dateString) return ''
@@ -169,6 +187,37 @@ const copyRawJson = async () => {
     console.error('Failed to copy:', err)
     copyFeedback.value = 'Copy failed'
     setTimeout(() => { copyFeedback.value = '' }, 2000)
+  }
+}
+
+const summaryText = (): string => {
+  if (!llmCall.value) return ''
+  const call = llmCall.value as any
+  const displayName = call.display_name ?? call.displayName ?? ''
+  const analysisId = call.analysis_id ?? call.analysisId ?? ''
+  const systemPrompt = call.prompt ?? ''
+  const userPrompt = call.user_prompt ?? call.userPrompt ?? ''
+  const output = call.output ?? ''
+
+  return [
+    `display_name: ${displayName}`,
+    `analysis_id: ${analysisId}`,
+    `System prompt: ${systemPrompt}`,
+    `User prompt: ${userPrompt}`,
+    `Output: ${output}`
+  ].join('\n')
+}
+
+const copySummaryText = async () => {
+  if (!llmCall.value) return
+  try {
+    await navigator.clipboard.writeText(summaryText())
+    copySummaryFeedback.value = 'Copied!'
+    setTimeout(() => { copySummaryFeedback.value = '' }, 2000)
+  } catch (err) {
+    console.error('Failed to copy summary:', err)
+    copySummaryFeedback.value = 'Copy failed'
+    setTimeout(() => { copySummaryFeedback.value = '' }, 2000)
   }
 }
 

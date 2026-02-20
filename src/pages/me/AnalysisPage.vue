@@ -47,6 +47,7 @@
     </div>
 
     <TraceFocusView v-if="activeView === 'current'" :id="id" />
+    <TraceMirrorFocusView v-if="activeView === 'mirror'" :id="id" />
     <AnalysisFocusView v-if="activeView === 'summary'" :id="id" />
     <LandscapeFocusView v-if="activeView === 'compare'" :id="id" />
     <StatisticsFocusView v-if="activeView === 'timeline'" :id="id" />
@@ -57,6 +58,7 @@
 import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import TraceFocusView from '@/components/Analysis/TraceFocusView.vue'
+import TraceMirrorFocusView from '@/components/Analysis/TraceMirrorFocusView.vue'
 import AnalysisFocusView from '@/components/Analysis/AnalysisFocusView.vue'
 import LandscapeFocusView from '@/components/Analysis/LandscapeFocusView.vue'
 import StatisticsFocusView from '@/components/Analysis/StatisticsFocusView.vue'
@@ -103,6 +105,7 @@ const nextAnalysisId = computed(() => {
 
 const viewOptions = [
   { id: 'current', label: 'Focus Trace' },
+  { id: 'mirror', label: 'Focus Mirror' },
   { id: 'summary', label: 'Analyse' },
   { id: 'compare', label: 'Paysage global' },
   { id: 'timeline', label: 'Statistiques' }

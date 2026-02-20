@@ -13,6 +13,7 @@ export interface User {
   pseudonym?: string
   pseudonymized?: boolean
   display_name?: string
+  high_level_projects_definition?: string
 }
 
 export interface Category {

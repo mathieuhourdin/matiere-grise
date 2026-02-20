@@ -69,7 +69,6 @@ const themeLoadingByElementId = ref<Record<string, boolean>>({})
 
 const sortedLandmarks = computed<Landmark[]>(() => {
   return displayLandmarks.value
-    .filter((landmark) => isResourceLandmark(landmark.landmark_type))
     .sort((a, b) => {
     const dateA = new Date((a as any).created_at || 0).getTime()
     const dateB = new Date((b as any).created_at || 0).getTime()
@@ -140,12 +139,6 @@ const latestRelatedElement = (landmarkId: string): RelatedElement | null => {
   const elements = relatedElementsByLandmarkId.value[landmarkId] ?? []
   if (elements.length === 0) return null
   return elements[0]
-}
-
-function isResourceLandmark(landmarkType: string | undefined): boolean {
-  if (!landmarkType) return false
-  const normalized = landmarkType.toLowerCase()
-  return normalized === 'rsrc' || normalized === 'resource'
 }
 
 const elementVerbPrefix = (verb: string): string => {

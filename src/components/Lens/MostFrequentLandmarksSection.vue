@@ -47,16 +47,6 @@ const { displayLandmarks, displayLandscapeAnalysis, isLoadingLandmarks } = useLe
 const relatedElementsCountByLandmarkId = ref<Record<string, number>>({})
 const isLoadingCounts = ref(false)
 
-function isResourceLandmark(landmarkType: string | undefined): boolean {
-  if (!landmarkType) return false
-  const normalized = landmarkType.toLowerCase()
-  return normalized === 'rsrc' || normalized === 'resource'
-}
-
-const resourceLandmarks = computed<Landmark[]>(() => {
-  return displayLandmarks.value.filter((landmark) => isResourceLandmark(landmark.landmark_type))
-})
-
 const loadRelatedElementsCount = async (landmarkId: string) => {
   if (!landmarkId) return
   if (relatedElementsCountByLandmarkId.value[landmarkId] != null) return
@@ -72,7 +62,7 @@ const loadRelatedElementsCount = async (landmarkId: string) => {
 }
 
 const sortedLandmarks = computed<Landmark[]>(() => {
-  return [...resourceLandmarks.value].sort((a, b) => {
+  return [...displayLandmarks.value].sort((a, b) => {
     const countA = relatedElementsCountByLandmarkId.value[a.id] ?? 0
     const countB = relatedElementsCountByLandmarkId.value[b.id] ?? 0
     if (countA !== countB) return countB - countA
@@ -91,12 +81,12 @@ const elementCount = (landmarkId: string): number => {
 }
 
 watch(
-  () => resourceLandmarks.value.map((landmark) => landmark.id).join(','),
+  () => displayLandmarks.value.map((landmark) => landmark.id).join(','),
   async () => {
-    if (resourceLandmarks.value.length === 0) return
+    if (displayLandmarks.value.length === 0) return
     isLoadingCounts.value = true
     try {
-      await Promise.all(resourceLandmarks.value.map((landmark) => loadRelatedElementsCount(landmark.id)))
+      await Promise.all(displayLandmarks.value.map((landmark) => loadRelatedElementsCount(landmark.id)))
     } finally {
       isLoadingCounts.value = false
     }

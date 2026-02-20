@@ -79,6 +79,15 @@
             class="h-80"
           />
         </div>
+
+        <div class="col-span-2">
+          <TextAreaInput
+            v-model="editableUser.high_level_projects_definition"
+            label="High level projects definition"
+            placeholder="Décrivez vos projets et objectifs globaux..."
+            class="h-48"
+          />
+        </div>
       </div>
 
       <!-- Action Buttons -->
@@ -107,7 +116,7 @@ import ActionButton from '@/components/Ui/ActionButton.vue'
 const { user, updateUser, loadUser } = useUser()
 const { launchSnackbar } = useSnackbar()
 
-const editableUser = ref<User & { biography?: string }>({
+const editableUser = ref<User & { biography?: string; high_level_projects_definition?: string }>({
   email: '',
   first_name: '',
   last_name: '',
@@ -115,10 +124,11 @@ const editableUser = ref<User & { biography?: string }>({
   pseudonym: '',
   pseudonymized: false,
   profile_picture_url: '',
-  biography: ''
+  biography: '',
+  high_level_projects_definition: ''
 })
 
-const originalUser = ref<User & { biography?: string } | null>(null)
+const originalUser = ref<User & { biography?: string; high_level_projects_definition?: string } | null>(null)
 const saving = ref(false)
 
 onMounted(async () => {
@@ -140,11 +150,13 @@ function initializeForm() {
   if (user.value) {
     editableUser.value = {
       ...user.value,
-      biography: (user.value as any).biography || ''
+      biography: (user.value as any).biography || '',
+      high_level_projects_definition: (user.value as any).high_level_projects_definition || ''
     }
     originalUser.value = {
       ...user.value,
-      biography: (user.value as any).biography || ''
+      biography: (user.value as any).biography || '',
+      high_level_projects_definition: (user.value as any).high_level_projects_definition || ''
     }
   }
 }
@@ -201,4 +213,3 @@ async function saveChanges() {
   scrollbar-width: none;  /* Firefox */
 }
 </style>
-

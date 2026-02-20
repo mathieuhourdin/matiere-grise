@@ -13,7 +13,12 @@
                   {{ formatDate(traceInteractionDate) }}
                 </div>
                 <article class="trace-entry text-[17px] text-slate-700 whitespace-pre-line leading-[2]">
-                  <div class="font-handwritten text-4xl mb-2 leading-tight text-slate-800 whitespace-pre-wrap">
+                  <div
+                    :class="[
+                      'mb-2 text-slate-800 whitespace-pre-wrap',
+                      isLongFirstLine ? 'font-georgia text-lg leading-relaxed' : 'font-handwritten text-4xl leading-tight'
+                    ]"
+                  >
                     <span
                       v-for="(segment, segmentIndex) in highlightedFirstSegments"
                       :key="`first-${segmentIndex}`"
@@ -43,50 +48,40 @@
 
       <!-- Right: analysis output -->
       <section class="xl:col-span-1 space-y-8 font-inter">
-
         <div>
           <h3 class="text-xl font-bold mb-4">Elements détectés</h3>
-          <div class="grid grid-cols-1 gap-3">
-            <div
-              v-for="(item, index) in visibleSimpleElements"
-              :key="item.id ?? index"
-              class="h-full p-3 rounded-lg border border-slate-700 bg-slate-800/40"
-              :style="{ borderColor: colorForElement(item, index).accent }"
-            >
-              <div class="text-sm font-semibold text-slate-200 line-clamp-2 flex items-start gap-2">
-                <span
-                  class="w-2 h-2 rounded-full mt-1.5 flex-none"
-                  :style="{ backgroundColor: colorForElement(item, index).accent }"
-                ></span>
-                {{ itemTitle(item) || 'Sans titre' }}
-              </div>
-              <div class="mt-2 flex flex-wrap gap-1.5">
-                <template v-if="elementLandmarksLoadingById[getElementId(item) || '']">
-                  <span class="text-[10px] text-slate-400">Chargement...</span>
-                </template>
-                <template v-else-if="elementLandmarksById[getElementId(item) || '']?.length">
-                  <span
-                    v-for="landmark in elementLandmarksById[getElementId(item) || '']"
-                    :key="`${item.id}-${landmark.id || landmark.title}`"
-                    class="text-[10px] px-1.5 py-0.5 rounded-full border border-slate-600 text-slate-300 bg-slate-900/60"
-                  >
-                    {{ landmark.title || 'Sans nom' }}
-                  </span>
-                </template>
-                <template v-else>
-                  <span class="text-[10px] text-slate-500">Aucun landmark</span>
-                </template>
+          <div class="space-y-3">
+            <div v-for="section in elementSections" :key="section.key">
+              <button
+                type="button"
+                class="w-full flex items-center justify-between rounded-lg border border-slate-700 bg-slate-900/50 px-3 py-2 hover:bg-slate-800/60 transition-colors"
+                @click="toggleSection(section.key)"
+              >
+                <span class="text-xs uppercase tracking-wide text-slate-300 font-semibold">
+                  {{ section.title }}
+                </span>
+                <span class="inline-flex items-center gap-2">
+                  <span class="text-xs text-slate-400">{{ section.items.length }}</span>
+                  <ChevronDownIcon
+                    class="w-4 h-4 text-slate-400 transition-transform"
+                    :class="expandedCategory === section.key ? 'rotate-180' : ''"
+                  />
+                </span>
+              </button>
+              <div v-if="expandedCategory === section.key" class="mt-2 pl-1">
+                <div v-if="section.items.length > 0" class="grid grid-cols-1 gap-3">
+                  <ElementDisplayCard
+                    v-for="(item, index) in section.items"
+                    :key="item.id ?? `${section.key}-${index}`"
+                    :element="item"
+                    :accent-color="colorForElement(item, index).accent"
+                    :associated-landmarks="elementLandmarksById[getElementId(item) || ''] ?? []"
+                  />
+                </div>
+                <div v-else class="text-xs text-slate-500">Aucun élément</div>
               </div>
             </div>
           </div>
-          <button
-            v-if="showSeeMoreSimpleElements"
-            type="button"
-            class="mt-3 text-sm underline text-slate-400 hover:text-slate-200 transition-colors"
-            @click="expandSimpleElements = true"
-          >
-            voir plus
-          </button>
         </div>
       </section>
     </div>
@@ -95,8 +90,10 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
+import { ChevronDownIcon } from '@heroicons/vue/24/outline'
 import { fetchWrapper } from '@/helpers'
+import ElementDisplayCard from '@/components/Element/ElementDisplayCard.vue'
 
 const props = defineProps<{
   id: string
@@ -105,8 +102,7 @@ const props = defineProps<{
 const analysis = ref<any>(null)
 const trace = ref<any>(null)
 const elements = ref<any[]>([])
-const expandSimpleElements = ref(false)
-const viewportWidth = ref(typeof window !== 'undefined' ? window.innerWidth : 1280)
+const expandedCategory = ref<ElementSectionKey | null>(null)
 type ElementLandmark = {
   id?: string
   title?: string
@@ -150,7 +146,7 @@ const loadAnalysis = async () => {
 
 const loadTrace = async (traceId: string) => {
   try {
-    const response = await fetchWrapper.get(`/traces/${traceId}`)
+    const response = await fetchWrapper.get(`/trace_mirrors/${traceId}`)
     trace.value = response.data
   } catch (error) {
     console.error('Error fetching trace:', error)
@@ -168,48 +164,130 @@ const loadAnalysisElements = async () => {
   }
 }
 
+type ElementSectionKey = 'transactions' | 'descriptives' | 'evaluatives' | 'normatives'
 
-const getElementType = (item: any): string => {
-  return item?.resource?.resource_type ?? item?.resource_type ?? item?.type ?? item?.element_type ?? ''
+const decodeElementContentObject = (item: any): Record<string, any> | null => {
+  const raw = item?.content ?? item?.resource?.content
+  if (typeof raw !== 'string') return null
+  let current: any = raw.trim()
+  if (!current) return null
+
+  for (let depth = 0; depth < 3; depth++) {
+    if (typeof current !== 'string') break
+    const trimmed = current.trim()
+    if (!trimmed) return null
+    const startsLikeJson = trimmed.startsWith('{') || trimmed.startsWith('[') || trimmed.startsWith('"')
+    if (!startsLikeJson) return null
+    try {
+      current = JSON.parse(trimmed)
+    } catch (_error) {
+      return null
+    }
+  }
+
+  if (current && typeof current === 'object' && !Array.isArray(current)) {
+    return current as Record<string, any>
+  }
+  return null
 }
 
-const filterElementsByType = (items: any[], type: string, aliases: string[] = []) => {
-  const matchTypes = [type, ...aliases]
-  return items.filter((item: any) => matchTypes.includes(getElementType(item)))
+const categoryFromTypeName = (value: unknown): ElementSectionKey | null => {
+  const normalized = String(value ?? '').trim().toLowerCase()
+  if (!normalized) return null
+
+  if (normalized === 'transaction' || normalized.startsWith('transaction')) return 'transactions'
+  if (normalized === 'descriptive' || normalized.startsWith('descriptive')) return 'descriptives'
+  if (normalized === 'evaluative' || normalized.startsWith('evaluative')) return 'evaluatives'
+  if (normalized === 'normative' || normalized.startsWith('normative')) return 'normatives'
+  return null
 }
 
-const simpleElements = computed(() => {
-  const evnt = filterElementsByType(elements.value, 'evnt', ['event'])
-  if (evnt.length > 0) return evnt
-  const rsrc = filterElementsByType(elements.value, 'rsrc', ['resource'])
-  const trce = filterElementsByType(elements.value, 'trce', ['trace'])
-  const knownIds = new Set([...rsrc.map((i: any) => i?.id), ...trce.map((i: any) => i?.id)].filter(Boolean))
-  return elements.value.filter((item: any) => !item?.id || !knownIds.has(item.id))
+const categoryFromSubtype = (value: unknown): ElementSectionKey | null => {
+  const normalized = String(value ?? '').trim().toLowerCase()
+  if (!normalized) return null
+
+  if (['input', 'output', 'transformation', 'question'].includes(normalized)) return 'transactions'
+  if (['unit', 'theme'].includes(normalized)) return 'descriptives'
+  if (['emotion', 'energy', 'quality', 'interest'].includes(normalized)) return 'evaluatives'
+  if (['plan', 'obligation', 'recommendation', 'principle'].includes(normalized)) return 'normatives'
+  return null
+}
+
+const getElementCategory = (item: any): ElementSectionKey | null => {
+  const decoded = decodeElementContentObject(item)
+
+  const typeCandidates = [
+    item?.element_type,
+    item?.elementType,
+    item?.resource?.element_type,
+    item?.resource?.elementType,
+    decoded?.element_type,
+    decoded?.elementType,
+    decoded?.type
+  ]
+  for (const candidate of typeCandidates) {
+    const category = categoryFromTypeName(candidate)
+    if (category) return category
+  }
+
+  const subtypeCandidates = [
+    item?.element_subtype,
+    item?.elementSubtype,
+    item?.resource?.element_subtype,
+    item?.resource?.elementSubtype,
+    decoded?.element_subtype,
+    decoded?.elementSubtype,
+    decoded?.subtype,
+    decoded?.kind
+  ]
+  for (const candidate of subtypeCandidates) {
+    const category = categoryFromSubtype(candidate)
+    if (category) return category
+  }
+
+  return null
+}
+
+const transactionElements = computed(() => {
+  return elements.value.filter((item: any) => getElementCategory(item) === 'transactions')
 })
 
-const cardsPerRow = computed(() => {
-  if (viewportWidth.value >= 1280) return 3
-  if (viewportWidth.value >= 768) return 2
-  return 1
+const descriptiveElements = computed(() => {
+  return elements.value.filter((item: any) => getElementCategory(item) === 'descriptives')
 })
 
-const hasMoreThanOneRow = (itemsLength: number) => itemsLength > cardsPerRow.value
+const evaluativeElements = computed(() => {
+  return elements.value.filter((item: any) => getElementCategory(item) === 'evaluatives')
+})
 
-const firstRowSlice = <T>(items: T[], expanded: boolean): T[] => {
-  if (expanded) return items
-  return items.slice(0, cardsPerRow.value)
+const normativeElements = computed(() => {
+  return elements.value.filter((item: any) => getElementCategory(item) === 'normatives')
+})
+
+const elementSections = computed(() => {
+  return [
+    { key: 'transactions', title: 'Transactions', items: transactionElements.value },
+    { key: 'descriptives', title: 'Descriptives', items: descriptiveElements.value },
+    { key: 'evaluatives', title: 'Evaluatives', items: evaluativeElements.value },
+    { key: 'normatives', title: 'Normatives', items: normativeElements.value }
+  ]
+})
+
+const displayedElements = computed(() => {
+  if (!expandedCategory.value) return []
+  const section = elementSections.value.find((item) => item.key === expandedCategory.value)
+  return section?.items ?? []
+})
+
+const toggleSection = (key: ElementSectionKey) => {
+  expandedCategory.value = expandedCategory.value === key ? null : key
 }
-
-const visibleSimpleElements = computed(() => firstRowSlice(simpleElements.value, expandSimpleElements.value))
-
-const showSeeMoreSimpleElements = computed(() => !expandSimpleElements.value && hasMoreThanOneRow(simpleElements.value.length))
 
 const traceInteractionDate = computed(() => {
   const t = trace.value
-  return t?.interaction_date ?? t?.interactionDate ?? undefined
+  return t?.interaction_date ?? t?.interactionDate ?? t?.created_at ?? t?.createdAt ?? undefined
 })
 
-const itemTitle = (item: any): string => item?.title ?? item?.resource?.title ?? ''
 const traceRawText = computed(() => {
   const t = trace.value
   return String(t?.content || t?.title || 'Trace sans contenu')
@@ -226,6 +304,7 @@ const traceSplit = computed(() => {
     restOffset: firstBreak + 1
   }
 })
+const isLongFirstLine = computed(() => traceSplit.value.first.length > 200)
 
 const toExtractionText = (value: any): string => {
   if (typeof value === 'string') return value
@@ -235,6 +314,89 @@ const toExtractionText = (value: any): string => {
     if (typeof candidate === 'string') return candidate
   }
   return ''
+}
+
+const decodeJsonEncodedContent = (content: string): any | null => {
+  if (!content) return null
+  let current: any = content.trim()
+  if (!current) return null
+
+  for (let depth = 0; depth < 3; depth++) {
+    if (typeof current !== 'string') return current
+    const trimmed = current.trim()
+    if (!trimmed) return null
+    const startsLikeJson = trimmed.startsWith('{') || trimmed.startsWith('[') || trimmed.startsWith('"')
+    if (!startsLikeJson) return depth === 0 ? null : current
+    try {
+      current = JSON.parse(trimmed)
+    } catch (_error) {
+      return depth === 0 ? null : current
+    }
+  }
+
+  return current
+}
+
+const spanTextCandidates = (value: any): string[] => {
+  if (typeof value === 'string') return [value]
+  if (Array.isArray(value)) {
+    return value
+      .flatMap((entry) => spanTextCandidates(entry))
+      .map((entry) => entry.trim())
+      .filter((entry) => entry.length > 0)
+  }
+  if (value == null || typeof value !== 'object') return []
+
+  const candidates = [value.text, value.value, value.content, value.extraction, value.title]
+  const found: string[] = []
+  for (const candidate of candidates) {
+    if (typeof candidate === 'string' && candidate.trim().length > 0) {
+      found.push(candidate.trim())
+    } else if (Array.isArray(candidate)) {
+      found.push(...spanTextCandidates(candidate))
+    }
+  }
+  return found
+}
+
+const collectSpanPhrases = (value: any, out: string[]) => {
+  if (value == null) return
+  if (Array.isArray(value)) {
+    for (const entry of value) collectSpanPhrases(entry, out)
+    return
+  }
+  if (typeof value !== 'object') return
+
+  if ('spans' in value) {
+    out.push(...spanTextCandidates((value as any).spans))
+  } else if ('span' in value) {
+    out.push(...spanTextCandidates((value as any).span))
+  }
+
+  for (const nested of Object.values(value)) {
+    if (nested == null || typeof nested !== 'object') continue
+    collectSpanPhrases(nested, out)
+  }
+}
+
+const parseSpanPhrasesFromContent = (content: string): string[] => {
+  const decoded = decodeJsonEncodedContent(content)
+  if (decoded == null) return []
+
+  const found: string[] = []
+  collectSpanPhrases(decoded, found)
+
+  const seen = new Set<string>()
+  const unique: string[] = []
+  for (const phrase of found) {
+    const normalized = phrase.trim()
+    if (normalized.length < 2) continue
+    const lowered = normalized.toLowerCase()
+    if (seen.has(lowered)) continue
+    seen.add(lowered)
+    unique.push(normalized)
+  }
+  return unique
 }
 
 const parseExtractionsFromContent = (content: string): string[] => {
@@ -273,6 +435,17 @@ const extractionPhrasesForElement = (item: any): string[] => {
   const phrases: string[] = []
 
   const content = String(item?.content ?? item?.resource?.content ?? '')
+  const contentSpans = parseSpanPhrasesFromContent(content)
+  for (const phrase of contentSpans) {
+    const lowered = phrase.toLowerCase()
+    if (seen.has(lowered)) continue
+    seen.add(lowered)
+    phrases.push(phrase)
+  }
+
+  // New payload: spans-based matching extracted from JSON-encoded content.
+  if (phrases.length > 0) return phrases
+
   const contentExtractions = parseExtractionsFromContent(content)
   for (const phrase of contentExtractions) {
     const lowered = phrase.toLowerCase()
@@ -299,7 +472,7 @@ const extractionPhrasesForElement = (item: any): string[] => {
 
 const elementColorById = computed<Record<string, ElementColor>>(() => {
   const map: Record<string, ElementColor> = {}
-  simpleElements.value.forEach((item, index) => {
+  displayedElements.value.forEach((item, index) => {
     const id = getElementId(item)
     if (!id) return
     map[id] = elementPalette[index % elementPalette.length]
@@ -320,7 +493,7 @@ const highlightRanges = computed<HighlightRange[]>(() => {
   const foundRanges: Array<HighlightRange & { length: number }> = []
   const dedupe = new Set<string>()
 
-  simpleElements.value.forEach((item, index) => {
+  displayedElements.value.forEach((item, index) => {
     const phrases = extractionPhrasesForElement(item)
     if (phrases.length === 0) return
     const color = colorForElement(item, index).highlight
@@ -420,9 +593,9 @@ const loadElementLandmarks = async (elementId: string) => {
 }
 
 watch(
-  () => visibleSimpleElements.value.map((item) => getElementId(item)).filter(Boolean).join(','),
+  () => displayedElements.value.map((item) => getElementId(item)).filter(Boolean).join(','),
   async () => {
-    const elementIds = visibleSimpleElements.value
+    const elementIds = displayedElements.value
       .map((item) => getElementId(item))
       .filter((value): value is string => Boolean(value))
     await Promise.all(elementIds.map((elementId) => loadElementLandmarks(elementId)))
@@ -430,38 +603,38 @@ watch(
   { immediate: true }
 )
 
-const getAnalyzedTraceId = (a: any): string | null => {
+const getTraceMirrorId = (a: any): string | null => {
   if (!a) return null
-  const id = a.analyzed_trace_id ?? a.analyzedTraceId
+  const id = a.trace_mirror_id ?? a.traceMirrorId
   if (id == null) return null
   const s = String(id).trim()
   return s.length > 0 ? s : null
 }
 
-const updateViewportWidth = () => {
-  if (typeof window === 'undefined') return
-  viewportWidth.value = window.innerWidth
-}
-
-onMounted(async () => {
-  expandSimpleElements.value = false
-  updateViewportWidth()
-  window.addEventListener('resize', updateViewportWidth)
-
+const loadData = async () => {
+  expandedCategory.value = null
+  elementLandmarksById.value = {}
+  elementLandmarksLoadingById.value = {}
+  elements.value = []
+  trace.value = null
   await loadAnalysis()
   const a = analysis.value
   if (a) {
-    const traceId = getAnalyzedTraceId(a)
-    if (traceId) {
-      await loadTrace(traceId)
+    const traceMirrorId = getTraceMirrorId(a)
+    if (traceMirrorId) {
+      await loadTrace(traceMirrorId)
     }
   }
 
   await loadAnalysisElements()
+}
+
+onMounted(async () => {
+  await loadData()
 })
 
-onUnmounted(() => {
-  window.removeEventListener('resize', updateViewportWidth)
+watch(() => props.id, async () => {
+  await loadData()
 })
 </script>
 

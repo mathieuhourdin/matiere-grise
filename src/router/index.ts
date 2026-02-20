@@ -103,6 +103,13 @@ const router = createRouter({
           name: 'userProfile',
           component: () => import('@/pages/me/UserPage.vue'),
           meta: { requiresAuth: true }
+        },
+        {
+          path: 'landmarks/:id',
+          name: 'seeLandmark',
+          props: true,
+          component: () => import('@/pages/app/SeeLandmarkPage.vue'),
+          meta: { requiresAuth: true }
         }
       ]
     },
@@ -148,10 +155,7 @@ const router = createRouter({
         },
         {
           path: 'landmarks/:id',
-          name: 'seeLandmark',
-          props: true,
-          component: () => import('@/pages/app/SeeLandmarkPage.vue'),
-          meta: { requiresAuth: true }
+          redirect: (to) => `/me/landmarks/${to.params.id}`
         },
       ]
     },
