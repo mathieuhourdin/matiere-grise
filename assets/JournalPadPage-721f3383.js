@@ -1,1 +1,0 @@
-import{J as e}from"./JournalPadComponent-325cace9.js";import{d as o,c as a,e as t,b as n}from"./index-51450bb9.js";import"./useJournal-9a5ba446.js";import"./PlusIcon-3896210c.js";const r={class:"min-h-screen p-2 md:p-4 md:w-11/12 mx-auto"},l=o({__name:"JournalPadPage",setup(s){return(m,c)=>(n(),a("div",r,[t(e,{fullscreen:""})]))}});export{l as default};
