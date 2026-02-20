@@ -75,7 +75,7 @@ import TracesSection from '@/components/Trace/TracesSection.vue'
 import AtelierDrawer from '@/components/Analysis/AtelierDrawer.vue'
 
 const props = defineProps<{
-  id: string
+  id?: string
 }>()
 
 const contextLandmarks = ref<any[]>([])
@@ -99,9 +99,16 @@ const handleTodayTimeline = async () => {
 }
 
 const loadLandscapeLandmarks = async () => {
+  const analysisId = typeof props.id === 'string' ? props.id.trim() : ''
+  if (!analysisId) {
+    contextLandmarks.value = []
+    currentLandmarks.value = []
+    return
+  }
+
   const [contextResult, currentResult] = await Promise.allSettled([
-    fetchWrapper.get(`/analysis/${props.id}/landmarks?kind=context`),
-    fetchWrapper.get(`/analysis/${props.id}/landmarks?kind=mentioned`)
+    fetchWrapper.get(`/analysis/${analysisId}/landmarks?kind=context`),
+    fetchWrapper.get(`/analysis/${analysisId}/landmarks?kind=mentioned`)
   ])
 
   if (contextResult.status === 'fulfilled') {

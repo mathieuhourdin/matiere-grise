@@ -4,8 +4,8 @@
       <div class="flex justify-between items-start mb-1 gap-3">
         <div class="text-lg font-bold">{{ formatDate(analyzedTrace?.interaction_date ?? analyzedTrace?.created_at) }} - {{ traceMirror?.title ?? analysis.title }}</div>
         <router-link
-          v-if="replayedFromId"
-          :to="`/me/analysis/${replayedFromId}`"
+          v-if="replayedFromRoute"
+          :to="replayedFromRoute"
           class="flex items-center gap-2 px-3 py-1.5 rounded-lg border border-slate-600 bg-slate-800/60 text-slate-300 hover:bg-slate-700/60 hover:text-white transition-colors text-sm"
         >
           Analyse source
@@ -13,16 +13,16 @@
       </div>
       <div class="flex items-center gap-4 text-sm">
         <router-link
-          v-if="previousAnalysisId"
-          :to="`/me/analysis/${previousAnalysisId}`"
+          v-if="previousAnalysisRoute"
+          :to="previousAnalysisRoute"
           class="inline-flex items-center gap-1 text-slate-400 hover:text-slate-200 underline transition-colors"
         >
           <ChevronLeftIcon class="w-4 h-4" />
           <span>Précédent</span>
         </router-link>
         <router-link
-          v-if="nextAnalysisId"
-          :to="`/me/analysis/${nextAnalysisId}`"
+          v-if="nextAnalysisRoute"
+          :to="nextAnalysisRoute"
           class="inline-flex items-center gap-1 text-slate-400 hover:text-slate-200 underline transition-colors"
         >
           <span>Suivant</span>
@@ -39,24 +39,32 @@
           type="button"
           class="px-3 py-1.5 text-xs rounded-md transition-colors"
           :class="activeView === option.id ? 'bg-slate-700 text-slate-100' : 'text-slate-400 hover:text-slate-200'"
-          @click="activeView = option.id"
+          @click="setActiveView(option.id)"
         >
           {{ option.label }}
         </button>
       </div>
     </div>
 
-    <TraceFocusView v-if="activeView === 'current'" :id="id" />
-    <TraceMirrorFocusView v-if="activeView === 'mirror'" :id="id" />
-    <AnalysisFocusView v-if="activeView === 'summary'" :id="id" />
-    <LandscapeFocusView v-if="activeView === 'compare'" :id="id" />
-    <StatisticsFocusView v-if="activeView === 'timeline'" :id="id" />
+    <LandscapeFocusView
+      v-if="activeView === 'compare'"
+      :id="currentAnalysisId ?? ''"
+    />
+    <template v-else-if="currentAnalysisId">
+      <TraceFocusView v-if="activeView === 'current'" :id="currentAnalysisId" />
+      <TraceMirrorFocusView v-if="activeView === 'mirror'" :id="currentAnalysisId" />
+      <AnalysisFocusView v-if="activeView === 'summary'" :id="currentAnalysisId" />
+      <StatisticsFocusView v-if="activeView === 'timeline'" :id="currentAnalysisId" />
+    </template>
+    <div v-else class="text-sm text-slate-400">
+      Aucune analyse sélectionnée.
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
-import { useRoute } from 'vue-router'
+import { computed, onUnmounted, ref, watch } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 import TraceFocusView from '@/components/Analysis/TraceFocusView.vue'
 import TraceMirrorFocusView from '@/components/Analysis/TraceMirrorFocusView.vue'
 import AnalysisFocusView from '@/components/Analysis/AnalysisFocusView.vue'
@@ -67,11 +75,8 @@ import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/vue/24/outline'
 import { fetchWrapper } from '@/helpers'
 import { useMenu } from '@/composables/useMenu'
 
-const props = defineProps<{
-  id: string
-}>()
-
 const route = useRoute()
+const router = useRouter()
 const { headLandscapeAnalysis, headLandscapeAnalysisParents, loadUserLenses } = useLens()
 const { headerValue } = useMenu()
 const analysis = ref<any>(null)
@@ -86,8 +91,19 @@ const analysisNavigationIds = computed(() => {
   return list.filter(Boolean)
 })
 
+const queryParam = (value: unknown): string | null => {
+  const raw = Array.isArray(value) ? value[0] : value
+  if (typeof raw !== 'string') return null
+  const normalized = raw.trim()
+  return normalized.length > 0 ? normalized : null
+}
+
+const currentAnalysisId = computed(() => queryParam(route.query.id))
+
 const currentAnalysisIndex = computed(() => {
-  const idx = analysisNavigationIds.value.indexOf(props.id)
+  const currentId = currentAnalysisId.value
+  if (!currentId) return -1
+  const idx = analysisNavigationIds.value.indexOf(currentId)
   return idx >= 0 ? idx : -1
 })
 
@@ -113,10 +129,36 @@ const viewOptions = [
 
 const activeView = ref<(typeof viewOptions)[number]['id']>('current')
 const validViewIds = new Set(viewOptions.map((option) => option.id))
+const defaultView = viewOptions[0].id
 
-const loadAnalysis = async () => {
+const toAnalysisRoute = (analysisId: string) => ({
+  name: 'analysis',
+  query: {
+    id: analysisId,
+    tab: activeView.value
+  }
+})
+
+const previousAnalysisRoute = computed(() => {
+  if (!previousAnalysisId.value) return null
+  return toAnalysisRoute(previousAnalysisId.value)
+})
+
+const nextAnalysisRoute = computed(() => {
+  if (!nextAnalysisId.value) return null
+  return toAnalysisRoute(nextAnalysisId.value)
+})
+
+const loadAnalysis = async (analysisId: string | null) => {
+  if (!analysisId) {
+    analysis.value = null
+    traceMirror.value = null
+    analyzedTrace.value = null
+    return
+  }
+
   try {
-    const response = await fetchWrapper.get(`/analysis/${props.id}`)
+    const response = await fetchWrapper.get(`/analysis/${analysisId}`)
     analysis.value = response.data?.analysis ?? response.data ?? null
 
     const traceMirrorResponse = await fetchWrapper.get(`/trace_mirrors/${analysis.value?.trace_mirror_id}`)
@@ -137,6 +179,19 @@ const replayedFromId = computed(() => {
   return s.length > 0 ? s : null
 })
 
+const replayedFromRoute = computed(() => {
+  if (!replayedFromId.value) return null
+  return toAnalysisRoute(replayedFromId.value)
+})
+
+const setActiveView = async (view: (typeof viewOptions)[number]['id']) => {
+  if (!validViewIds.has(view)) return
+  activeView.value = view
+  const query: Record<string, string> = { tab: view }
+  if (currentAnalysisId.value) query.id = currentAnalysisId.value
+  await router.replace({ name: 'analysis', query })
+}
+
 const formatDate = (date: Date | string | undefined) => {
   if (!date) return ''
   const dateObj = date instanceof Date ? date : new Date(date)
@@ -148,25 +203,37 @@ const formatDate = (date: Date | string | undefined) => {
   })
 }
 
-watch(() => props.id, async () => {
-  await Promise.all([loadUserLenses(), loadAnalysis()])
+watch(currentAnalysisId, async (analysisId) => {
+  await Promise.all([loadUserLenses(), loadAnalysis(analysisId)])
   if (analysis.value?.id && analysis.value?.title) {
-    headerValue.value = { text: analysis.value.title, link: `/me/analysis/${analysis.value.id}` }
+    headerValue.value = { text: analysis.value.title, link: `/me/analysis?id=${analysis.value.id}` }
+  } else {
+    headerValue.value = { text: 'Analyse', link: '/me/analysis' }
   }
 }, { immediate: true })
 
-watch(() => route.query.view, (value) => {
-  const view = Array.isArray(value) ? value[0] : value
-  if (typeof view === 'string' && validViewIds.has(view as (typeof viewOptions)[number]['id'])) {
-    activeView.value = view as (typeof viewOptions)[number]['id']
+watch(() => [route.name, route.query.tab, route.query.view], ([routeName, tabValue, legacyViewValue]) => {
+  if (routeName !== 'analysis') return
+  const tab = queryParam(tabValue)
+  const legacyView = queryParam(legacyViewValue)
+  const tabIsValid = Boolean(tab && validViewIds.has(tab as (typeof viewOptions)[number]['id']))
+  const candidate = tab ?? legacyView
+  if (candidate && validViewIds.has(candidate as (typeof viewOptions)[number]['id'])) {
+    activeView.value = candidate as (typeof viewOptions)[number]['id']
+    if (!tab && legacyView) {
+      const query: Record<string, string> = { tab: activeView.value }
+      if (currentAnalysisId.value) query.id = currentAnalysisId.value
+      router.replace({ name: 'analysis', query })
+    }
+    return
+  }
+  activeView.value = defaultView
+  if (!tabIsValid) {
+    const query: Record<string, string> = { tab: defaultView }
+    if (currentAnalysisId.value) query.id = currentAnalysisId.value
+    router.replace({ name: 'analysis', query })
   }
 }, { immediate: true })
-
-onMounted(() => {
-  if (analysis.value?.id && analysis.value?.title) {
-    headerValue.value = { text: analysis.value.title, link: `/me/analysis/${analysis.value.id}` }
-  }
-})
 
 onUnmounted(() => {
   headerValue.value = null

@@ -3,40 +3,28 @@
     <div v-if="!displayLandscapeAnalysis" class="text-sm text-slate-500 mt-3">
       Aucune analyse courante
     </div>
-    <div v-else-if="isLoadingLandmarks" class="text-sm text-slate-500 mt-3">
+    <div v-else-if="isLoadingElements" class="text-sm text-slate-500 mt-3">
       Chargement...
     </div>
-    <div v-else-if="visibleLandmarks.length === 0" class="text-sm text-slate-500 mt-3">
-      Aucun landmark
+    <div v-else-if="visibleElements.length === 0" class="text-sm text-slate-500 mt-3">
+      Aucun élément
     </div>
     <div v-else class="mt-3">
       <ul class="list-disc list-outside pl-4 space-y-1">
         <li
-          v-for="landmark in visibleLandmarks"
-          :key="landmark.id"
+          v-for="(element, index) in visibleElements"
+          :key="element.id ?? `element-${index}`"
           class="text-slate-300 marker:text-slate-500"
         >
-          <router-link
-            :to="`/app/landmarks/${landmark.id}`"
-            class="group text-xs leading-[0.95rem] text-slate-200 hover:text-slate-100 transition-colors whitespace-normal break-words"
-          >
-            <template v-if="relatedElementsLoadingById[landmark.id]">
-              <span class="text-slate-400 text-xs leading-4">Chargement...</span>
-            </template>
-            <template v-else-if="latestRelatedElement(landmark.id)">
-              {{ latestElementDisplayText(landmark) }}
-            </template>
-            <template v-else>
-              <span class="text-slate-500 text-xs leading-4">Aucun element</span>
-            </template>
-            <ShareIcon class="inline-block w-3.5 h-3.5 ml-1 text-slate-500 group-hover:text-slate-300 transition-colors align-[-2px]" />
-          </router-link>
+          <div class="text-xs leading-[0.95rem] text-slate-200 whitespace-normal break-words">
+            {{ elementLineText(element) }}
+          </div>
         </li>
       </ul>
       <div class="mt-2 flex justify-end">
         <router-link
           v-if="displayLandscapeAnalysis?.id"
-          :to="{ name: 'analysis', params: { id: displayLandscapeAnalysis.id } }"
+          :to="{ name: 'analysis', query: { id: displayLandscapeAnalysis.id } }"
           class="text-xs text-slate-400 underline hover:text-slate-200 transition-colors"
         >
           voir plus
@@ -48,135 +36,124 @@
 
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue'
-import { ShareIcon } from '@heroicons/vue/24/outline'
 import { fetchWrapper } from '@/helpers'
-import { useLens, type Landmark } from '@/composables/useLens'
+import { useLens } from '@/composables/useLens'
 
-const { displayLandmarks, displayLandscapeAnalysis, isLoadingLandmarks } = useLens()
-const relatedElementsLoadingById = ref<Record<string, boolean>>({})
-type RelatedElement = {
-  id: string
-  title?: string
-  subtitle?: string
-  content?: string
-  verb?: string
-  created_at?: string | Date
-}
-type ThemeLandmark = { id?: string; title?: string; landmark_type?: string }
-const relatedElementsByLandmarkId = ref<Record<string, RelatedElement[]>>({})
-const themeTitleByElementId = ref<Record<string, string>>({})
-const themeLoadingByElementId = ref<Record<string, boolean>>({})
+const { displayLandscapeAnalysis } = useLens()
+const elements = ref<any[]>([])
+const isLoadingElements = ref(false)
 
-const sortedLandmarks = computed<Landmark[]>(() => {
-  return displayLandmarks.value
-    .sort((a, b) => {
-    const dateA = new Date((a as any).created_at || 0).getTime()
-    const dateB = new Date((b as any).created_at || 0).getTime()
-    return dateB - dateA
-  })
-})
+const decodeJsonEncodedContent = (content: unknown): any | null => {
+  if (typeof content !== 'string') return null
+  let current: any = content.trim()
+  if (!current) return null
 
-const visibleLandmarks = computed<Landmark[]>(() => {
-  return sortedLandmarks.value.slice(0, 4)
-})
-
-const loadRelatedElements = async (landmarkId: string) => {
-  if (!landmarkId) return
-  if (relatedElementsByLandmarkId.value[landmarkId] != null) return
-  if (relatedElementsLoadingById.value[landmarkId]) return
-
-  relatedElementsLoadingById.value[landmarkId] = true
-  try {
-    const response = await fetchWrapper.get(`/landmarks/${landmarkId}`)
-    const related = Array.isArray(response.data?.related_elements) ? response.data.related_elements : []
-    relatedElementsByLandmarkId.value[landmarkId] = related
-  } catch (error) {
-    console.error(`Error loading related elements for landmark ${landmarkId}:`, error)
-    relatedElementsByLandmarkId.value[landmarkId] = []
-  } finally {
-    relatedElementsLoadingById.value[landmarkId] = false
+  for (let depth = 0; depth < 3; depth++) {
+    if (typeof current !== 'string') return current
+    const trimmed = current.trim()
+    if (!trimmed) return null
+    const startsLikeJson = trimmed.startsWith('{') || trimmed.startsWith('[') || trimmed.startsWith('"')
+    if (!startsLikeJson) return depth === 0 ? null : current
+    try {
+      current = JSON.parse(trimmed)
+    } catch (_error) {
+      return depth === 0 ? null : current
+    }
   }
+  return current
 }
 
-const loadThemeForElement = async (elementId: string) => {
-  if (!elementId) return
-  if (themeTitleByElementId.value[elementId] != null) return
-  if (themeLoadingByElementId.value[elementId]) return
+const decodeElementContent = (element: any): Record<string, any> | null => {
+  const decoded = decodeJsonEncodedContent(element?.content ?? element?.resource?.content ?? '')
+  if (decoded && typeof decoded === 'object' && !Array.isArray(decoded)) {
+    return decoded as Record<string, any>
+  }
+  return null
+}
 
-  themeLoadingByElementId.value[elementId] = true
+const elementTypeValue = (element: any): string => {
+  const decoded = decodeElementContent(element)
+  const raw = element?.element_type
+    ?? element?.elementType
+    ?? element?.resource?.element_type
+    ?? element?.resource?.elementType
+    ?? decoded?.element_type
+    ?? decoded?.elementType
+    ?? ''
+  return String(raw).trim().toUpperCase()
+}
+
+const elementDateValue = (element: any): number => {
+  const raw = element?.interaction_date ?? element?.created_at ?? 0
+  return new Date(raw).getTime() || 0
+}
+
+const transactionElements = computed(() => {
+  return elements.value
+    .filter((element) => elementTypeValue(element) === 'TRANSACTION')
+    .sort((a, b) => elementDateValue(b) - elementDateValue(a))
+})
+
+const visibleElements = computed(() => {
+  return transactionElements.value.slice(0, 4)
+})
+
+const loadAnalysisElements = async (analysisId: string) => {
+  if (!analysisId) {
+    elements.value = []
+    return
+  }
+  isLoadingElements.value = true
   try {
-    const response = await fetchWrapper.get(`/elements/${elementId}/landmarks`)
-    const landmarks = Array.isArray(response.data) ? (response.data as ThemeLandmark[]) : []
-    const themeLandmark = landmarks.find((landmark) => {
-      const type = (landmark.landmark_type || '').toLowerCase()
-      return type === 'them' || type === 'theme'
-    })
-    themeTitleByElementId.value[elementId] = themeLandmark?.title || 'ce thème'
+    const response = await fetchWrapper.get(`/analysis/${analysisId}/elements`)
+    elements.value = Array.isArray(response.data) ? response.data : []
   } catch (error) {
-    console.error(`Error loading themes for element ${elementId}:`, error)
-    themeTitleByElementId.value[elementId] = 'ce thème'
+    console.error(`Error loading analysis elements for analysis ${analysisId}:`, error)
+    elements.value = []
   } finally {
-    themeLoadingByElementId.value[elementId] = false
+    isLoadingElements.value = false
   }
 }
 
 watch(
-  () => visibleLandmarks.value.map((l) => l.id).join(','),
+  () => displayLandscapeAnalysis.value?.id,
   async () => {
-    await Promise.all(visibleLandmarks.value.map((l) => loadRelatedElements(l.id)))
-    await Promise.all(
-      visibleLandmarks.value.map(async (landmark) => {
-        const elementId = latestRelatedElement(landmark.id)?.id
-        if (!elementId) return
-        await loadThemeForElement(elementId)
-      })
-    )
+    const analysisId = displayLandscapeAnalysis.value?.id
+    if (!analysisId) {
+      elements.value = []
+      return
+    }
+    await loadAnalysisElements(analysisId)
   },
   { immediate: true }
 )
 
-const latestRelatedElement = (landmarkId: string): RelatedElement | null => {
-  const elements = relatedElementsByLandmarkId.value[landmarkId] ?? []
-  if (elements.length === 0) return null
-  return elements[0]
+const elementTargetText = (element: any): string => {
+  const decoded = decodeElementContent(element)
+  const target = decoded?.target ?? element?.target
+  if (typeof target === 'string' && target.trim().length > 0) return target.trim()
+  if (target != null) return String(target).trim() || 'Sans cible'
+  return 'Sans cible'
 }
 
-const elementVerbPrefix = (verb: string): string => {
-  const normalized = verb.trim().toUpperCase()
-  if (normalized.startsWith('DONE')) return "j'ai "
-  if (normalized.startsWith('IN_PROGRESS')) return 'Je suis en train de '
-  if (normalized.startsWith('INTENDED')) return 'Je voudrais '
-  return ''
+const elementStatusText = (element: any): string => {
+  const decoded = decodeElementContent(element)
+  const status = decoded?.status ?? element?.status
+  if (typeof status === 'string' && status.trim().length > 0) return status.trim()
+  if (status != null) return String(status).trim() || 'Sans statut'
+  return 'Sans statut'
 }
 
-const elementVerbRest = (verb: string): string => {
-  return verb
-    .trim()
-    .replace(/^(DONE|IN_PROGRESS|INTENDED)[\s:_-]*/i, '')
-    .trim()
+const elementVerbText = (element: any): string => {
+  const decoded = decodeElementContent(element)
+  const verb = decoded?.verb ?? element?.verb
+  if (typeof verb === 'string' && verb.trim().length > 0) return verb.trim()
+  if (verb != null) return String(verb).trim() || 'Sans verbe'
+  return 'Sans verbe'
 }
 
-const extractElementVerb = (element: RelatedElement): string => {
-  const candidates = [element.verb, element.subtitle, element.content, element.title]
-  for (const candidate of candidates) {
-    if (typeof candidate === 'string' && candidate.trim().length > 0) return candidate.trim()
-  }
-  return ''
-}
-
-const latestElementDisplayText = (landmark: Landmark): string => {
-  const element = latestRelatedElement(landmark.id)
-  if (!element) return 'Aucun element'
-  const rawVerb = extractElementVerb(element)
-  const prefix = elementVerbPrefix(rawVerb)
-  const rest = elementVerbRest(rawVerb)
-  const fallbackVerb = 'explorer'
-  const verb = rest || fallbackVerb
-  const resourceTitle = (landmark.title || element.title || 'cette ressource').trim()
-  const themeTitle = element.id
-    ? (themeTitleByElementId.value[element.id] || (themeLoadingByElementId.value[element.id] ? '...' : 'ce thème'))
-    : 'ce thème'
-  return `${prefix}${verb} ${resourceTitle} à propos de ${themeTitle}`.replace(/\s+/g, ' ').trim()
+const elementLineText = (element: any): string => {
+  return `${elementStatusText(element)} - ${elementVerbText(element)} - ${elementTargetText(element)}`
 }
 
 </script>

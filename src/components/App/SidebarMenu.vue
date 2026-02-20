@@ -39,18 +39,6 @@
           icon="InformationCircleIcon"
           :is-active="isActiveRoute('/me/platform-presentation')"
         />
-        <MenuItem
-          to="/me/mission-choice"
-          title="Choix de mission"
-          icon="ClipboardDocumentCheckIcon"
-          :is-active="isActiveRoute('/me/mission-choice')"
-        />
-        <MenuItem
-          to="/me/mentor-choice"
-          title="Choix de mentor"
-          icon="AcademicCapIcon"
-          :is-active="isActiveRoute('/me/mentor-choice')"
-        />
       </MenuSection>
 
       <!-- Social Section -->
@@ -128,9 +116,8 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue'
+import { ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
-import { useUser } from '@/composables/useUser'
 import MenuSection from '@/components/App/MenuSection.vue'
 import MenuItem from '@/components/App/MenuItem.vue'
 import DarkModeMenuItem from '@/components/App/DarkModeMenuItem.vue'
@@ -144,8 +131,6 @@ import {
   UserCircleIcon,
   PlusCircleIcon,
   InformationCircleIcon,
-  ClipboardDocumentCheckIcon,
-  AcademicCapIcon,
   Cog6ToothIcon,
   PencilSquareIcon,
   DocumentTextIcon,
@@ -154,7 +139,6 @@ import {
 } from '@heroicons/vue/24/outline'
 
 const route = useRoute()
-const { user } = useUser()
 
 const expandedSections = ref<Set<string>>(new Set(['social', 'me']))
 

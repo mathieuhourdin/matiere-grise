@@ -38,10 +38,10 @@ L’IA ne vous dit pas quoi faire. Elle lit vos rythmes, vos évolutions, mais a
       C’est pour cela que ce produit prend aussi la forme d’un réseau social : un lieu où vous pouvez exposer vos processus de travail, vos lectures, vos inspirations. Et où vous pouvez, en retour, vous nourrir des trajectoires de celles et ceux qui vous inspirent.
     </div>
     <div class="my-2">
-      Êtes-vous prêt à choisir votre mission ? Si vous l'acceptez...
+      Prêt à définir tes projets à haut niveau ?
     </div>
     <div class="my-2">
-      <ActionButton class="my-2" @click="goToMissionChoice" type="valid">Choisir une mission</ActionButton>
+      <ActionButton class="my-2" @click="goToHighLevelProjects" type="valid">Continuer</ActionButton>
     </div>
   </div>
 </template>
@@ -52,7 +52,7 @@ import ActionButton from '@/components/Ui/ActionButton.vue'
 import { useRouter } from 'vue-router'
 const { user } = useUser()
 const router = useRouter()
-const goToMissionChoice = () => {
-  router.push('/me/mission-choice')
+const goToHighLevelProjects = () => {
+  router.push('/me/high-level-projects')
 }
 </script>

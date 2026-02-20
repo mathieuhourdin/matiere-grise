@@ -191,7 +191,7 @@ const deleteAnalysisItem = async (item: AnalysisItem) => {
 
 const openAnalysisPage = (item: AnalysisItem | { id?: string | number; title: string; content?: string; date?: Date | string }) => {
   if (item.id) {
-    router.push('/me/analysis/' + item.id)
+    router.push({ name: 'analysis', query: { id: String(item.id) } })
   }
 }
 
@@ -208,4 +208,3 @@ onMounted(async () => {
   await loadUserLenses()
 })
 </script>
-

@@ -49,7 +49,7 @@
       
       <router-link
         v-else-if="displayLandscapeAnalysis"
-        :to="{ name: 'analysis', params: { id: displayLandscapeAnalysis.id } }"
+        :to="{ name: 'analysis', query: { id: displayLandscapeAnalysis.id } }"
         :title="displayTrace?.id ?? displayLandscapeAnalysis.id"
         class="relative block rounded-2xl border border-slate-800 bg-slate-900/60 p-4 cursor-pointer hover:border-slate-600 hover:bg-slate-800/60 transition-colors"
       >
@@ -136,4 +136,3 @@ onMounted(async () => {
   await Promise.all([loadUserLenses(), loadUserTraces()])
 })
 </script>
-

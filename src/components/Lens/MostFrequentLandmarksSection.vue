@@ -28,7 +28,7 @@
       <div class="mt-2 flex justify-end">
         <router-link
           v-if="displayLandscapeAnalysis?.id"
-          :to="{ name: 'analysis', params: { id: displayLandscapeAnalysis.id }, query: { view: 'compare' } }"
+          :to="{ name: 'analysis', query: { id: displayLandscapeAnalysis.id, tab: 'compare' } }"
           class="text-xs text-slate-400 underline hover:text-slate-200 transition-colors"
         >
           voir plus

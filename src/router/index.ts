@@ -64,7 +64,20 @@ const router = createRouter({
         {
           path: 'platform-presentation',
           name: 'platformPresentation',
-          component: () => import('@/pages/me/PlatformPresentationPage.vue')
+          component: () => import('@/pages/me/PlatformPresentationPage.vue'),
+          meta: { requiresAuth: true }
+        },
+        {
+          path: 'high-level-projects',
+          name: 'highLevelProjects',
+          component: () => import('@/pages/me/HighLevelProjectsPage.vue'),
+          meta: { requiresAuth: true }
+        },
+        {
+          path: 'biography',
+          name: 'biography',
+          component: () => import('@/pages/me/BiographyPage.vue'),
+          meta: { requiresAuth: true }
         },
         {
           path: 'mission-choice',
@@ -86,11 +99,18 @@ const router = createRouter({
           meta: { requiresAuth: true }
         },
         {
-          path: 'analysis/:id',
+          path: 'analysis',
           name: 'analysis',
-          props: true,
           component: () => import('@/pages/me/AnalysisPage.vue'),
           meta: { requiresAuth: true }
+        },
+        {
+          path: 'analysis/:id',
+          redirect: (to) => {
+            const id = Array.isArray(to.params.id) ? to.params.id[0] : to.params.id
+            const query = id ? { ...to.query, id } : { ...to.query }
+            return { name: 'analysis', query }
+          }
         },
         {
           path: 'journal-pad',

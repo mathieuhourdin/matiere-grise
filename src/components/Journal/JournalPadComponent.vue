@@ -32,6 +32,20 @@
         >
           {{ journal.resource?.title || 'Sans titre' }}
         </button>
+        <button
+          type="button"
+          :disabled="isCreatingJournal"
+          @click="createNewJournal"
+          :class="[
+            'inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border text-xs whitespace-nowrap transition-all duration-200 shadow-sm',
+            isCreatingJournal
+              ? 'border-slate-300 bg-slate-100 text-slate-400 cursor-wait'
+              : 'border-slate-300 border-dashed bg-white/80 text-slate-600 hover:border-slate-400'
+          ]"
+        >
+          <PlusIcon class="w-3.5 h-3.5" />
+          <span>{{ isCreatingJournal ? 'Création...' : 'Nouveau journal' }}</span>
+        </button>
       </div>
 
       <div class="mt-4 flex-1 min-h-0">
@@ -40,12 +54,25 @@
         <div v-else class="journal-canvas h-full">
           <div class="traces-scroll flex-1 min-h-0 overflow-y-auto pr-2">
             <div class="paper-content space-y-6">
-              <textarea
-                v-model="newTraceContent"
-                rows="3"
-                placeholder="Ecrire une nouvelle trace..."
-                class="w-full rounded-xl border border-amber-200 bg-white/75 text-slate-700 text-base p-4 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-sky-300 font-handwritten"
-              ></textarea>
+              <div>
+                <textarea
+                  v-model="newTraceContent"
+                  rows="3"
+                  :placeholder="entryPlaceholder"
+                  :disabled="isSubmittingEntry || isLoadingJournalTraces"
+                  class="w-full rounded-xl border border-amber-200 bg-white/75 text-slate-700 text-base p-4 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-sky-300 font-georgia disabled:opacity-70"
+                ></textarea>
+                <div class="mt-2 flex justify-end">
+                  <button
+                    type="button"
+                    :disabled="isSubmittingEntry || isLoadingJournalTraces || !newTraceContent.trim() || !currentJournalId"
+                    class="px-2.5 py-1 text-xs rounded-md border border-slate-300 bg-white/85 text-slate-700 hover:border-slate-400 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                    @click="submitEntry"
+                  >
+                    {{ isSubmittingEntry ? 'Envoi...' : 'Valider' }}
+                  </button>
+                </div>
+              </div>
 
               <div v-if="isLoadingJournalTraces" class="text-sm text-slate-500">
                 Chargement des traces...
@@ -82,10 +109,13 @@
 <script setup lang="ts">
 import { computed, onMounted, ref, watch } from 'vue'
 import { useJournal } from '@/composables/useJournal'
+import { useResource } from '@/composables/useResource'
+import { useInteraction } from '@/composables/useInteraction'
+import { useUser } from '@/composables/useUser'
 import { fetchWrapper } from '@/helpers'
 import { useSnackbar } from '@/composables/useSnackbar'
-import { type ApiInteraction, type ApiTrace } from '@/types/models'
-import { ArrowTopRightOnSquareIcon, ArrowsPointingInIcon } from '@heroicons/vue/24/outline'
+import { type ApiInteraction, type ApiTrace, type Resource } from '@/types/models'
+import { ArrowTopRightOnSquareIcon, ArrowsPointingInIcon, PlusIcon } from '@heroicons/vue/24/outline'
 
 withDefaults(defineProps<{
   fullscreen?: boolean
@@ -94,12 +124,18 @@ withDefaults(defineProps<{
 })
 
 const { userJournals, loadUserJournal } = useJournal()
+const { createResource, createTrace, updateResource } = useResource()
+const { createInteractionForResource } = useInteraction()
+const { user } = useUser()
 const { launchSnackbar } = useSnackbar()
 
 const isLoading = ref(false)
 const isLoadingJournalTraces = ref(false)
 const newTraceContent = ref('')
 const journalTraces = ref<ApiTrace[]>([])
+const isCreatingJournal = ref(false)
+const isSubmittingEntry = ref(false)
+const titleInitializedByJournalId = ref<Record<string, boolean>>({})
 let tracesRequestToken = 0
 
 const sortedJournals = computed<ApiInteraction[]>(() => {
@@ -121,8 +157,109 @@ const currentJournalId = computed(() => {
   return currentJournal.value?.resource_id ?? currentJournal.value?.resource?.id ?? null
 })
 
+const isTitleEntryMode = computed(() => {
+  const journalId = currentJournalId.value
+  if (!journalId) return false
+  if (titleInitializedByJournalId.value[journalId]) return false
+  if (journalTraces.value.length > 0) return false
+  const currentTitle = (currentJournal.value?.resource?.title ?? '').trim()
+  return currentTitle.length === 0 || currentTitle === 'Nouveau journal'
+})
+
+const entryPlaceholder = computed(() => {
+  return isTitleEntryMode.value ? 'Titre du journal' : 'Ecrire une nouvelle trace...'
+})
+
 const selectJournal = (journal: ApiInteraction) => {
   currentJournal.value = journal
+}
+
+const createNewJournal = async () => {
+  if (isCreatingJournal.value) return
+  if (!user.value?.id) {
+    launchSnackbar('Utilisateur non trouvé', 'error')
+    return
+  }
+
+  isCreatingJournal.value = true
+  try {
+    const resource: Resource = {
+      title: 'Nouveau journal',
+      subtitle: '',
+      content: '',
+      external_content_url: '',
+      comment: '',
+      image_url: '',
+      maturing_state: 'drft',
+      publishing_state: '',
+      resource_type: 'jrnl',
+      is_local_draft: false
+    }
+
+    const createdResource = await createResource(resource)
+    await createInteractionForResource(createdResource.id, {
+      interaction_progress: 0,
+      interaction_date: new Date(),
+      interaction_comment: '',
+      interaction_is_public: false
+    })
+
+    await loadUserJournal()
+    const createdJournal = userJournals.value.find((journal) => {
+      return (journal.resource_id ?? journal.resource?.id) === createdResource.id
+    })
+    if (createdJournal) currentJournal.value = createdJournal
+    titleInitializedByJournalId.value[createdResource.id] = false
+    launchSnackbar('Nouveau journal créé', 'success')
+  } catch (error) {
+    console.error('Error creating new journal:', error)
+    launchSnackbar('Erreur lors de la création du journal', 'error')
+  } finally {
+    isCreatingJournal.value = false
+  }
+}
+
+const submitEntry = async () => {
+  const content = newTraceContent.value.trim()
+  const journalId = currentJournalId.value
+  if (!content || !journalId) return
+
+  isSubmittingEntry.value = true
+  try {
+    if (isTitleEntryMode.value) {
+      const currentResource = currentJournal.value?.resource
+      const payload: Resource = {
+        title: content,
+        subtitle: currentResource?.subtitle ?? '',
+        content: currentResource?.content ?? '',
+        external_content_url: currentResource?.external_content_url ?? '',
+        comment: currentResource?.comment ?? '',
+        image_url: currentResource?.image_url ?? '',
+        maturing_state: currentResource?.maturing_state ?? 'drft',
+        publishing_state: currentResource?.publishing_state ?? '',
+        resource_type: 'jrnl',
+        is_local_draft: false
+      }
+      await updateResource(journalId, payload)
+      titleInitializedByJournalId.value[journalId] = true
+      await loadUserJournal()
+      const updatedJournal = userJournals.value.find((journal) => {
+        return (journal.resource_id ?? journal.resource?.id) === journalId
+      })
+      if (updatedJournal) currentJournal.value = updatedJournal
+      launchSnackbar('Titre du journal mis à jour', 'success')
+    } else {
+      await createTrace({ content, journal_id: journalId } as any)
+      await loadTracesForJournal(journalId)
+      launchSnackbar('Trace ajoutée', 'success')
+    }
+    newTraceContent.value = ''
+  } catch (error) {
+    console.error('Error submitting journal entry:', error)
+    launchSnackbar("Erreur lors de l'envoi", 'error')
+  } finally {
+    isSubmittingEntry.value = false
+  }
 }
 
 const loadTracesForJournal = async (journalId: string) => {
@@ -133,6 +270,9 @@ const loadTracesForJournal = async (journalId: string) => {
     if (token !== tracesRequestToken) return
     const list = Array.isArray(response.data) ? response.data : []
     journalTraces.value = list
+    if (list.length > 0) {
+      titleInitializedByJournalId.value[journalId] = true
+    }
   } catch (error) {
     if (token !== tracesRequestToken) return
     console.error('Error loading traces for journal:', error)
@@ -174,9 +314,11 @@ watch(sortedJournals, (list) => {
 watch(currentJournalId, async (journalId) => {
   if (!journalId) {
     journalTraces.value = []
+    newTraceContent.value = ''
     return
   }
   journalTraces.value = []
+  newTraceContent.value = ''
   await loadTracesForJournal(journalId)
 })
 

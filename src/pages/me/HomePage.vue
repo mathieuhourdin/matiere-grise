@@ -10,15 +10,11 @@
           Continuer le journal
         </router-link>
         <router-link
-          v-if="analysisLinkTo"
           :to="analysisLinkTo"
           class="text-sm underline text-slate-300 hover:text-slate-100 transition-colors"
         >
           Analyse &gt;
         </router-link>
-        <span v-else class="text-sm text-slate-500">
-          Analyse &gt;
-        </span>
       </div>
     </div>
     <div class="flex flex-col gap-4">
@@ -35,8 +31,8 @@
                 :alt="`Mentor ${journalMentor.name}`"
                 class="w-9 h-9 rounded-lg object-cover flex-none"
               >
-              <span class="text-xs leading-4 text-slate-300">
-                {{ journalMentor.message }}
+              <span class="text-xs leading-4 text-slate-300 whitespace-pre-line">
+                {{ mentorMessage }}
               </span>
             </div>
             <div class="mt-4 flex justify-end">
@@ -51,10 +47,10 @@
 
           <article class="flex-1 border-t xl:border-t-0 xl:border-l border-slate-800 p-3 md:p-4 xl:min-h-[170px] font-inter">
             <div class="text-lg font-semibold text-slate-200 mb-2">
-              Synthèse de la semaine
+              Tes grands projets
             </div>
             <ul class="space-y-1.5 text-xs leading-4 text-slate-300">
-              <li v-for="point in weeklySummary" :key="point">• {{ point }}</li>
+              <li v-for="point in weeklySummaryLines" :key="point" class="whitespace-pre-line">• {{ point }}</li>
             </ul>
           </article>
 
@@ -72,18 +68,11 @@
             </div>
             <div class="mt-2 flex justify-end">
               <router-link
-                v-if="metricsLinkTo"
                 :to="metricsLinkTo"
                 class="text-xs text-slate-400 underline hover:text-slate-200 transition-colors"
               >
                 voir plus
               </router-link>
-              <span
-                v-else
-                class="text-xs text-slate-500"
-              >
-                voir plus
-              </span>
             </div>
           </section>
           <div class="flex items-center justify-between gap-3">
@@ -123,38 +112,64 @@ import { useUser } from '@/composables/useUser'
 import { useLens } from '@/composables/useLens'
 
 const { user } = useUser()
-const { displayLandscapeAnalysis, loadUserLenses } = useLens()
+const { displayLandscapeAnalysis, displayLandmarks, loadUserLenses } = useLens()
 const analysisLinkTo = computed(() => {
   const analysisId = displayLandscapeAnalysis.value?.id
-  if (!analysisId) return null
+  const query: Record<string, string> = { tab: 'compare' }
+  if (analysisId) query.id = analysisId
   return {
     name: 'analysis',
-    params: { id: analysisId },
-    query: { view: 'compare' }
+    query
   }
 })
 
 const metricsLinkTo = computed(() => {
   const analysisId = displayLandscapeAnalysis.value?.id
-  if (!analysisId) return null
+  const query: Record<string, string> = { tab: 'timeline' }
+  if (analysisId) query.id = analysisId
   return {
     name: 'analysis',
-    params: { id: analysisId },
-    query: { view: 'timeline' }
+    query
   }
 })
 
 const journalMentor = {
   name: 'Gon',
-  image: 'https://i.pinimg.com/originals/93/d7/e8/93d7e8cb60b17a0d12ac40e26f71064e.jpg',
-  message: "Franchement, vu d'ici, on dirait que tu es en plein arc d'entraînement avant un énorme examen de Hunter. Tu ne fais plus juste des petites quêtes séparées : tu t'es trouvé un vrai boss final, les survivances souterraines de la cité industrielle, et tu tapes dessus tous les jours sous plusieurs angles."
+  image: 'https://i.pinimg.com/originals/93/d7/e8/93d7e8cb60b17a0d12ac40e26f71064e.jpg'
 }
 
-const weeklySummary = [
-  "Tu as consolidé tes notes de lecture et transformé plusieurs intuitions en hypothèses formulées.",
-  'La progression est régulière sur les tâches critiques, avec une bonne cadence de production écrite.',
-  "Point d'attention : réduire la dispersion en début de session pour garder plus d'énergie sur les priorités."
-]
+const mentorMessage = computed(() => {
+  const firstName = user.value?.first_name?.trim() || 'toi'
+  return [
+    `Bonjour ${firstName},`,
+    "Bienvenue sur Matière Grise ! Je suis Gon, ton mentor. Je suis ici pour t'aider à progresser dans tes projets. L'important c'est de s'amuser et de relever des défis. Ensemble, on va soulever des montagnes !",
+    'Hoooooosss !!!'
+  ].join('\n')
+})
+
+const weeklySummaryLines = computed(() => {
+  const highLevelProjects = displayLandmarks.value.filter((landmark: any) => {
+    const landmarkType = String(landmark?.landmark_type ?? landmark?.landmarkType ?? '').trim().toUpperCase()
+    return landmarkType === 'HIGH_LEVEL_PROJECT'
+  })
+
+  if (highLevelProjects.length === 0) {
+    return ["Partant.e pour travailler sur tes grands projets ??"]
+  }
+
+  const lines = highLevelProjects
+    .map((landmark: any) => {
+      const title = String(landmark?.title ?? '').trim()
+      const content = String(landmark?.content ?? '').trim()
+      if (title && content && content !== title) return `${title}\n${content}`
+      if (title) return title
+      if (content) return content
+      return ''
+    })
+    .filter((line: string) => line.length > 0)
+
+  return lines.length > 0 ? lines : ["Partant.e pour travailler sur tes grands projets ??"]
+})
 
 watch(
   () => user.value?.id,
