@@ -1,0 +1,1 @@
+import{d as r,i as s,j as a,c as l,h as u,m as c,b as t,R as n}from"./index-51450bb9.js";const i={id:"router-view",class:"relative overflow-scroll h-full w-full"},d=r({__name:"AppLayout",setup(p){const e=s(),o=a(()=>e.meta.requiresRender===!1?e.path:e.fullPath);return(f,_)=>(t(),l("div",i,[(t(),u(c(n),{class:"",key:o.value}))]))}});export{d as default};
