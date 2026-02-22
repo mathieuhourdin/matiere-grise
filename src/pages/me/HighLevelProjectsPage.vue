@@ -17,7 +17,7 @@
         <TextAreaInput
           v-model="projectDefinition"
           label="High level projects definition"
-          placeholder="Ex: Construire un prototype, publier une série d'articles, structurer un projet pro..."
+          placeholder="Ex: Trouver un équilibre dans ma vie perso, Reprendre le sport, Construire un prototype, publier une série d'articles, structurer un projet pro..."
           class="h-72"
         />
 

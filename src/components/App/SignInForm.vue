@@ -18,6 +18,9 @@
     />
     <TextInput class="mt-2" label="handle* (@comme_sur_insta)" v-model="newUser.handle" />
     <TextInput class="mt-2" label="Password*" v-model="newUser.password" type="password" />
+    <div v-if="errorMessage" class="mt-3 rounded border border-red-400/50 bg-red-100/60 px-3 py-2 text-sm text-red-700 whitespace-pre-wrap break-words">
+      {{ errorMessage }}
+    </div>
     <div class="mt-2 flex">
       <ActionButton class="ml-auto m-2" type="valid" @click="submit">Valider</ActionButton>
       <ActionButton class="m-2" type="abort" @click="submit">Annuler</ActionButton>
@@ -33,6 +36,7 @@ import { ref, watch } from 'vue'
 import { useUser } from '@/composables/useUser'
 
 const { createNewUser } = useUser()
+const errorMessage = ref('')
 
 const newUser = ref({
   username: '',
@@ -69,6 +73,25 @@ watch(
 )
 
 const submit = async () => {
-  await createNewUser(newUser.value)
+  errorMessage.value = ''
+  try {
+    await createNewUser(newUser.value)
+  } catch (error: any) {
+    if (typeof error === 'string' && error.trim().length > 0) {
+      errorMessage.value = error
+      return
+    }
+
+    if (error && typeof error === 'object') {
+      try {
+        errorMessage.value = JSON.stringify(error, null, 2)
+      } catch (_jsonError) {
+        errorMessage.value = String(error)
+      }
+      return
+    }
+
+    errorMessage.value = String(error ?? 'Erreur lors de la création du compte')
+  }
 }
 </script>

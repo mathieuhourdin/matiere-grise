@@ -133,13 +133,35 @@ async function createNewDraftUser() {
 async function createNewUser(userPayload: User) {
   if (!userPayload.handle.startsWith('@')) userPayload.handle = '@' + userPayload.handle
   try {
-    const response = await fetchWrapper.post('/users', userPayload)
-    authUser(
+    const response = await fetch(import.meta.env.VITE_API_URL + '/users', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(userPayload)
+    })
+
+    const raw = await response.text()
+    let parsed: any = null
+    if (raw) {
+      try {
+        parsed = JSON.parse(raw)
+      } catch (_error) {
+        parsed = raw
+      }
+    }
+
+    if (!response.ok) {
+      throw parsed ?? { message: response.statusText, status_code: response.status }
+    }
+
+    await authUser(
       { username: userPayload.email, password: userPayload.password },
       '/me/platform-presentation'
     )
   } catch (error) {
     console.log('Error : ', error)
+    throw error
   }
 }
 

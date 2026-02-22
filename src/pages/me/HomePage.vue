@@ -50,7 +50,20 @@
               Tes grands projets
             </div>
             <ul class="space-y-1.5 text-xs leading-4 text-slate-300">
-              <li v-for="point in weeklySummaryLines" :key="point" class="whitespace-pre-line">• {{ point }}</li>
+              <li
+                v-for="item in weeklySummaryItems"
+                :key="item.id ?? item.text"
+                class="whitespace-pre-line"
+              >
+                • {{ item.text }}
+                <router-link
+                  v-if="item.id"
+                  :to="{ name: 'seeLandmark', params: { id: item.id } }"
+                  class="ml-1 underline text-slate-400 hover:text-slate-200 transition-colors"
+                >
+                  voir plus
+                </router-link>
+              </li>
             </ul>
           </article>
 
@@ -141,34 +154,35 @@ const journalMentor = {
 const mentorMessage = computed(() => {
   const firstName = user.value?.first_name?.trim() || 'toi'
   return [
-    `Bonjour ${firstName},`,
-    "Bienvenue sur Matière Grise ! Je suis Gon, ton mentor. Je suis ici pour t'aider à progresser dans tes projets. L'important c'est de s'amuser et de relever des défis. Ensemble, on va soulever des montagnes !",
+    `Bonjour ${firstName}-San !`,
+    "Bienvenue sur Matière Grise, je suis si content de te voir ici ! Je suis Gon, ton mentor. Je suis ici pour t'aider à progresser dans tes projets. L'important c'est de s'amuser et de relever des défis. Ensemble, on va soulever des montagnes !",
     'Hoooooosss !!!'
   ].join('\n')
 })
 
-const weeklySummaryLines = computed(() => {
+const weeklySummaryItems = computed(() => {
   const highLevelProjects = displayLandmarks.value.filter((landmark: any) => {
     const landmarkType = String(landmark?.landmark_type ?? landmark?.landmarkType ?? '').trim().toUpperCase()
     return landmarkType === 'HIGH_LEVEL_PROJECT'
-  })
+  }).slice(0, 2)
 
   if (highLevelProjects.length === 0) {
-    return ["Partant.e pour travailler sur tes grands projets ??"]
+    return [{ id: null, text: "Partant.e pour travailler sur tes grands projets ??" }]
   }
 
-  const lines = highLevelProjects
+  const items = highLevelProjects
     .map((landmark: any) => {
+      const id = typeof landmark?.id === 'string' ? landmark.id : null
       const title = String(landmark?.title ?? '').trim()
       const content = String(landmark?.content ?? '').trim()
-      if (title && content && content !== title) return `${title}\n${content}`
-      if (title) return title
-      if (content) return content
-      return ''
+      if (title && content && content !== title) return { id, text: `${title}\n${content}` }
+      if (title) return { id, text: title }
+      if (content) return { id, text: content }
+      return { id, text: '' }
     })
-    .filter((line: string) => line.length > 0)
+    .filter((item: { id: string | null, text: string }) => item.text.length > 0)
 
-  return lines.length > 0 ? lines : ["Partant.e pour travailler sur tes grands projets ??"]
+  return items.length > 0 ? items : [{ id: null, text: "Partant.e pour travailler sur tes grands projets ??" }]
 })
 
 watch(
