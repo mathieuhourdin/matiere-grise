@@ -71,8 +71,10 @@ async function authUser(login: any, redirectPath: string = '/') {
     localStorage.setItem('userId', responseData.user_id)
     await loadUser()
     router.push(redirectPath)
+    return responseData
   } catch (error) {
     launchSnackbar('Wrong password or email', 'error')
+    throw error
   }
 }
 
